@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Materiais</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* Navegação/Abas */
+        .tabs { display: flex; gap: 10px; margin-bottom: 25px; }
+        .tab-btn { padding: 12px 24px; border: none; background: #e0e0e0; cursor: pointer; font-weight: bold; border-radius: 6px; transition: 0.3s; }
+        .tab-btn.active { background: #ff6600; color: white; }
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* Blocos e Formulários Generais */
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 25px; border: 1px solid #e8eef3; }
+        h2 { margin-top: 0; color: #222; border-bottom: 2px solid #f0f4f8; padding-bottom: 12px; font-size: 20px; }
+        h3 { margin-top: 30px; color: #222; border-left: 5px solid #ff6600; padding-left: 10px; font-size: 20px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; color: #4a5568; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 15px; background-color: #fff; }
+        input:focus, select:focus, textarea:focus { border-color: #ff6600; outline: none; box-shadow: 0 0 0 3px rgba(255,102,0,0.1); }
+        
+        input:disabled, select:disabled, textarea:disabled { background-color: transparent; color: #333; border-color: transparent; appearance: none; -webkit-appearance: none; opacity: 1; cursor: default; padding-left: 0; font-weight: 500; }
+        
+        .btn-submit { background: #ff6600; color: white; border: none; padding: 11px 20px; border-radius: 6px; font-size: 15px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s; }
+        .btn-submit:hover { background: #e55c00; }
+
+        /* LINHA SUPERIOR COMPACTA */
+        .search-action-bar { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: end; }
+        @media (max-width: 768px) { .search-action-bar { grid-template-columns: 1fr; } }
+
+        .btn-abrir-sutil { background: transparent; color: #ff6600; border: 2px dashed #ff6600; padding: 10px 20px; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 600; height: 43px; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; white-space: nowrap; }
+        .btn-abrir-sutil:hover { background: rgba(255,102,0,0.05); transform: translateY(-1px); }
+        
+        /* Alertas */
+        .alert { padding: 12px; border-radius: 6px; margin-bottom: 15px; font-weight: bold; display: none; }
+        .alert-error { background-color: #ffe3e3; color: #cc0000; border: 1px solid #ffb3b3; }
+        .alert-success { background-color: #e3ffe5; color: #008800; border: 1px solid #b3ffb8; }
+        
+        /* DESIGN DE CARD REFINADO */
+        .info-card-public { background: white; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #ff6600; padding: 22px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-top: 20px; }
+        .info-card-public.success-border { border-top-color: #008800; }
+        .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px; }
+        .card-row.full { grid-template-columns: 1fr; }
+        .card-data-label { font-size: 11px; text-transform: uppercase; color: #718096; font-weight: bold; margin-bottom: 2px; }
+
+        /* DESIGN DE MINI BLOCOS PENDENTES */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(490px, 1fr)); gap: 20px; }
+        .student-card { background: white; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #ff6600; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s; }
+        
+        .timer-banner { background: #edf2f7; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #4a5568; display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+
+        /* ======================================================= */
+        /*   NOVA ARQUITETURA DE BOTÕES 3D PREMIUM (GLASSMORPHISM) */
+        /* ======================================================= */
+        .card-actions { display: flex; gap: 12px; margin-top: 20px; padding-top: 15px; border-top: 1px dashed #e2e8f0; }
+
+        .btn-3d-premium {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            outline: none;
+        }
+
+        .btn-3d-premium.btn-edit { background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%); box-shadow: 0 4px 0 #1a202c, 0 6px 10px rgba(45, 55, 72, 0.3); }
+        .btn-3d-premium.btn-save { background: linear-gradient(135deg, #00b300 0%, #007700 100%); box-shadow: 0 4px 0 #004400, 0 6px 10px rgba(0, 119, 0, 0.3); }
+        .btn-3d-premium.btn-del { background: linear-gradient(135deg, #e53e3e 0%, #9b2c2c 100%); box-shadow: 0 4px 0 #672020, 0 6px 10px rgba(155, 44, 44, 0.3); }
+
+        .btn-3d-premium::before { content: ''; position: absolute; top: 2px; left: 2px; right: 2px; height: 35%; background: linear-gradient(to bottom, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 100%); border-radius: 6px 6px 4px 4px; pointer-events: none; }
+
+        .btn-3d-premium:hover { transform: translateY(-2px); }
+        .btn-3d-premium.btn-edit:hover { box-shadow: 0 6px 0 #1a202c, 0 8px 15px rgba(45, 55, 72, 0.4); }
+        .btn-3d-premium.btn-save:hover { box-shadow: 0 6px 0 #004400, 0 8px 15px rgba(0, 119, 0, 0.4); }
+        .btn-3d-premium.btn-del:hover { box-shadow: 0 6px 0 #672020, 0 8px 15px rgba(155, 44, 44, 0.4); }
+
+        .btn-3d-premium:active { transform: translateY(4px); box-shadow: 0 0 0 transparent, 0 2px 4px rgba(0, 0, 0, 0.2); }
+
+        /* Botões Compactos da Tabela de Enviados */
+        .table-btn-3d { padding: 6px 10px; font-size: 11px; border-radius: 6px; font-weight: bold; color: white; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all 0.1s ease; }
+        .table-btn-3d.btn-edit { background: linear-gradient(135deg, #4a5568, #2d3748); box-shadow: 0 2px 0 #1a202c; }
+        .table-btn-3d.btn-save { background: linear-gradient(135deg, #00b300, #007700); box-shadow: 0 2px 0 #004400; }
+        .table-btn-3d.btn-del { background: linear-gradient(135deg, #e53e3e, #9b2c2c); box-shadow: 0 2px 0 #672020; }
+        .table-btn-3d:active { transform: translateY(2px); box-shadow: 0 0 0 transparent; }
+
+        /* DESIGN DA LISTA DE ENVIADOS */
+        .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .list-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+        .list-table th { background: #2d3748; color: white; padding: 10px; font-weight: 600; white-space: nowrap; }
+        .list-table td { padding: 8px 10px; border-bottom: 1px solid #edf2f7; vertical-align: middle; }
+        .list-table tr:hover { background: #f7fafc; }
+        .list-table .table-input { padding: 4px 6px; font-size: 13px; border-radius: 4px; }
+        .list-table .table-input:disabled { padding-left: 0; background: transparent; }
+
+        /* Botões de Relatório */
+        .action-buttons-group { display: flex; gap: 8px; }
+        .btn-export { color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .btn-pdf { background-color: #4a5568; }
+        .btn-pdf:hover { background-color: #2d3748; }
+        .btn-excel { background-color: #107c41; }
+        .btn-excel:hover { background-color: #0b592e; }
+
+        .login-box { max-width: 400px; margin: 50px auto; }
+
+        /* CONFIGURAÇÃO DE IMPRESSÃO (PDF) */
+        @media print {
+            @page { size: landscape; margin: 10mm; }
+            body { background: white; color: black; padding: 0; }
+            .tabs, #lock-screen, .search-action-bar, .card, h3, #grid-pendentes, .action-buttons-group, .card-actions, .table-btn-3d, div[style*="justify-content: space-between"] { display: none !important; }
+            .page { display: none !important; }
+            #page-restrita { display: block !important; }
+            #admin-panel { display: block !important; }
+            .table-responsive { border: none !important; overflow: visible !important; width: 100% !important; }
+            .list-table { width: 100% !important; border: 1px solid #333 !important; font-size: 11px !important; }
+            .list-table th { background: #e2e8f0 !important; color: black !important; border: 1px solid #333 !important; }
+            .list-table td { border: 1px solid #ccc !important; padding: 5px !important; }
+            .list-table .table-input { border: none !important; background: transparent !important; padding: 0 !important; color: black !important; }
+            .list-table td:last-child, .list-table th:last-child { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Menu Superior -->
+    <div class="tabs">
+        <button class="tab-btn active" id="tab-publica" onclick="switchPage('publica')">Consultar Envio e Cadastramento</button>
+        <button class="tab-btn" id="tab-restrita" onclick="switchPage('restrita')">Painel Restrito (Gerencial)</button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- INTERFACE PÚBLICA                          -->
+    <!-- ========================================== -->
+    <div id="page-publica" class="page active">
+        
+        <!-- BARRA SUPERIOR COMPACTA -->
+        <div class="card" style="padding: 20px;">
+            <div class="search-action-bar">
+                <div style="width: 100%;">
+                    <label style="margin-bottom: 4px;">Consultar Envio de Material:</label>
+                    <input type="text" id="search-matricula" placeholder="Digite o número da matrícula do aluno...">
+                </div>
+                <button style="width: auto; padding: 0 25px; background-color: #222; height: 43px;" class="btn-submit" onclick="consultarMaterial()">Buscar</button>
+                <button id="btn-abrir-cadastro" class="btn-abrir-sutil" onclick="mostrarFormulario()">➕ Cadastrar Novo Aluno</button>
+            </div>
+            
+            <div id="search-error" class="alert alert-error" style="margin-top: 15px; margin-bottom: 0;">Matrícula não encontrada no sistema!</div>
+            <div id="search-result" class="info-card-public" style="display:none;"></div>
+        </div>
+
+        <!-- FORMULÁRIO DE CADASTRO -->
+        <div id="area-cadastro-box" class="info-card-public" style="display: none; margin-bottom: 25px;">
+            <h2 style="font-size: 18px; margin-bottom: 15px;">Ficha de Cadastro de Aluno</h2>
+            
+            <form id="form-cadastro" onsubmit="cadastrarAluno(event)">
+                <div class="card-row">
+                    <div>
+                        <label>Nome Completo do Aluno(a):</label>
+                        <input type="text" id="cad-nome" required>
+                    </div>
+                    <div>
+                        <label>Matrícula (Única):</label>
+                        <input type="text" id="cad-matricula" required placeholder="Ex: 2026001">
+                    </div>
+                </div>
+
+                <div class="card-row">
+                    <div>
+                        <label>Dia de Aula:</label>
+                        <select id="cad-dia" required>
+                            <option value="">Selecione...</option>
+                            <option value="Segunda-feira">Segunda-feira</option>
+                            <option value="Terça-feira">Terça-feira</option>
+                            <option value="Quarta-feira">Quarta-feira</option>
+                            <option value="Quinta-feira">Quinta-feira</option>
+                            <option value="Sexta-feira">Sexta-feira</option>
+                            <option value="Sábado">Sábado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Horário de estudo:</label>
+                        <select id="cad-horario" required>
+                            <option value="">Selecione...</option>
+                            <option value="07:00 às 09:00">07:00 às 09:00</option>
+                            <option value="09:00 às 11:00">09:00 às 11:00</option>
+                            <option value="11:00 às 13:00">11:00 às 13:00</option>
+                            <option value="13:00 às 15:00">13:00 às 15:00</option>
+                            <option value="15:00 às 17:00">15:00 às 17:00</option>
+                            <option value="17:00 às 19:00">17:00 às 19:00</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card-row full">
+                    <div>
+                        <label>Curso:</label>
+                        <select id="cad-curso" required>
+                            <option value="">Selecione...</option>
+                            <option value="Assistente Administrativo - AA">Assistente Administrativo - AA</option>
+                            <option value="Assistente Administrativo Plus - AAP">Assistente Administrativo Plus - AAP</option>
+                            <option value="Atendente de Farmácia - AF">Atendente de Farmácia - AF</option>
+                            <option value="Atendente de Farmácia Plus - AFP">Atendente de Farmácia Plus - AFP</option>
+                            <option value="Cuidador de Idosos - CI">Cuidador de Idosos - CI</option>
+                            <option value="Design de Games e Edições - DGE">Design de Games e Edições - DGE</option>
+                            <option value="Design Gráfico Plus - DGP">Design Gráfico Plus - DGP</option>
+                            <option value="Informática Essencial Adulto - IEA">Informática Essencial Adulto - IEA</option>
+                            <option value="Informática Essencial Kids - IEK">Informática Essencial Kids - IEK</option>
+                            <option value="Marketing Digital Criativo">Marketing Digital Criativo</option>
+                            <option value="Operador de Caixa - OC">Operador de Caixa - OC</option>
+                            <option value="Operador de Caixa Plus - OCP">Operador de Caixa Plus - OCP</option>
+                            <option value="Programador Web Profissional - PWP">Programador Web Profissional - PWP</option>
+                            <option value="Secretariado - S">Secretariado - S</option>
+                            <option value="Telemarketing - T">Telemarketing - T</option>
+                            <option value="CN - Assistente em Administração">CN - Assistente em Administração</option>
+                            <option value="CN - Assistente em Administração Plus">CN - Assistente em Administração Plus</option>
+                            <option value="CN - Atendente de Farmácia">CN - Atendente de Farmácia</option>
+                            <option value="CN - Atendente de Farmácia Plus">CN - Atendente de Farmácia Plus</option>
+                            <option value="CN - Cuidador de Idosos">CN - Cuidador de Idosos</option>
+                            <option value="CN - Design Desenvolvedor de Games">CN - Design Desenvolvedor de Games</option>
+                            <option value="CN - Design Gráfico">CN - Design Gráfico</option>
+                            <option value="CN - Design Gráfico Plus">CN - Design Gráfico Plus</option>
+                            <option value="CN - Informática Essencial - Adulto">CN - Informática Essencial - Adulto</option>
+                            <option value="CN - Informática Essencial - Kids">CN - Informática Essencial - Kids</option>
+                            <option value="CN - Operador de Caixa">CN - Operador de Caixa</option>
+                            <option value="CN - Operador de Caixa Plus">CN - Operador de Caixa Plus</option>
+                            <option value="CN - Secretariado">CN - Secretariado</option>
+                            <option value="CN - Tabelas, Gráficos e Excel Completo - Adulto">CN - Tabelas, Gráficos e Excel Completo - Adulto</option>
+                            <option value="CN - Telemarketing">CN - Telemarketing</option>
+                            <option value="CN- Informática Essencial - Terceira Idade">CN- Informática Essencial - Terceira Idade</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card-row">
+                    <div>
+                        <label>E-mail para enviar o Material (Sem acentuações):</label>
+                        <input type="email" id="cad-email" required oninput="validarEmailInput(this)">
+                    </div>
+                    <div>
+                        <label>Campanha:</label>
+                        <select id="cad-campanha" required>
+                            <option value="">Selecione...</option>
+                            <option value="Suporte">Suporte</option>
+                            <option value="Padrão">Padrão</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card-row full">
+                    <div>
+                        <label>Nome do Vendedor/Consultor:</label>
+                        <select id="cad-vendedor" required>
+                            <option value="">Selecione...</option>
+                            <option value="Emison Nascimento Santos">Emison Nascimento Santos</option>
+                            <option value="Thamyres Cardoso Alves">Thamyres Cardoso Alves</option>
+                            <option value="Secretaria">Secretaria</option>
+                            <option value="Sala de Aula">Sala de Aula</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" style="background-color: #008800; margin-top: 10px;">Gravar Registro na Base</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- INTERFACE RESTRITA                         -->
+    <!-- ========================================== -->
+    <div id="page-restrita" class="page">
+        <div id="lock-screen" class="card login-box">
+            <h2>Acesso Restrito</h2>
+            <p style="font-size: 14px; color: #666;">Insira a senha master para gerenciar dados.</p>
+            <div class="form-group">
+                <input type="password" id="admin-password" placeholder="Digite a senha...">
+            </div>
+            <button class="btn-submit" onclick="autenticar()">Entrar no Painel</button>
+            <div id="login-error" class="alert alert-error" style="margin-top:10px;">Senha incorreta!</div>
+        </div>
+
+        <div id="admin-panel" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="border:none; margin:0;">Gestão Operacional de Envios</h2>
+                <button style="width:auto; background:#333; padding: 8px 15px; font-size:12px;" class="btn-submit" onclick="logout()">Sair/Bloquear</button>
+            </div>
+            
+            <h3>Pendentes de Envio</h3>
+            <div id="grid-pendentes" class="grid-cards"></div>
+
+            <!-- PAINEL DE RELATÓRIOS -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 12px;">
+                <h3 style="margin: 0; border-left: 5px solid #008800;">Materiais Enviados</h3>
+                <div class="action-buttons-group">
+                    <button class="btn-export btn-excel" onclick="exportarTabelaExcel()">🟢 Exportar para Excel (.xls)</button>
+                    <button class="btn-export btn-pdf" onclick="exportarTabelaPDF()">🖨️ Imprimir / Salvar PDF</button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="list-table" id="tabela-enviados-raiz">
+                    <thead>
+                        <tr>
+                            <th>Cadastro</th>
+                            <th>Envio</th>
+                            <th>Matrícula</th>
+                            <th>Campanha</th>
+                            <th>Aluno(a)</th>
+                            <th>Curso</th>
+                            <th>Dia</th>
+                            <th>Horário</th>
+                            <th>Vendedor</th>
+                            <th>E-mail</th>
+                            <th>Situação</th>
+                            <th>Observações</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-enviados"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let logado = false;
+    const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbxg_7ALH3c3l4RsqZ48s3Z4VktBAxow_16NfVwmBM7YAIDD85LtUDN2_kJaNkCljuGt/exec";
+
+    const listaCursos = [
+        "Assistente Administrativo - AA", "Assistente Administrativo Plus - AAP",
+        "Atendente de Farmácia - AF", "Atendente de Farmácia Plus - AFP",
+        "Cuidador de Idosos - CI", "Design de Games e Edições - DGE",
+        "Design Gráfico Plus - DGP", "Informática Essencial Adulto - IEA",
+        "Informática Essencial Kids - IEK", "Marketing Digital Criativo",
+        "Operador de Caixa - OC", "Operador de Caixa Plus - OCP",
+        "Programador Web Profissional - PWP", "Secretariado - S", "Telemarketing - T",
+        "CN - Assistente em Administração", "CN - Assistente em Administração Plus",
+        "CN - Atendente de Farmácia", "CN - Atendente de Farmácia Plus",
+        "CN - Cuidador de Idosos", "CN - Design Desenvolvedor de Games",
+        "CN - Design Gráfico", "CN - Design Gráfico Plus",
+        "CN - Informática Essencial - Adulto", "CN - Informática Essencial - Kids",
+        "CN - Operador de Caixa", "CN - Operador de Caixa Plus", "CN - Secretariado",
+        "CN - Tabelas, Gráficos e Excel Completo - Adulto", "CN - Telemarketing",
+        "CN- Informática Essencial - Terceira Idade"
+    ];
+
+
+    function formatarData(dataISO) {
+        if (!dataISO) return 'N/A';
+        const data = new Date(dataISO);
+        return data.toLocaleDateString('pt-BR');
+    }
+
+    function switchPage(page) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`page-${page}`).classList.add('active');
+        document.getElementById(`tab-${page}`).classList.add('active');
+        
+        if (page === 'restrita') {
+            if (!logado) {
+                document.getElementById('lock-screen').style.display = 'block';
+                document.getElementById('admin-panel').style.display = 'none';
+            } else {
+                renderizarPainelGerencial();
+            }
+        } else {
+            logoutSilencioso();
+        }
+    }
+
+    function mostrarFormulario() {
+        const box = document.getElementById('area-cadastro-box');
+        box.style.display = (box.style.display === 'none') ? 'block' : 'none';
+    }
+
+    // 1. CONSULTA PÚBLICA
+    async function consultarMaterial() {
+        const inputBusca = document.getElementById('search-matricula').value.trim();
+        const erroBox = document.getElementById('search-error');
+        const resultadoBox = document.getElementById('search-result');
+        
+        erroBox.style.display = 'none';
+        resultadoBox.style.display = 'none';
+        if (!inputBusca) return;
+
+        resultadoBox.innerHTML = `<div style="text-align: center; padding: 20px;">Consultando base de dados...</div>`;
+        resultadoBox.style.display = 'block';
+
+        try {
+            const res = await fetch(URL_PLANILHA);
+            let alunos = await res.json();
+            
+            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) {
+                alunos = alunos.slice(1);
+            }
+
+            const a = alunos.find(al => al.matricula == inputBusca);
+
+            if (a) {
+                resultadoBox.className = `info-card-public ${a.status === 'Enviado' ? 'success-border' : ''}`;
+                resultadoBox.innerHTML = `
+                    <div class="card-row">
+                        <div>
+                            <div class="card-data-label">Data Cadastro</div>
+                            <div style="font-size:14px; font-weight:500;">${formatarData(a.dataCadastro)}</div>
+                        </div>
+                        <div>
+                            <div class="card-data-label">Data de Envio</div>
+                            <div style="font-size:14px; font-weight:600; color:${a.status === 'Enviado' ? 'green' : '#4a5568'}">${a.dataEnvio ? formatarData(a.dataEnvio) : 'Aguardando Envio'}</div>
+                        </div>
+                    </div>
+                    <div class="card-row">
+                        <div>
+                            <div class="card-data-label">Aluno(a)</div>
+                            <div style="font-size:15px; font-weight:600;">${a.nome}</div>
+                        </div>
+                        <div>
+                            <div class="card-data-label">Matrícula</div>
+                            <div style="font-size:15px; font-weight:bold;">${a.matricula}</div>
+                        </div>
+                    </div>
+                    <div class="card-row">
+                        <div>
+                            <div class="card-data-label">Curso Escolhido</div>
+                            <div style="font-size:14px;">${a.curso}</div>
+                        </div>
+                        <div>
+                            <div class="card-data-label">Campanha</div>
+                            <div style="font-size:14px; font-weight:500;">${a.campanha || 'Padrão'}</div>
+                        </div>
+                    </div>
+                    <div class="card-row full">
+                        <div style="padding-top:8px; border-top:1px dashed #e2e8f0;">
+                            <div class="card-data-label">Situação de Envio</div>
+                            <span style="font-weight:bold; color:${a.status === 'Enviado' ? 'green' : 'orange'}">${a.status}</span>
+                        </div>
+                        <div style="margin-top:5px;">
+                            <div class="card-data-label">Observações da Operação</div>
+                            <div style="font-size:13px; color:#4a5568;">${a.observacoes || '<i>Nenhuma observação registrada.</i>'}</div>
+                        </div>
+                    </div>
+                `;
+            } else { 
+                resultadoBox.style.display = 'none';
+                erroBox.style.display = 'block'; 
+            }
+        } catch (err) {
+            console.error("Erro ao consultar:", err);
+            resultadoBox.innerHTML = `<div style="color:red; text-align:center;">Erro ao conectar com a base de dados.</div>`;
+        }
+    }
+
+    // 2. CADASTRO DE ALUNOS
+    function cadastrarAluno(e) {
+        e.preventDefault();
+        const matricula = document.getElementById('cad-matricula').value.trim();
+        const nome = document.getElementById('cad-nome').value.trim();
+        const dia = document.getElementById('cad-dia').value;
+        const horario = document.getElementById('cad-horario').value;
+        const curso = document.getElementById('cad-curso').value;
+        const email = document.getElementById('cad-email').value.trim();
+        const vendedor = document.getElementById('cad-vendedor').value;
+        const campanha = document.getElementById('cad-campanha').value;
+
+        const dados = { matricula, nome, dia, horario, curso, email, vendedor, campanha };
+
+        fetch(URL_PLANILHA, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dados)
+        })
+        .then(() => {
+            alert("Aluno gravado com sucesso na planilha!");
+            document.getElementById('area-cadastro-box').style.display = 'none';
+            document.getElementById('form-cadastro').reset();
+            if(logado) renderizarPainelGerencial();
+        })
+        .catch(err => alert("Erro ao gravar na planilha."));
+    }
+
+    function validarEmailInput(input) {
+        input.value = input.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    // 3. SEGURANÇA
+    function autenticar() {
+        const senha = document.getElementById('admin-password').value;
+        if (senha === "1312892099") { 
+            logado = true;
+            document.getElementById('lock-screen').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+            document.getElementById('login-error').style.display = 'none';
+            renderizarPainelGerencial();
+        } else { document.getElementById('login-error').style.display = 'block'; }
+    }
+
+    function logout() {
+        logado = false;
+        document.getElementById('admin-password').value = "";
+        document.getElementById('lock-screen').style.display = 'block';
+        document.getElementById('admin-panel').style.display = 'none';
+    }
+    function logoutSilencioso() { logado = false; }
+
+    // 4. ESTRUTURA OPERACIONAL ASYNC
+    async function renderizarPainelGerencial() {
+        const containerPendentes = document.getElementById('grid-pendentes');
+        const tbodyEnviados = document.getElementById('tbody-enviados');
+        
+        containerPendentes.innerHTML = "<p style='padding: 20px;'>Carregando dados da planilha...</p>";
+        tbodyEnviados.innerHTML = "<tr><td colspan='13' style='text-align:center; padding: 20px;'>Carregando dados da planilha...</td></tr>";
+        
+        try {
+            const res = await fetch(URL_PLANILHA);
+            let alunos = await res.json();
+            
+            containerPendentes.innerHTML = "";
+            tbodyEnviados.innerHTML = "";
+            
+            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) {
+                alunos = alunos.slice(1);
+            }
+            
+            alunos.forEach((aluno, index) => {
+                let opcoesCursos = '';
+                listaCursos.forEach(c => { opcoesCursos += `<option value="${c}" ${aluno.curso === c ? 'selected' : ''}>${c}</option>`; });
+
+                if (aluno.status === "Pendente de Envio") {
+                    const card = document.createElement('div');
+                    card.className = "student-card";
+                    card.id = `row-${index}`;
+                    card.innerHTML = `
+                        <div>
+                            <div class="timer-banner">⏳ Aguardando Envio (Prazo padrão: até 72h)</div>
+                            <div class="card-row">
+                                <div><div class="card-data-label">Data Cadastro</div><div style="font-size:13px; font-weight:500;">${formatarData(aluno.dataCadastro)}</div></div>
+                                <div><div class="card-data-label">Matrícula</div><input type="text" id="card-mat-${index}" value="${aluno.matricula}" disabled style="font-weight:bold;"></div>
+                            </div>
+                            <div class="card-row">
+                                <div><div class="card-data-label">Aluno(a)</div><input type="text" id="card-nome-${index}" value="${aluno.nome}" disabled style="font-weight:600;"></div>
+                                <div><div class="card-data-label">Campanha</div><select id="card-campanha-${index}" disabled><option value="Padrão" ${aluno.campanha === 'Padrão' ? 'selected' : ''}>Padrão</option><option value="Suporte" ${aluno.campanha === 'Suporte' ? 'selected' : ''}>Suporte</option></select></div>
+                            </div>
+                            <div class="card-row full"><div><div class="card-data-label">Curso Escolhido</div><select id="card-curso-${index}" disabled>${opcoesCursos}</select></div></div>
+                            <div class="card-row">
+                                <div><div class="card-data-label">Dia de Aula</div><select id="card-dia-${index}" disabled><option value="Segunda-feira" ${aluno.dia === 'Segunda-feira' ? 'selected' : ''}>Segunda-feira</option><option value="Terça-feira" ${aluno.dia === 'Terça-feira' ? 'selected' : ''}>Terça-feira</option><option value="Quarta-feira" ${aluno.dia === 'Quarta-feira' ? 'selected' : ''}>Quarta-feira</option><option value="Quinta-feira" ${aluno.dia === 'Quinta-feira' ? 'selected' : ''}>Quinta-feira</option><option value="Sexta-feira" ${aluno.dia === 'Sexta-feira' ? 'selected' : ''}>Sexta-feira</option><option value="Sábado" ${aluno.dia === 'Sábado' ? 'selected' : ''}>Sábado</option></select></div>
+                                <div><div class="card-data-label">Horário de Estudo</div><select id="card-horario-${index}" disabled><option value="07:00 às 09:00" ${aluno.horario === '07:00 às 09:00' ? 'selected' : ''}>07:00 às 09:00</option><option value="09:00 às 11:00" ${aluno.horario === '09:00 às 11:00' ? 'selected' : ''}>09:00 às 11:00</option><option value="11:00 às 13:00" ${aluno.horario === '11:00 às 13:00' ? 'selected' : ''}>11:00 às 13:00</option><option value="13:00 às 15:00" ${aluno.horario === '13:00 às 15:00' ? 'selected' : ''}>13:00 às 15:00</option><option value="15:00 às 17:00" ${aluno.horario === '15:00 às 17:00' ? 'selected' : ''}>15:00 às 17:00</option><option value="17:00 às 19:00" ${aluno.horario === '17:00 às 19:00' ? 'selected' : ''}>17:00 às 19:00</option></select></div>
+                            </div>
+                            <div class="card-row">
+                                <div><div class="card-data-label">Vendedor</div><select id="card-vend-${index}" disabled><option value="Emison Nascimento Santos" ${aluno.vendedor === 'Emison Nascimento Santos' ? 'selected' : ''}>Emison Nascimento Santos</option><option value="Thamyres Cardoso Alves" ${aluno.vendedor === 'Thamyres Cardoso Alves' ? 'selected' : ''}>Thamyres Cardoso Alves</option><option value="Secretaria" ${aluno.vendedor === 'Secretaria' ? 'selected' : ''}>Secretaria</option><option value="Sala de Aula" ${aluno.vendedor === 'Sala de Aula' ? 'selected' : ''}>Sala de Aula</option></select></div>
+                                <div><div class="card-data-label">E-mail</div><input type="text" id="card-email-${index}" value="${aluno.email}" disabled></div>
+                            </div>
+                            <div class="card-row">
+                                <div><div class="card-data-label">Situação</div><select id="card-status-${index}" disabled style="font-weight:bold; color:#d69e2e;"><option value="Pendente de Envio" selected>Pendente de Envio</option><option value="Enviado">Enviado</option></select></div>
+                                <div><div class="card-data-label">Observações</div><textarea id="card-obs-${index}" disabled rows="1">${aluno.observacoes || ''}</textarea></div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-3d-premium btn-edit" id="card-btn-edit-${index}" onclick="habilitarEdicaoCard(${index})">✏️ Editar/Enviar</button>
+                            <button class="btn-3d-premium btn-save" id="card-btn-save-${index}" onclick="salvarEdicaoCard(${index})" style="display:none;">💾 Salvar</button>
+                            <button class="btn-3d-premium btn-del" onclick="deletarAluno(${index})">🗑️ Excluir</button>
+                        </div>
+                    `;
+                    containerPendentes.appendChild(card);
+                } 
+                else if (aluno.status === "Enviado") {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${formatarData(aluno.dataCadastro)}</td>
+                        <td style="color:green; font-weight:600;">${formatarData(aluno.dataEnvio)}</td>
+                        <td><input type="text" id="card-mat-${index}" value="${aluno.matricula}" disabled class="table-input" style="width:70px; font-weight:bold;"></td>
+                        <td><select id="card-campanha-${index}" disabled class="table-input" style="width:100px;"><option value="Padrão" ${aluno.campanha === 'Padrão' ? 'selected' : ''}>Padrão</option><option value="Suporte" ${aluno.campanha === 'Suporte' ? 'selected' : ''}>Suporte</option></select></td>
+                        <td><input type="text" id="card-nome-${index}" value="${aluno.nome}" disabled class="table-input" style="width:140px; font-weight:600;"></td>
+                        <td><select id="card-curso-${index}" disabled class="table-input" style="width:180px;">${opcoesCursos}</select></td>
+                        <td><select id="card-dia-${index}" disabled class="table-input" style="width:110px;"><option value="Segunda-feira" ${aluno.dia === 'Segunda-feira' ? 'selected' : ''}>Segunda-feira</option><option value="Terça-feira" ${aluno.dia === 'Terça-feira' ? 'selected' : ''}>Terça-feira</option><option value="Quarta-feira" ${aluno.dia === 'Quarta-feira' ? 'selected' : ''}>Quarta-feira</option><option value="Quinta-feira" ${aluno.dia === 'Quinta-feira' ? 'selected' : ''}>Quinta-feira</option><option value="Sexta-feira" ${aluno.dia === 'Sexta-feira' ? 'selected' : ''}>Sexta-feira</option><option value="Sábado" ${aluno.dia === 'Sábado' ? 'selected' : ''}>Sábado</option></select></td>
+                        <td><select id="card-horario-${index}" disabled class="table-input" style="width:120px;"><option value="07:00 às 09:00" ${aluno.horario === '07:00 às 09:00' ? 'selected' : ''}>07:00 às 09:00</option><option value="09:00 às 11:00" ${aluno.horario === '09:00 às 11:00' ? 'selected' : ''}>09:00 às 11:00</option><option value="11:00 às 13:00" ${aluno.horario === '11:00 às 13:00' ? 'selected' : ''}>11:00 às 13:00</option><option value="13:00 às 15:00" ${aluno.horario === '13:00 às 15:00' ? 'selected' : ''}>13:00 às 15:00</option><option value="15:00 às 17:00" ${aluno.horario === '15:00 às 17:00' ? 'selected' : ''}>15:00 às 17:00</option><option value="17:00 às 19:00" ${aluno.horario === '17:00 às 19:00' ? 'selected' : ''}>17:00 às 19:00</option></select></td>
+                        <td><select id="card-vend-${index}" disabled class="table-input" style="width:150px;"><option value="Emison Nascimento Santos" ${aluno.vendedor === 'Emison Nascimento Santos' ? 'selected' : ''}>Emison Nascimento Santos</option><option value="Thamyres Cardoso Alves" ${aluno.vendedor === 'Thamyres Cardoso Alves' ? 'selected' : ''}>Thamyres Cardoso Alves</option><option value="Secretaria" ${aluno.vendedor === 'Secretaria' ? 'selected' : ''}>Secretaria</option><option value="Sala de Aula" ${aluno.vendedor === 'Sala de Aula' ? 'selected' : ''}>Sala de Aula</option></select></td>
+                        <td><input type="text" id="card-email-${index}" value="${aluno.email}" disabled class="table-input" style="width:140px;"></td>
+                        <td><select id="card-status-${index}" disabled class="table-input" style="width:140px; font-weight:bold; color:green;"><option value="Pendente de Envio">Pendente de Envio</option><option value="Enviado" selected>Enviado</option></select></td>
+                        <td><textarea id="card-obs-${index}" disabled class="table-input" style="width:120px; height:32px; resize:none;">${aluno.observacoes || ''}</textarea></td>
+                        <td><div style="display:flex; gap:6px;"><button class="table-btn-3d btn-edit" id="card-btn-edit-${index}" onclick="habilitarEdicaoCard(${index})">✏️</button><button class="table-btn-3d btn-save" id="card-btn-save-${index}" onclick="salvarEdicaoCard(${index})" style="display:none;">💾</button><button class="table-btn-3d btn-del" onclick="deletarAluno(${index})">🗑️</button></div></td>
+                    `;
+                    tbodyEnviados.appendChild(tr);
+                }
+            });
+        } catch (e) {
+            console.error(e);
+            tbodyEnviados.innerHTML = "<tr><td colspan='13' style='text-align:center; color:red; padding:20px;'>Erro ao carregar dados da planilha.</td></tr>";
+            containerPendentes.innerHTML = "<p style='color:red; padding:20px;'>Erro ao carregar dados da planilha.</p>";
+        }
+    }
+
+    // 5. EXPORTAÇÕES (USANDO FETCH)
+    async function exportarTabelaExcel() {
+        try {
+            const res = await fetch(URL_PLANILHA);
+            let alunos = await res.json();
+            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
+            const enviados = alunos.filter(a => a.status === "Enviado");
+            if (enviados.length === 0) { alert("Não existem registros!"); return; }
+
+            let conteudoHTML = `<meta charset="utf-8"><table border="1"><tr style="background-color: #2d3748; color: white; font-weight: bold;"><th>Data Cadastro</th><th>Data Envio</th><th>Matrícula</th><th>Campanha</th><th>Aluno(a)</th><th>Curso</th><th>Dia</th><th>Horário</th><th>Vendedor</th><th>E-mail</th><th>Situação</th><th>Observações</th></tr>`;
+            enviados.forEach(aluno => {
+                conteudoHTML += `<tr><td>${aluno.dataCadastro||''}</td><td>${aluno.dataEnvio||''}</td><td>${aluno.matricula||''}</td><td>${aluno.campanha||''}</td><td>${aluno.nome||''}</td><td>${aluno.curso||''}</td><td>${aluno.dia||''}</td><td>${aluno.horario||''}</td><td>${aluno.vendedor||''}</td><td>${aluno.email||''}</td><td>${aluno.status||''}</td><td>${aluno.observacoes||''}</td></tr>`;
+            });
+            conteudoHTML += '</table>';
+            const blobUri = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(conteudoHTML);
+            const linkInvisivel = document.createElement("a");
+            linkInvisivel.href = blobUri; linkInvisivel.download = "relatorio_materiais_enviados.xls"; document.body.appendChild(linkInvisivel); linkInvisivel.click(); document.body.removeChild(linkInvisivel);
+        } catch (err) { alert("Erro ao buscar dados."); }
+    }
+
+    async function exportarTabelaPDF() {
+        try {
+            const res = await fetch(URL_PLANILHA);
+            let alunos = await res.json();
+            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
+            if (!alunos.some(a => a.status === "Enviado")) { alert("Não existem registros!"); return; }
+            window.print();
+        } catch (err) { alert("Erro ao verificar dados."); }
+    }
+
+    // 6. EDIÇÃO E DELEÇÃO (MÉTODO POST PARA A NUVEM)
+    function habilitarEdicaoCard(index) {
+        const campos = [
+            `card-nome-${index}`,
+            `card-campanha-${index}`,
+            `card-curso-${index}`,
+            `card-dia-${index}`,
+            `card-horario-${index}`,
+            `card-vend-${index}`,
+            `card-email-${index}`,
+            `card-status-${index}`,
+            `card-obs-${index}`
+        ];
+
+        campos.forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) elemento.disabled = false;
+        });
+
+        document.getElementById(`card-btn-edit-${index}`).style.display = 'none';
+        document.getElementById(`card-btn-save-${index}`).style.display = 'inline-block';
+    }
+
+    async function salvarEdicaoCard(index) {
+        const matricula = document.getElementById(`card-mat-${index}`).value.trim();
+        const nome = document.getElementById(`card-nome-${index}`).value.trim();
+        const campanha = document.getElementById(`card-campanha-${index}`).value;
+        const curso = document.getElementById(`card-curso-${index}`).value;
+        const dia = document.getElementById(`card-dia-${index}`).value;
+        const horario = document.getElementById(`card-horario-${index}`).value;
+        const vendedor = document.getElementById(`card-vend-${index}`).value;
+        const email = document.getElementById(`card-email-${index}`).value.trim();
+        const novoStatus = document.getElementById(`card-status-${index}`).value;
+        const observacoes = document.getElementById(`card-obs-${index}`).value.trim();
+
+        const dados = {
+            action: "update",
+            matricula: matricula,
+            nome: nome,
+            campanha: campanha,
+            curso: curso,
+            dia: dia,
+            horario: horario,
+            vendedor: vendedor,
+            email: email,
+            status: novoStatus,
+            observacoes: observacoes
+        };
+
+        try {
+            await fetch(URL_PLANILHA, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dados)
+            });
+
+            alert("Dados atualizados com sucesso!");
+
+            setTimeout(() => {
+                renderizarPainelGerencial();
+            }, 1000);
+
+        } catch (err) {
+            alert("Erro ao salvar: " + err);
+            console.error(err);
+        }
+    }
+
+    async function deletarAluno(index) {
+        const matricula = document.getElementById(`card-mat-${index}`).value.trim();
+
+        if (confirm("Deseja remover o aluno de matrícula " + matricula + " definitivamente?")) {
+            const dados = {
+                action: "delete",
+                matricula: matricula
+            };
+
+            try {
+                await fetch(URL_PLANILHA, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(dados)
+                });
+
+                alert("Aluno removido! Recarregando...");
+
+                setTimeout(() => {
+                    renderizarPainelGerencial();
+                }, 1000);
+
+            } catch (err) {
+                alert("Erro ao excluir: " + err);
+                console.error(err);
+            }
+        }
+    }
+</script>
+</body>
+</html>
