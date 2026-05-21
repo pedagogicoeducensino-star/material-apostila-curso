@@ -55,9 +55,7 @@
         
         .timer-banner { background: #edf2f7; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #4a5568; display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
 
-        /* ======================================================= */
-        /*   NOVA ARQUITETURA DE BOTÕES 3D PREMIUM (GLASSMORPHISM) */
-        /* ======================================================= */
+        /* Botões 3D Premium */
         .card-actions { display: flex; gap: 12px; margin-top: 20px; padding-top: 15px; border-top: 1px dashed #e2e8f0; }
 
         .btn-3d-premium {
@@ -139,18 +137,12 @@
 <body>
 
 <div class="container">
-    <!-- Menu Superior -->
     <div class="tabs">
         <button class="tab-btn active" id="tab-publica" onclick="switchPage('publica')">Consultar Envio e Cadastramento</button>
         <button class="tab-btn" id="tab-restrita" onclick="switchPage('restrita')">Painel Restrito (Gerencial)</button>
     </div>
 
-    <!-- ========================================== -->
-    <!-- INTERFACE PÚBLICA                          -->
-    <!-- ========================================== -->
     <div id="page-publica" class="page active">
-        
-        <!-- BARRA SUPERIOR COMPACTA -->
         <div class="card" style="padding: 20px;">
             <div class="search-action-bar">
                 <div style="width: 100%;">
@@ -165,7 +157,6 @@
             <div id="search-result" class="info-card-public" style="display:none;"></div>
         </div>
 
-        <!-- FORMULÁRIO DE CADASTRO -->
         <div id="area-cadastro-box" class="info-card-public" style="display: none; margin-bottom: 25px;">
             <h2 style="font-size: 18px; margin-bottom: 15px;">Ficha de Cadastro de Aluno</h2>
             
@@ -281,9 +272,6 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- INTERFACE RESTRITA                         -->
-    <!-- ========================================== -->
     <div id="page-restrita" class="page">
         <div id="lock-screen" class="card login-box">
             <h2>Acesso Restrito</h2>
@@ -304,7 +292,6 @@
             <h3>Pendentes de Envio</h3>
             <div id="grid-pendentes" class="grid-cards"></div>
 
-            <!-- PAINEL DE RELATÓRIOS -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 12px;">
                 <h3 style="margin: 0; border-left: 5px solid #008800;">Materiais Enviados</h3>
                 <div class="action-buttons-group">
@@ -360,7 +347,6 @@
         "CN - Tabelas, Gráficos e Excel Completo - Adulto", "CN - Telemarketing",
         "CN- Informática Essencial - Terceira Idade"
     ];
-
 
     function formatarData(dataISO) {
         if (!dataISO) return 'N/A';
@@ -565,7 +551,7 @@
                                 <div><div class="card-data-label">Horário de Estudo</div><select id="card-horario-${index}" disabled><option value="07:00 às 09:00" ${aluno.horario === '07:00 às 09:00' ? 'selected' : ''}>07:00 às 09:00</option><option value="09:00 às 11:00" ${aluno.horario === '09:00 às 11:00' ? 'selected' : ''}>09:00 às 11:00</option><option value="11:00 às 13:00" ${aluno.horario === '11:00 às 13:00' ? 'selected' : ''}>11:00 às 13:00</option><option value="13:00 às 15:00" ${aluno.horario === '13:00 às 15:00' ? 'selected' : ''}>13:00 às 15:00</option><option value="15:00 às 17:00" ${aluno.horario === '15:00 às 17:00' ? 'selected' : ''}>15:00 às 17:00</option><option value="17:00 às 19:00" ${aluno.horario === '17:00 às 19:00' ? 'selected' : ''}>17:00 às 19:00</option></select></div>
                             </div>
                             <div class="card-row">
-                                <div><div class="card-data-label">Vendedor</div><select id="card-vend-${index}" disabled><option value="Emison Nascimento Santos" ${aluno.vendedor === 'Emison Nascimento Santos' ? 'selected' : ''}>Emison Nascimento Santos</option><option value="Thamyres Cardoso Alves" ${aluno.vendedor === 'Thamyres Cardoso Alves' ? 'selected' : ''}>Thamyres Cardoso Alves</option><option value="Secretaria" ${aluno.vendedor === 'Secretaria' ? 'selected' : ''}>Secretaria</option><option value="Sala de Aula" ${aluno.vendedor === 'Sala de Aula' ? 'selected' : ''}>Sala de Aula</option></select></div>
+                                <div><div class="card-data-label">Vendedor</div><select id="card-vendedor-${index}" disabled><option value="Emison Nascimento Santos" ${aluno.vendedor === 'Emison Nascimento Santos' ? 'selected' : ''}>Emison Nascimento Santos</option><option value="Thamyres Cardoso Alves" ${aluno.vendedor === 'Thamyres Cardoso Alves' ? 'selected' : ''}>Thamyres Cardoso Alves</option><option value="Secretaria" ${aluno.vendedor === 'Secretaria' ? 'selected' : ''}>Secretaria</option><option value="Sala de Aula" ${aluno.vendedor === 'Sala de Aula' ? 'selected' : ''}>Sala de Aula</option></select></div>
                                 <div><div class="card-data-label">E-mail</div><input type="text" id="card-email-${index}" value="${aluno.email}" disabled></div>
                             </div>
                             <div class="card-row">
@@ -592,7 +578,7 @@
                         <td><select id="card-curso-${index}" disabled class="table-input" style="width:180px;">${opcoesCursos}</select></td>
                         <td><select id="card-dia-${index}" disabled class="table-input" style="width:110px;"><option value="Segunda-feira" ${aluno.dia === 'Segunda-feira' ? 'selected' : ''}>Segunda-feira</option><option value="Terça-feira" ${aluno.dia === 'Terça-feira' ? 'selected' : ''}>Terça-feira</option><option value="Quarta-feira" ${aluno.dia === 'Quarta-feira' ? 'selected' : ''}>Quarta-feira</option><option value="Quinta-feira" ${aluno.dia === 'Quinta-feira' ? 'selected' : ''}>Quinta-feira</option><option value="Sexta-feira" ${aluno.dia === 'Sexta-feira' ? 'selected' : ''}>Sexta-feira</option><option value="Sábado" ${aluno.dia === 'Sábado' ? 'selected' : ''}>Sábado</option></select></td>
                         <td><select id="card-horario-${index}" disabled class="table-input" style="width:120px;"><option value="07:00 às 09:00" ${aluno.horario === '07:00 às 09:00' ? 'selected' : ''}>07:00 às 09:00</option><option value="09:00 às 11:00" ${aluno.horario === '09:00 às 11:00' ? 'selected' : ''}>09:00 às 11:00</option><option value="11:00 às 13:00" ${aluno.horario === '11:00 às 13:00' ? 'selected' : ''}>11:00 às 13:00</option><option value="13:00 às 15:00" ${aluno.horario === '13:00 às 15:00' ? 'selected' : ''}>13:00 às 15:00</option><option value="15:00 às 17:00" ${aluno.horario === '15:00 às 17:00' ? 'selected' : ''}>15:00 às 17:00</option><option value="17:00 às 19:00" ${aluno.horario === '17:00 às 19:00' ? 'selected' : ''}>17:00 às 19:00</option></select></td>
-                        <td><select id="card-vend-${index}" disabled class="table-input" style="width:150px;"><option value="Emison Nascimento Santos" ${aluno.vendedor === 'Emison Nascimento Santos' ? 'selected' : ''}>Emison Nascimento Santos</option><option value="Thamyres Cardoso Alves" ${aluno.vendedor === 'Thamyres Cardoso Alves' ? 'selected' : ''}>Thamyres Cardoso Alves</option><option value="Secretaria" ${aluno.vendedor === 'Secretaria' ? 'selected' : ''}>Secretaria</option><option value="Sala de Aula" ${aluno.vendedor === 'Sala de Aula' ? 'selected' : ''}>Sala de Aula</option></select></td>
+                        <td><select id="card-vendedor-${index}" disabled class="table-input" style="width:150px;"><option value="Emison Nascimento Santos" ${aluno.vendedor === 'Emison Nascimento Santos' ? 'selected' : ''}>Emison Nascimento Santos</option><option value="Thamyres Cardoso Alves" ${aluno.vendedor === 'Thamyres Cardoso Alves' ? 'selected' : ''}>Thamyres Cardoso Alves</option><option value="Secretaria" ${aluno.vendedor === 'Secretaria' ? 'selected' : ''}>Secretaria</option><option value="Sala de Aula" ${aluno.vendedor === 'Sala de Aula' ? 'selected' : ''}>Sala de Aula</option></select></td>
                         <td><input type="text" id="card-email-${index}" value="${aluno.email}" disabled class="table-input" style="width:140px;"></td>
                         <td><select id="card-status-${index}" disabled class="table-input" style="width:140px; font-weight:bold; color:green;"><option value="Pendente de Envio">Pendente de Envio</option><option value="Enviado" selected>Enviado</option></select></td>
                         <td><textarea id="card-obs-${index}" disabled class="table-input" style="width:120px; height:32px; resize:none;">${aluno.observacoes || ''}</textarea></td>
@@ -646,7 +632,7 @@
             `card-curso-${index}`,
             `card-dia-${index}`,
             `card-horario-${index}`,
-            `card-vend-${index}`,
+            `card-vendedor-${index}`,
             `card-email-${index}`,
             `card-status-${index}`,
             `card-obs-${index}`
@@ -668,7 +654,7 @@
         const curso = document.getElementById(`card-curso-${index}`).value;
         const dia = document.getElementById(`card-dia-${index}`).value;
         const horario = document.getElementById(`card-horario-${index}`).value;
-        const vendedor = document.getElementById(`card-vend-${index}`).value;
+        const vendedor = document.getElementById(`card-vendedor-${index}`).value;
         const email = document.getElementById(`card-email-${index}`).value.trim();
         const novoStatus = document.getElementById(`card-status-${index}`).value;
         const observacoes = document.getElementById(`card-obs-${index}`).value.trim();
@@ -677,7 +663,7 @@
             action: "update",
             matricula: matricula,
             nome: nome,
-            campanha: campanha,
+            campanha: campaign = campanha,
             curso: curso,
             dia: dia,
             horario: horario,
