@@ -27,7 +27,7 @@
             color: var(--escola-cinza-escuro); 
         }
         
-        /* AUMENTADO PARA 1450px PARA DAR MAIS ESPAÇO À TABELA */
+        /* AUMENTADO PARA 1450px PARA DAR MAIS ESPAÇO À TABELA E CARDS HORIZONTAIS */
         .container { max-width: 1450px; margin: 0 auto; }
         
         /* NAVEGAÇÃO / ABAS */
@@ -73,10 +73,10 @@
         
         input, select, textarea { 
             width: 100%; 
-            padding: 10px 14px; 
+            padding: 8px 12px; 
             border: 1px solid #ddd; 
             border-radius: 6px; 
-            font-size: 14.5px; 
+            font-size: 14px; 
             font-family: 'Jost', sans-serif;
             background-color: #fff; 
             transition: 0.2s;
@@ -162,47 +162,52 @@
         .card-row.full { grid-template-columns: 1fr; }
         .card-data-label { font-size: 11px; text-transform: uppercase; color: #888; font-weight: 700; margin-bottom: 2px; letter-spacing: 0.5px;}
 
-        /* DESIGN DE MINI BLOCOS PENDENTES (MENORES E MAIS COMPACTOS) */
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
-        .student-card { 
+        /* ========================================================
+           NOVO DESIGN: LINHAS HORIZONTAIS PARA PENDENTES
+           ======================================================== */
+        .grid-cards { 
+            display: grid; 
+            grid-template-columns: 1fr; /* Força 1 coluna única (Linha horizontal) */
+            gap: 12px; 
+        }
+        
+        .student-card-horizontal { 
             background: white; 
-            border-radius: 10px; 
-            border: 1px solid #e8eef3; 
-            border-top: 4px solid var(--escola-laranja); 
-            padding: 18px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02); 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
+            border-radius: 8px; 
+            border: 1px solid #e2e8f0; 
+            border-left: 6px solid var(--escola-laranja); /* Cor da borda dinâmica no JS */
+            padding: 15px 20px; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
             transition: 0.3s; 
         }
-        .student-card:hover { border-color: var(--escola-laranja); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+        .student-card-horizontal:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.06); border-color: #cbd5e0; }
         
-        .timer-banner { 
-            padding: 6px 12px; 
-            border-radius: 6px; 
-            font-size: 13px; 
-            font-weight: 700; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            margin-bottom: 15px; 
-            border: 1px solid;
-            text-align: center;
-            justify-content: center;
+        .sch-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f4f5f7;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .sch-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr); /* 6 colunas que criam o grid horizontal */
+            gap: 12px;
+            align-items: end;
         }
 
         /* Botões de Ação dos Cards Pendentes (Modernizados) */
-        .card-actions { display: flex; gap: 8px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #eee; }
-
         .btn-3d-premium {
-            flex: 1;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            padding: 8px 12px;
-            font-size: 13.5px;
+            padding: 6px 12px;
+            font-size: 13px;
             font-weight: 600;
             font-family: 'Jost', sans-serif;
             color: white;
@@ -249,7 +254,6 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.02);
         }
         
-        /* Personalizando a barra de rolagem para ficar elegante */
         .table-responsive::-webkit-scrollbar { width: 8px; height: 8px; }
         .table-responsive::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         .table-responsive::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
@@ -532,7 +536,6 @@
         "CN- Informática Essencial - Terceira Idade"
     ];
 
-    // Verifica se a sessão já estava aberta ao carregar a página
     window.onload = () => {
         if (sessionStorage.getItem('logadoMaster') === 'true') {
             logado = true;
@@ -556,7 +559,6 @@
                 document.getElementById('lock-screen').style.display = 'block';
                 document.getElementById('admin-panel').style.display = 'none';
             } else {
-                // Se já estiver logado (via Session Storage), vai direto para o painel
                 document.getElementById('lock-screen').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
                 renderizarPainelGerencial();
@@ -679,12 +681,12 @@
         input.value = input.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     }
 
-    // 3. SEGURANÇA COM SESSION STORAGE (Corrige o bug de deslogar ao atualizar)
+    // 3. SEGURANÇA COM SESSION STORAGE
     function autenticar() {
         const senha = document.getElementById('admin-password').value;
         if (senha === "1312892099") { 
             logado = true;
-            sessionStorage.setItem('logadoMaster', 'true'); // Salva a sessão no navegador
+            sessionStorage.setItem('logadoMaster', 'true'); 
             document.getElementById('lock-screen').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
             document.getElementById('login-error').style.display = 'none';
@@ -694,13 +696,13 @@
 
     function logout() {
         logado = false;
-        sessionStorage.removeItem('logadoMaster'); // Remove a sessão ao clicar em sair
+        sessionStorage.removeItem('logadoMaster'); 
         document.getElementById('admin-password').value = "";
         document.getElementById('lock-screen').style.display = 'block';
         document.getElementById('admin-panel').style.display = 'none';
     }
 
-    // 4. ESTRUTURA OPERACIONAL ASYNC (COM LÓGICA DE 72H E ORDENAÇÃO)
+    // 4. ESTRUTURA OPERACIONAL ASYNC
     async function renderizarPainelGerencial() {
         const containerPendentes = document.getElementById('grid-pendentes');
         const tbodyEnviados = document.getElementById('tbody-enviados');
@@ -719,28 +721,27 @@
                 alunos = alunos.slice(1);
             }
             
-            // Separação dos alunos
             let pendentes = [];
             let enviados = [];
             
             alunos.forEach((a, index) => {
-                a.originalIndex = index; // Preserva o ID original para edição
+                a.originalIndex = index; 
                 if(a.status === 'Pendente de Envio') pendentes.push(a);
                 else if(a.status === 'Enviado') enviados.push(a);
             });
 
-            // Ordenação dos pendentes pela data de cadastro (Mais antigos primeiro - Prioridade Alta)
+            // Lógica de Ordenação: Do mais antigo (atrasado) para o mais recente (topo da fila)
             pendentes.sort((a, b) => new Date(a.dataCadastro) - new Date(b.dataCadastro));
             
-            // Renderiza Pendentes Ordenados
+            // Renderiza Pendentes em Linhas Horizontais (Strips)
             pendentes.forEach((aluno) => {
                 let index = aluno.originalIndex;
                 let opcoesCursos = '';
                 listaCursos.forEach(c => { opcoesCursos += `<option value="${c}" ${aluno.curso === c ? 'selected' : ''}>${c}</option>`; });
 
-                // LÓGICA DO TEMPORIZADOR E ALERTAS (Prazo de 72h)
                 let timerHTML = '<i class="fas fa-clock"></i> Aguardando Envio';
                 let timerStyle = 'background: #fff5eb; color: var(--escola-laranja); border-color: #ffe8cc;';
+                let borderLeft = 'var(--escola-laranja)'; // Cor da borda lateral do Card
                 
                 if (aluno.dataCadastro) {
                     const dataCad = new Date(aluno.dataCadastro);
@@ -750,48 +751,103 @@
 
                     if (horasPassadas <= 48) {
                         timerHTML = `<i class="fas fa-check-circle"></i> No Prazo (${horasPassadas}h decorridas)`;
-                        timerStyle = `background: #f0fdf4; color: #16a34a; border-color: #bbf7d0;`; // Verde
+                        timerStyle = `background: #f0fdf4; color: #16a34a; border-color: #bbf7d0;`;
+                        borderLeft = '#16a34a';
                     } else if (horasPassadas <= 72) {
                         timerHTML = `<i class="fas fa-exclamation-triangle"></i> Atenção, prazo acabando (${horasPassadas}h decorridas)`;
-                        timerStyle = `background: #fffbeb; color: #d97706; border-color: #fde68a;`; // Amarelo
+                        timerStyle = `background: #fffbeb; color: #d97706; border-color: #fde68a;`;
+                        borderLeft = '#d97706';
                     } else {
                         timerHTML = `<i class="fas fa-fire"></i> Atrasado (${horasPassadas}h decorridas)`;
-                        timerStyle = `background: #fef2f2; color: #dc2626; border-color: #fecaca;`; // Vermelho
+                        timerStyle = `background: #fef2f2; color: #dc2626; border-color: #fecaca;`;
+                        borderLeft = '#dc2626';
                     }
                 }
 
                 const card = document.createElement('div');
-                card.className = "student-card";
+                card.className = "student-card-horizontal";
+                card.style.borderLeftColor = borderLeft; // Aplica a cor de urgência na borda
                 card.id = `row-${index}`;
                 card.innerHTML = `
-                    <div>
-                        <div class="timer-banner" style="${timerStyle}">${timerHTML}</div>
-                        <div class="card-row">
-                            <div><div class="card-data-label">Cadastro</div><div style="font-size:14px; font-weight:500;">${formatarData(aluno.dataCadastro)}</div></div>
-                            <div><div class="card-data-label">Matrícula</div><input type="text" id="card-mat-${index}" value="${aluno.matricula}" disabled style="font-weight:bold; color: #333;"></div>
+                    <div class="sch-top">
+                        <div style="display:flex; gap: 15px; align-items:center; flex-wrap: wrap;">
+                            <div style="padding: 6px 12px; border-radius:6px; font-size:12px; font-weight:700; border: 1px solid; ${timerStyle}">${timerHTML}</div>
+                            <div style="font-size: 14px; color: #555; font-weight:600;"><i class="fas fa-calendar-alt text-muted"></i> Cadastro: ${formatarData(aluno.dataCadastro)}</div>
                         </div>
-                        <div class="card-row">
-                            <div><div class="card-data-label">Aluno(a)</div><input type="text" id="card-nome-${index}" value="${aluno.nome}" disabled style="font-weight:600; color: #333;"></div>
-                            <div><div class="card-data-label">Campanha</div><select id="card-campanha-${index}" disabled><option value="Padrão" ${aluno.campanha === 'Padrão' ? 'selected' : ''}>Padrão</option><option value="Suporte" ${aluno.campanha === 'Suporte' ? 'selected' : ''}>Suporte</option></select></div>
-                        </div>
-                        <div class="card-row full"><div><div class="card-data-label">Curso Escolhido</div><select id="card-curso-${index}" disabled>${opcoesCursos}</select></div></div>
-                        <div class="card-row">
-                            <div><div class="card-data-label">Dia de Aula</div><select id="card-dia-${index}" disabled><option value="Segunda-feira" ${aluno.dia === 'Segunda-feira' ? 'selected' : ''}>Segunda-feira</option><option value="Terça-feira" ${aluno.dia === 'Terça-feira' ? 'selected' : ''}>Terça-feira</option><option value="Quarta-feira" ${aluno.dia === 'Quarta-feira' ? 'selected' : ''}>Quarta-feira</option><option value="Quinta-feira" ${aluno.dia === 'Quinta-feira' ? 'selected' : ''}>Quinta-feira</option><option value="Sexta-feira" ${aluno.dia === 'Sexta-feira' ? 'selected' : ''}>Sexta-feira</option><option value="Sábado" ${aluno.dia === 'Sábado' ? 'selected' : ''}>Sábado</option></select></div>
-                            <div><div class="card-data-label">Horário de Estudo</div><select id="card-horario-${index}" disabled><option value="07:00 às 09:00" ${aluno.horario === '07:00 às 09:00' ? 'selected' : ''}>07:00 às 09:00</option><option value="09:00 às 11:00" ${aluno.horario === '09:00 às 11:00' ? 'selected' : ''}>09:00 às 11:00</option><option value="11:00 às 13:00" ${aluno.horario === '11:00 às 13:00' ? 'selected' : ''}>11:00 às 13:00</option><option value="13:00 às 15:00" ${aluno.horario === '13:00 às 15:00' ? 'selected' : ''}>13:00 às 15:00</option><option value="15:00 às 17:00" ${aluno.horario === '15:00 às 17:00' ? 'selected' : ''}>15:00 às 17:00</option><option value="17:00 às 19:00" ${aluno.horario === '17:00 às 19:00' ? 'selected' : ''}>17:00 às 19:00</option></select></div>
-                        </div>
-                        <div class="card-row">
-                            <div><div class="card-data-label">Vendedor</div><select id="card-vendedor-${index}" disabled><option value="Emison Nascimento Santos" ${aluno.vendedor === 'Emison Nascimento Santos' ? 'selected' : ''}>Emison Nascimento Santos</option><option value="Thamyres Cardoso Alves" ${aluno.vendedor === 'Thamyres Cardoso Alves' ? 'selected' : ''}>Thamyres Cardoso Alves</option><option value="Secretaria" ${aluno.vendedor === 'Secretaria' ? 'selected' : ''}>Secretaria</option><option value="Sala de Aula" ${aluno.vendedor === 'Sala de Aula' ? 'selected' : ''}>Sala de Aula</option></select></div>
-                            <div><div class="card-data-label">E-mail</div><input type="text" id="card-email-${index}" value="${aluno.email}" disabled style="color: #333;"></div>
-                        </div>
-                        <div class="card-row">
-                            <div><div class="card-data-label">Situação</div><select id="card-status-${index}" disabled style="font-weight:bold; color:var(--escola-laranja);"><option value="Pendente de Envio" selected>Pendente de Envio</option><option value="Enviado">Enviado</option></select></div>
-                            <div><div class="card-data-label">Observações</div><textarea id="card-obs-${index}" disabled rows="1" style="color: #333;">${aluno.observacoes || ''}</textarea></div>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" class="btn-3d-premium btn-edit" id="card-btn-edit-${index}" onclick="habilitarEdicaoCard(${index}, false)"><i class="fas fa-edit"></i> Editar / Enviar</button>
+                            <button type="button" class="btn-3d-premium btn-save" id="card-btn-save-${index}" onclick="salvarEdicaoCard(${index}, false)" style="display:none;"><i class="fas fa-save"></i> Salvar</button>
+                            <button type="button" class="btn-3d-premium btn-del" onclick="deletarAluno(${index}, false)"><i class="fas fa-trash"></i> Excluir</button>
                         </div>
                     </div>
-                    <div class="card-actions">
-                        <button type="button" class="btn-3d-premium btn-edit" id="card-btn-edit-${index}" onclick="habilitarEdicaoCard(${index}, false)"><i class="fas fa-edit"></i> Editar/Enviar</button>
-                        <button type="button" class="btn-3d-premium btn-save" id="card-btn-save-${index}" onclick="salvarEdicaoCard(${index}, false)" style="display:none;"><i class="fas fa-save"></i> Salvar</button>
-                        <button type="button" class="btn-3d-premium btn-del" onclick="deletarAluno(${index}, false)"><i class="fas fa-trash"></i> Excluir</button>
+                    
+                    <div class="sch-grid">
+                        <div style="grid-column: span 2;">
+                            <div class="card-data-label">Aluno(a)</div>
+                            <input type="text" id="card-nome-${index}" value="${aluno.nome}" disabled style="font-weight:600; color: #333;">
+                        </div>
+                        <div>
+                            <div class="card-data-label">Matrícula</div>
+                            <input type="text" id="card-mat-${index}" value="${aluno.matricula}" disabled style="font-weight:bold; color: #333;">
+                        </div>
+                        <div>
+                            <div class="card-data-label">Campanha</div>
+                            <select id="card-campanha-${index}" disabled style="color: #333;">
+                                <option value="Padrão" ${aluno.campanha === 'Padrão' ? 'selected' : ''}>Padrão</option>
+                                <option value="Suporte" ${aluno.campanha === 'Suporte' ? 'selected' : ''}>Suporte</option>
+                            </select>
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <div class="card-data-label">Curso Escolhido</div>
+                            <select id="card-curso-${index}" disabled style="color: #333;">${opcoesCursos}</select>
+                        </div>
+                        
+                        <div>
+                            <div class="card-data-label">Dia de Aula</div>
+                            <select id="card-dia-${index}" disabled style="color: #333;">
+                                <option value="Segunda-feira" ${aluno.dia === 'Segunda-feira' ? 'selected' : ''}>Segunda-feira</option>
+                                <option value="Terça-feira" ${aluno.dia === 'Terça-feira' ? 'selected' : ''}>Terça-feira</option>
+                                <option value="Quarta-feira" ${aluno.dia === 'Quarta-feira' ? 'selected' : ''}>Quarta-feira</option>
+                                <option value="Quinta-feira" ${aluno.dia === 'Quinta-feira' ? 'selected' : ''}>Quinta-feira</option>
+                                <option value="Sexta-feira" ${aluno.dia === 'Sexta-feira' ? 'selected' : ''}>Sexta-feira</option>
+                                <option value="Sábado" ${aluno.dia === 'Sábado' ? 'selected' : ''}>Sábado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="card-data-label">Horário de Estudo</div>
+                            <select id="card-horario-${index}" disabled style="color: #333;">
+                                <option value="07:00 às 09:00" ${aluno.horario === '07:00 às 09:00' ? 'selected' : ''}>07:00 às 09:00</option>
+                                <option value="09:00 às 11:00" ${aluno.horario === '09:00 às 11:00' ? 'selected' : ''}>09:00 às 11:00</option>
+                                <option value="11:00 às 13:00" ${aluno.horario === '11:00 às 13:00' ? 'selected' : ''}>11:00 às 13:00</option>
+                                <option value="13:00 às 15:00" ${aluno.horario === '13:00 às 15:00' ? 'selected' : ''}>13:00 às 15:00</option>
+                                <option value="15:00 às 17:00" ${aluno.horario === '15:00 às 17:00' ? 'selected' : ''}>15:00 às 17:00</option>
+                                <option value="17:00 às 19:00" ${aluno.horario === '17:00 às 19:00' ? 'selected' : ''}>17:00 às 19:00</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="card-data-label">Vendedor</div>
+                            <select id="card-vendedor-${index}" disabled style="color: #333;">
+                                <option value="Emison Nascimento Santos" ${aluno.vendedor === 'Emison Nascimento Santos' ? 'selected' : ''}>Emison Nascimento Santos</option>
+                                <option value="Thamyres Cardoso Alves" ${aluno.vendedor === 'Thamyres Cardoso Alves' ? 'selected' : ''}>Thamyres Cardoso Alves</option>
+                                <option value="Secretaria" ${aluno.vendedor === 'Secretaria' ? 'selected' : ''}>Secretaria</option>
+                                <option value="Sala de Aula" ${aluno.vendedor === 'Sala de Aula' ? 'selected' : ''}>Sala de Aula</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="card-data-label">E-mail</div>
+                            <input type="text" id="card-email-${index}" value="${aluno.email}" disabled style="color: #333;">
+                        </div>
+                        <div>
+                            <div class="card-data-label">Situação</div>
+                            <select id="card-status-${index}" disabled style="font-weight:bold; color:var(--escola-laranja);">
+                                <option value="Pendente de Envio" selected>Pendente de Envio</option>
+                                <option value="Enviado">Enviado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="card-data-label">Observações</div>
+                            <input type="text" id="card-obs-${index}" value="${aluno.observacoes || ''}" disabled style="color: #333;">
+                        </div>
                     </div>
                 `;
                 containerPendentes.appendChild(card);
@@ -816,7 +872,7 @@
                     <td><select id="card-vendedor-${index}-tab" disabled class="table-input" style="width:155px; color: #333;"><option value="Emison Nascimento Santos" ${aluno.vendedor === 'Emison Nascimento Santos' ? 'selected' : ''}>Emison Nascimento Santos</option><option value="Thamyres Cardoso Alves" ${aluno.vendedor === 'Thamyres Cardoso Alves' ? 'selected' : ''}>Thamyres Cardoso Alves</option><option value="Secretaria" ${aluno.vendedor === 'Secretaria' ? 'selected' : ''}>Secretaria</option><option value="Sala de Aula" ${aluno.vendedor === 'Sala de Aula' ? 'selected' : ''}>Sala de Aula</option></select></td>
                     <td><input type="text" id="card-email-${index}-tab" value="${aluno.email}" disabled class="table-input" style="width:150px; color: #333;"></td>
                     <td><select id="card-status-${index}-tab" disabled class="table-input" style="width:145px; font-weight:bold; color:#16a34a;"><option value="Pendente de Envio">Pendente de Envio</option><option value="Enviado" selected>Enviado</option></select></td>
-                    <td><textarea id="card-obs-${index}-tab" disabled class="table-input" style="width:130px; height:34px; resize:none; color: #333;">${aluno.observacoes || ''}</textarea></td>
+                    <td><input type="text" id="card-obs-${index}-tab" disabled class="table-input" value="${aluno.observacoes || ''}" style="width:130px; color: #333;"></td>
                     <td><div style="display:flex; gap:6px;"><button type="button" title="Editar" class="table-btn-3d btn-edit" id="card-btn-edit-${index}-tab" onclick="habilitarEdicaoCard(${index}, true)"><i class="fas fa-edit"></i></button><button type="button" title="Salvar" class="table-btn-3d btn-save" id="card-btn-save-${index}-tab" onclick="salvarEdicaoCard(${index}, true)" style="display:none;"><i class="fas fa-save"></i></button><button type="button" title="Excluir" class="table-btn-3d btn-del" onclick="deletarAluno(${index}, true)"><i class="fas fa-trash"></i></button></div></td>
                 `;
                 tbodyEnviados.appendChild(tr);
@@ -863,7 +919,7 @@
         } catch (err) { alert("Erro ao verificar dados."); }
     }
 
-    // 6. EDIÇÃO E DELEÇÃO (MÉTODO POST PARA A NUVEM)
+    // 6. EDIÇÃO E DELEÇÃO
     function habilitarEdicaoCard(index, ehTabela) {
         const sufixo = ehTabela ? "-tab" : "";
         const campos = [
@@ -898,7 +954,7 @@
     async function salvarEdicaoCard(index, ehTabela) {
         const sufixo = ehTabela ? "-tab" : "";
         const btnSalvar = document.getElementById(`card-btn-save-${index}${sufixo}`);
-        btnSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; // Loading state
+        btnSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; 
         btnSalvar.disabled = true;
 
         const matricula = document.getElementById(`card-mat-${index}${sufixo}`).value.trim();
@@ -952,7 +1008,6 @@
             const dados = { action: "delete", matricula: matricula };
 
             try {
-                // Atualiza tela visualmente rápido enquanto carrega
                 document.getElementById(`row-${index}`) ? document.getElementById(`row-${index}`).style.opacity = '0.5' : null;
 
                 await fetch(URL_PLANILHA, {
