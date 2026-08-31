@@ -133,7 +133,7 @@
 <div class="container">
     <div class="tabs">
         <button class="tab-btn active" id="tab-publica" onclick="switchPage('publica')"><i class="fas fa-search me-2"></i> Consultar e Cadastrar Material</button>
-        <button class="tab-btn" id="tab-restrita" onclick="switchPage('restrita')"><i class="fas fa-user-shield me-2"></i> Painel Restrito (Gerencial)</button>
+        <button class="tab-btn" id="tab-restrita" onclick="switchPage('restrita')"><i class="fas fa-user-shield me-2"></i> Painel Restrito</button>
     </div>
 
     <!-- PÁGINA PÚBLICA -->
@@ -288,7 +288,7 @@
                 </div>
             </div>
             
-            <h3>Pendentes de Envio</h3>
+            <h3>Materiais Pendentes de Envio - Lembre-se: o envio do material deverá ocorrer em até 72 horas, contadas a partir da data e horário do registro da solicitação.</h3>
             <div id="grid-pendentes"></div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 15px;">
@@ -523,10 +523,10 @@
             // ALERTA PREMIUM AQUI
             Swal.fire({
                 title: 'Tudo Certo!',
-                text: 'Aluno gravado com sucesso na planilha.',
+                text: 'Material registrado com sucesso! Aguarde o envio do material em até 72 horas.',
                 icon: 'success',
                 confirmButtonColor: '#16a34a',
-                confirmButtonText: 'Ótimo'
+                confirmButtonText: 'Ok'
             });
             
             document.getElementById('area-cadastro-box').style.display = 'none';
