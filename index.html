@@ -16,50 +16,85 @@
             --escola-cinza-claro: #f4f5f7; 
             --escola-cinza-escuro: #4a4a4a; 
         }
+
         * { box-sizing: border-box; }
+        
         body { background-color: var(--escola-cinza-claro); font-family: 'Jost', sans-serif; margin: 0; padding: 20px 10px; color: var(--escola-cinza-escuro); }
         .container { max-width: 1450px; margin: 0 auto; }
+        
         .tabs { display: flex; gap: 10px; margin-bottom: 25px; }
         .tab-btn { padding: 12px 24px; border: none; background: #e0e0e0; color: #555; cursor: pointer; font-weight: 600; font-size: 15px; font-family: 'Jost', sans-serif; border-radius: 8px; transition: 0.3s; }
         .tab-btn:hover { background: #d5d5d5; }
         .tab-btn.active { background: linear-gradient(145deg, #ff8226, #e65c00); color: white; box-shadow: 0 4px 12px rgba(230, 92, 0, 0.3); }
+        
         .page { display: none; }
         .page.active { display: block; }
+
         .card { background: #ffffff; padding: 25px; border-radius: 12px; border-top: 5px solid var(--escola-laranja); box-shadow: 0 8px 25px rgba(0,0,0,0.08); margin-bottom: 25px; }
+        
         h2 { margin-top: 0; color: var(--escola-cinza-escuro); border-bottom: 2px solid #f0f4f8; padding-bottom: 12px; font-size: 22px; font-weight: 700; }
         h3 { margin-top: 30px; color: var(--escola-laranja); border-left: 4px solid var(--escola-laranja); padding-left: 10px; font-size: 20px; margin-bottom: 15px; font-weight: 600; }
+        
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14.5px; color: var(--escola-cinza-escuro); }
+        
         input, select, textarea { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: 'Jost', sans-serif; background-color: #fff; transition: 0.2s; }
         input:focus, select:focus, textarea:focus { border-color: var(--escola-laranja); outline: none; box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15); }
         input:disabled, select:disabled, textarea:disabled { background-color: transparent; color: #333; border-color: transparent; appearance: none; -webkit-appearance: none; opacity: 1; cursor: default; padding-left: 0; font-weight: 600; }
+        
         .btn-submit { background: linear-gradient(145deg, #ff8226, #e65c00); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: 600; font-family: 'Jost', sans-serif; width: 100%; transition: 0.2s; }
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(230, 92, 0, 0.3); }
+
         .btn-abrir-sutil { background: transparent; color: var(--escola-laranja); border: 2px dashed var(--escola-laranja); padding: 10px 20px; border-radius: 6px; font-size: 15px; cursor: pointer; font-weight: 600; height: 48px; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; white-space: nowrap; font-family: 'Jost', sans-serif; }
         .btn-abrir-sutil:hover { background: rgba(255,107,0,0.05); transform: translateY(-1px); }
+
         .search-action-bar { display: grid; grid-template-columns: 1fr auto auto; gap: 15px; align-items: end; }
         @media (max-width: 768px) { .search-action-bar { grid-template-columns: 1fr; } }
+        
         .alert { padding: 12px 15px; border-radius: 6px; margin-bottom: 15px; font-weight: 600; display: none; border-left: 4px solid; }
         .alert-error { background-color: #fff0f0; color: #dc3545; border-color: #dc3545; }
+        
         .info-card-public { background: white; border-radius: 10px; border: 1px solid #eee; border-top: 4px solid var(--escola-laranja); padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-top: 20px; }
         .info-card-public.success-border { border-top-color: #16a34a; }
+        
         .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px; }
         .card-row.full { grid-template-columns: 1fr; }
         .card-data-label { font-size: 11px; text-transform: uppercase; color: #888; font-weight: 700; margin-bottom: 2px; letter-spacing: 0.5px;}
 
-        /* PENDENTES SCROLL */
-        #grid-pendentes { display: grid; grid-template-columns: 1fr; gap: 12px; max-height: 480px; overflow-y: auto; overflow-x: hidden; padding-right: 8px; }
+        /* ========================================================
+           CORREÇÃO DA BARRA DE ROLAGEM VERTICAL DOS PENDENTES
+           ======================================================== */
+        #grid-pendentes { 
+            display: flex; /* Mudança para Flexbox para garantir a rolagem vertical perfeita */
+            flex-direction: column;
+            gap: 15px; 
+            max-height: 500px; /* Limite de altura equivalente a aprox 4 cards */
+            overflow-y: auto; 
+            overflow-x: hidden; 
+            padding-right: 8px; 
+        }
+        
         #grid-pendentes::-webkit-scrollbar { width: 8px; }
         #grid-pendentes::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         #grid-pendentes::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
         #grid-pendentes::-webkit-scrollbar-thumb:hover { background: var(--escola-laranja); }
 
-        .student-card-horizontal { background: white; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 6px solid var(--escola-laranja); padding: 15px 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: 0.3s; }
+        .student-card-horizontal { 
+            flex: 0 0 auto; /* REGRA CRUCIAL: Impede que o card "amasse", forçando a barra de rolagem! */
+            background: white; 
+            border-radius: 8px; 
+            border: 1px solid #e2e8f0; 
+            border-left: 6px solid var(--escola-laranja); 
+            padding: 15px 20px; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
+            transition: all 0.3s ease; /* Animação de transição suave */
+        }
         .student-card-horizontal:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.06); border-color: #cbd5e0; }
+        
         .sch-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #f4f5f7; flex-wrap: wrap; gap: 10px; }
         .sch-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; align-items: end; }
-        
-        /* BOTÕES 3D */
+
+        /* Botões */
         .btn-3d-premium { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 12px; font-size: 13px; font-weight: 600; font-family: 'Jost', sans-serif; color: white; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; outline: none; }
         .btn-3d-premium.btn-edit { background: #4a5568; }
         .btn-3d-premium.btn-edit:hover { background: #2d3748; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(74, 85, 104, 0.3);}
@@ -67,13 +102,14 @@
         .btn-3d-premium.btn-save:hover { background: #15803d; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3);}
         .btn-3d-premium.btn-del { background: #dc3545; }
         .btn-3d-premium.btn-del:hover { background: #b02a37; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);}
+
         .table-btn-3d { padding: 6px 12px; font-size: 13px; border-radius: 6px; color: white; border: none; cursor: pointer; transition: all 0.2s ease; }
         .table-btn-3d.btn-edit { background: #4a5568; }
         .table-btn-3d.btn-save { background: #16a34a; }
         .table-btn-3d.btn-del { background: #dc3545; }
         .table-btn-3d:hover { transform: translateY(-2px); }
 
-        /* ENVIADOS (TABELA) */
+        /* SESSÃO DE ENVIADOS */
         .table-responsive { width: 100%; max-height: 650px; overflow-y: auto; overflow-x: auto; background: white; border-radius: 10px; border: 1px solid #eee; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
         .table-responsive::-webkit-scrollbar { width: 8px; height: 8px; }
         .table-responsive::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
@@ -85,12 +121,14 @@
         .list-table tr:hover { background: #fffaf5; }
         .list-table .table-input { padding: 6px 8px; font-size: 14px; border-radius: 4px; }
         .list-table .table-input:disabled { padding-left: 0; background: transparent; }
+
         .action-buttons-group { display: flex; gap: 10px; }
         .btn-export { color: white; border: none; padding: 10px 16px; border-radius: 6px; font-size: 14px; font-family: 'Jost', sans-serif; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
         .btn-pdf { background-color: #4a5568; }
         .btn-pdf:hover { background-color: #2d3748; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(74,85,104,0.2);}
         .btn-excel { background-color: #107c41; }
         .btn-excel:hover { background-color: #0b592e; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(16,124,65,0.2);}
+
         .login-box { max-width: 400px; margin: 80px auto; text-align: center; }
         .login-box i { font-size: 40px; color: var(--escola-laranja); margin-bottom: 15px; }
 
@@ -310,7 +348,8 @@
 <script>
     let logado = false;
     
-    // ATENÇÃO: Verifique se este é o link NOVO gerado após a implantação do Apps Script
+    // ATENÇÃO EXTREMA AQUI: Se você fez a limpeza no Apps Script, a Google te deu um NOVO link ao clicar em "Nova Implantação".
+    // Você DEVE colar esse link novo aqui. O link antigo que estava aqui antes não funciona mais corretamente!
     const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbznSlicmkBv0A5y5GuDvTmvTb8weWiFOYNGqdzmaU1fhlv0r8dIOYa6UGT5PIZ9QA/exec";
 
     const listaCursos = [
@@ -337,9 +376,6 @@
         }
     };
 
-    // ==========================================
-    // NOVA TRAVA DE SEGURANÇA PARA AS DATAS (ANTI-TELA AZUL DO NAVEGADOR)
-    // ==========================================
     function parseDateSafely(dataStr) {
         if (!dataStr || dataStr === "Aguardando Envio" || dataStr === "-") return 0;
         if (typeof dataStr === "number") return dataStr;
@@ -351,7 +387,6 @@
             if (!isNaN(d)) return d;
         }
 
-        // Se for a data antiga no formato DD/MM/YYYY
         let partes = dataString.split(/[\s/:\-]+/); 
         if (partes.length >= 3) {
             let dia = parseInt(partes[0], 10);
@@ -393,7 +428,7 @@
             } else {
                 document.getElementById('lock-screen').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
-                renderizarPainelGerencial();
+                renderizarPainelGerencial(false);
             }
         }
     }
@@ -507,7 +542,7 @@
             document.getElementById('form-cadastro').reset();
             
             if(logado) {
-                setTimeout(() => { renderizarPainelGerencial(); }, 2500);
+                setTimeout(() => { renderizarPainelGerencial(true); }, 1500); // Modo silencioso
             }
         })
         .catch(err => alert("Erro ao gravar na planilha."));
@@ -525,7 +560,7 @@
             document.getElementById('lock-screen').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
             document.getElementById('login-error').style.display = 'none';
-            renderizarPainelGerencial();
+            renderizarPainelGerencial(false); // Falso = Mostra aviso inicial de carregando
         } else { document.getElementById('login-error').style.display = 'block'; }
     }
 
@@ -537,12 +572,15 @@
         document.getElementById('admin-panel').style.display = 'none';
     }
 
-    async function renderizarPainelGerencial() {
+    // MODIFICAÇÃO CHAVE: Passamos um parâmetro 'silencioso' para não travar a tela visualmente.
+    async function renderizarPainelGerencial(silencioso = false) {
         const containerPendentes = document.getElementById('grid-pendentes');
         const tbodyEnviados = document.getElementById('tbody-enviados');
         
-        containerPendentes.innerHTML = "<p style='padding: 20px; font-weight:600;'><i class='fas fa-spinner fa-spin text-muted'></i> Atualizando base de dados...</p>";
-        tbodyEnviados.innerHTML = "<tr><td colspan='13' style='text-align:center; padding: 30px; font-weight:600;'><i class='fas fa-spinner fa-spin text-muted'></i> Atualizando base de dados...</td></tr>";
+        if (!silencioso) {
+            containerPendentes.innerHTML = "<p style='padding: 20px; font-weight:600;'><i class='fas fa-spinner fa-spin text-muted'></i> Atualizando base de dados...</p>";
+            tbodyEnviados.innerHTML = "<tr><td colspan='13' style='text-align:center; padding: 30px; font-weight:600;'><i class='fas fa-spinner fa-spin text-muted'></i> Atualizando base de dados...</td></tr>";
+        }
         
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
@@ -558,7 +596,6 @@
             let pendentes = [];
             let enviados = [];
             
-            // SEPARAÇÃO COM CHECAGEM BLINDADA DE NOME (ignora espaços)
             alunos.forEach((a, index) => {
                 a.originalIndex = index; 
                 let st = a.status ? a.status.toString().trim().toLowerCase() : "";
@@ -570,7 +607,6 @@
                 }
             });
 
-            // ORDENAÇÃO USANDO A FUNÇÃO SEGURA
             pendentes.sort((a, b) => parseDateSafely(a.dataCadastro) - parseDateSafely(b.dataCadastro));
             enviados.sort((a, b) => {
                 let valA = parseDateSafely(a.dataEnvio) || parseDateSafely(a.dataCadastro);
@@ -587,7 +623,6 @@
                 let timerStyle = 'background: #fff5eb; color: var(--escola-laranja); border-color: #ffe8cc;';
                 let borderLeft = 'var(--escola-laranja)';
                 
-                // SISTEMA DE AVISO (CORRIGIDO)
                 let msCad = parseDateSafely(aluno.dataCadastro);
                 if (msCad > 0) {
                     const diffMs = new Date().getTime() - msCad;
@@ -800,8 +835,6 @@
     async function salvarEdicaoCard(index, ehTabela) {
         const sufixo = ehTabela ? "-tab" : "";
         const btnSalvar = document.getElementById(`card-btn-save-${index}${sufixo}`);
-        btnSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; 
-        btnSalvar.disabled = true;
 
         const matricula = document.getElementById(`card-mat-${index}${sufixo}`).value.trim();
         const nome = document.getElementById(`card-nome-${index}${sufixo}`).value.trim();
@@ -813,6 +846,21 @@
         const email = document.getElementById(`card-email-${index}${sufixo}`).value.trim();
         const novoStatus = document.getElementById(`card-status-${index}${sufixo}`).value;
         const observacoes = document.getElementById(`card-obs-${index}${sufixo}`).value.trim();
+
+        // ----------------------------------------------------
+        // MÁGICA VISUAL (UX Otimista): Oculta o card instantaneamente!
+        // ----------------------------------------------------
+        if (!ehTabela && novoStatus.toLowerCase() === "enviado") {
+            const cardRow = document.getElementById(`row-${index}`);
+            if (cardRow) {
+                cardRow.style.opacity = '0'; // Esmaece
+                cardRow.style.transform = 'translateX(50px)'; // Joga pro lado rapidinho
+                setTimeout(() => { cardRow.style.display = 'none'; }, 300); // Apaga de vez
+            }
+        } else {
+            btnSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; 
+            btnSalvar.disabled = true;
+        }
 
         const dados = {
             action: "update",
@@ -836,7 +884,11 @@
                 body: JSON.stringify(dados)
             });
 
-            setTimeout(() => { renderizarPainelGerencial(); }, 2500);
+            // Recarrega a tabela por baixo dos panos (silencioso), 
+            // sem travar sua tela com o aviso de 'Atualizando...'
+            setTimeout(() => { 
+                renderizarPainelGerencial(true); 
+            }, 1500);
 
         } catch (err) {
             alert("Erro ao salvar: " + err);
@@ -862,7 +914,7 @@
                     body: JSON.stringify(dados)
                 });
 
-                setTimeout(() => { renderizarPainelGerencial(); }, 2500);
+                setTimeout(() => { renderizarPainelGerencial(true); }, 1500);
 
             } catch (err) { alert("Erro ao excluir: " + err); }
         }
