@@ -27,7 +27,7 @@
             color: var(--escola-cinza-escuro); 
         }
         
-        /* AUMENTADO PARA 1450px PARA DAR MAIS ESPAÇO À TABELA E CARDS HORIZONTAIS */
+        /* Largura máxima para aproveitar telas grandes */
         .container { max-width: 1450px; margin: 0 auto; }
         
         /* NAVEGAÇÃO / ABAS */
@@ -54,7 +54,7 @@
         .page { display: none; }
         .page.active { display: block; }
 
-        /* CARDS PRINCIPAIS (Padrão Novo) */
+        /* CARDS PRINCIPAIS */
         .card { 
             background: #ffffff; 
             padding: 25px; 
@@ -137,16 +137,12 @@
         }
         .btn-abrir-sutil:hover { background: rgba(255,107,0,0.05); transform: translateY(-1px); }
 
-        /* LINHA SUPERIOR COMPACTA */
         .search-action-bar { display: grid; grid-template-columns: 1fr auto auto; gap: 15px; align-items: end; }
         @media (max-width: 768px) { .search-action-bar { grid-template-columns: 1fr; } }
         
-        /* ALERTAS */
         .alert { padding: 12px 15px; border-radius: 6px; margin-bottom: 15px; font-weight: 600; display: none; border-left: 4px solid; }
         .alert-error { background-color: #fff0f0; color: #dc3545; border-color: #dc3545; }
-        .alert-success { background-color: #f0fdf4; color: #16a34a; border-color: #16a34a; }
         
-        /* DESIGN DE CARD SECUNDÁRIO (Pesquisa/Cadastro) */
         .info-card-public { 
             background: white; 
             border-radius: 10px; 
@@ -163,19 +159,29 @@
         .card-data-label { font-size: 11px; text-transform: uppercase; color: #888; font-weight: 700; margin-bottom: 2px; letter-spacing: 0.5px;}
 
         /* ========================================================
-           NOVO DESIGN: LINHAS HORIZONTAIS PARA PENDENTES
+           SESSÃO DE PENDENTES (COM SCROLL PARA MAX 4 ITENS)
            ======================================================== */
-        .grid-cards { 
+        #grid-pendentes { 
             display: grid; 
-            grid-template-columns: 1fr; /* Força 1 coluna única (Linha horizontal) */
+            grid-template-columns: 1fr; 
             gap: 12px; 
+            max-height: 620px; /* Altura ideal para exibir aprox. 4 cards */
+            overflow-y: auto; 
+            overflow-x: hidden;
+            padding-right: 8px; /* Espaço para não colar a scrollbar no card */
         }
         
+        /* Scrollbar exclusiva para os cards pendentes */
+        #grid-pendentes::-webkit-scrollbar { width: 8px; }
+        #grid-pendentes::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        #grid-pendentes::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
+        #grid-pendentes::-webkit-scrollbar-thumb:hover { background: var(--escola-laranja); }
+
         .student-card-horizontal { 
             background: white; 
             border-radius: 8px; 
             border: 1px solid #e2e8f0; 
-            border-left: 6px solid var(--escola-laranja); /* Cor da borda dinâmica no JS */
+            border-left: 6px solid var(--escola-laranja); 
             padding: 15px 20px; 
             box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
             transition: 0.3s; 
@@ -195,12 +201,12 @@
 
         .sch-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr); /* 6 colunas que criam o grid horizontal */
+            grid-template-columns: repeat(6, 1fr);
             gap: 12px;
             align-items: end;
         }
 
-        /* Botões de Ação dos Cards Pendentes (Modernizados) */
+        /* Botões */
         .btn-3d-premium {
             display: inline-flex;
             align-items: center;
@@ -220,14 +226,11 @@
 
         .btn-3d-premium.btn-edit { background: #4a5568; }
         .btn-3d-premium.btn-edit:hover { background: #2d3748; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(74, 85, 104, 0.3);}
-        
         .btn-3d-premium.btn-save { background: #16a34a; }
         .btn-3d-premium.btn-save:hover { background: #15803d; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3);}
-        
         .btn-3d-premium.btn-del { background: #dc3545; }
         .btn-3d-premium.btn-del:hover { background: #b02a37; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);}
 
-        /* Botões Compactos da Tabela de Enviados */
         .table-btn-3d { 
             padding: 6px 12px; 
             font-size: 13px; 
@@ -242,7 +245,7 @@
         .table-btn-3d.btn-del { background: #dc3545; }
         .table-btn-3d:hover { transform: translateY(-2px); }
 
-        /* DESIGN DA LISTA DE ENVIADOS (TABELÃO COM SCROLLBAR) */
+        /* SESSÃO DE ENVIADOS (TABELÃO COM SCROLLBAR) */
         .table-responsive { 
             width: 100%; 
             max-height: 650px; 
@@ -278,7 +281,6 @@
         .list-table .table-input { padding: 6px 8px; font-size: 14px; border-radius: 4px; }
         .list-table .table-input:disabled { padding-left: 0; background: transparent; }
 
-        /* Botões de Relatório */
         .action-buttons-group { display: flex; gap: 10px; }
         .btn-export { 
             color: white; 
@@ -302,7 +304,6 @@
         .login-box { max-width: 400px; margin: 80px auto; text-align: center; }
         .login-box i { font-size: 40px; color: var(--escola-laranja); margin-bottom: 15px; }
 
-        /* CONFIGURAÇÃO DE IMPRESSÃO (PDF) */
         @media print {
             @page { size: landscape; margin: 10mm; }
             body { background: white; color: black; padding: 0; }
@@ -327,6 +328,7 @@
         <button class="tab-btn" id="tab-restrita" onclick="switchPage('restrita')"><i class="fas fa-user-shield me-2"></i> Painel Restrito (Gerencial)</button>
     </div>
 
+    <!-- PÁGINA PÚBLICA -->
     <div id="page-publica" class="page active">
         <div class="card" style="padding: 25px;">
             <div class="search-action-bar">
@@ -457,6 +459,7 @@
         </div>
     </div>
 
+    <!-- PÁGINA RESTRITA -->
     <div id="page-restrita" class="page">
         <div id="lock-screen" class="card login-box">
             <i class="fas fa-lock"></i>
@@ -478,7 +481,8 @@
             </div>
             
             <h3>Pendentes de Envio</h3>
-            <div id="grid-pendentes" class="grid-cards"></div>
+            <!-- Container com rolagem limitando a exibição visual -->
+            <div id="grid-pendentes"></div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 15px;">
                 <h3 style="margin: 0; border-left: 4px solid #16a34a;">Materiais Enviados</h3>
@@ -571,7 +575,7 @@
         box.style.display = (box.style.display === 'none') ? 'block' : 'none';
     }
 
-    // 1. CONSULTA PÚBLICA
+    // CONSULTA PÚBLICA
     async function consultarMaterial() {
         const inputBusca = document.getElementById('search-matricula').value.trim();
         const erroBox = document.getElementById('search-error');
@@ -585,7 +589,8 @@
         resultadoBox.style.display = 'block';
 
         try {
-            const res = await fetch(URL_PLANILHA);
+            // cache: "no-store" para evitar que o navegador puxe dados velhos
+            const res = await fetch(URL_PLANILHA, { cache: "no-store" });
             let alunos = await res.json();
             
             if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) {
@@ -648,7 +653,7 @@
         }
     }
 
-    // 2. CADASTRO DE ALUNOS
+    // CADASTRO DE ALUNOS
     function cadastrarAluno(e) {
         e.preventDefault();
         const matricula = document.getElementById('cad-matricula').value.trim();
@@ -672,7 +677,11 @@
             alert("Aluno gravado com sucesso na planilha!");
             document.getElementById('area-cadastro-box').style.display = 'none';
             document.getElementById('form-cadastro').reset();
-            if(logado) renderizarPainelGerencial();
+            
+            if(logado) {
+                // Aguarda um pouquinho pro Google gravar antes de recarregar a tela
+                setTimeout(() => { renderizarPainelGerencial(); }, 1500);
+            }
         })
         .catch(err => alert("Erro ao gravar na planilha."));
     }
@@ -681,7 +690,7 @@
         input.value = input.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     }
 
-    // 3. SEGURANÇA COM SESSION STORAGE
+    // SEGURANÇA
     function autenticar() {
         const senha = document.getElementById('admin-password').value;
         if (senha === "1312892099") { 
@@ -702,7 +711,7 @@
         document.getElementById('admin-panel').style.display = 'none';
     }
 
-    // 4. ESTRUTURA OPERACIONAL ASYNC
+    // ESTRUTURA OPERACIONAL ASYNC
     async function renderizarPainelGerencial() {
         const containerPendentes = document.getElementById('grid-pendentes');
         const tbodyEnviados = document.getElementById('tbody-enviados');
@@ -711,7 +720,8 @@
         tbodyEnviados.innerHTML = "<tr><td colspan='13' style='text-align:center; padding: 30px; font-weight:600;'><i class='fas fa-spinner fa-spin text-muted'></i> Carregando dados da planilha...</td></tr>";
         
         try {
-            const res = await fetch(URL_PLANILHA);
+            // "no-store" desativa totalmente o cache para forçar a busca do dado mais fresco possível
+            const res = await fetch(URL_PLANILHA, { cache: "no-store" });
             let alunos = await res.json();
             
             containerPendentes.innerHTML = "";
@@ -730,10 +740,17 @@
                 else if(a.status === 'Enviado') enviados.push(a);
             });
 
-            // Lógica de Ordenação: Do mais antigo (atrasado) para o mais recente (topo da fila)
+            // Lógica PENDENTES: Do mais antigo (atrasado) para o mais recente (topo da fila) [Ordem Crescente]
             pendentes.sort((a, b) => new Date(a.dataCadastro) - new Date(b.dataCadastro));
             
-            // Renderiza Pendentes em Linhas Horizontais (Strips)
+            // Nova Lógica ENVIADOS: Do MAIS RECENTE para o MAIS ANTIGO [Ordem Decrescente]
+            enviados.sort((a, b) => {
+                let valA = a.dataEnvio ? new Date(a.dataEnvio) : new Date(a.dataCadastro);
+                let valB = b.dataEnvio ? new Date(b.dataEnvio) : new Date(b.dataCadastro);
+                return valB - valA; // O maior (mais recente) vem primeiro
+            });
+            
+            // Renderiza Pendentes
             pendentes.forEach((aluno) => {
                 let index = aluno.originalIndex;
                 let opcoesCursos = '';
@@ -741,7 +758,7 @@
 
                 let timerHTML = '<i class="fas fa-clock"></i> Aguardando Envio';
                 let timerStyle = 'background: #fff5eb; color: var(--escola-laranja); border-color: #ffe8cc;';
-                let borderLeft = 'var(--escola-laranja)'; // Cor da borda lateral do Card
+                let borderLeft = 'var(--escola-laranja)';
                 
                 if (aluno.dataCadastro) {
                     const dataCad = new Date(aluno.dataCadastro);
@@ -766,7 +783,7 @@
 
                 const card = document.createElement('div');
                 card.className = "student-card-horizontal";
-                card.style.borderLeftColor = borderLeft; // Aplica a cor de urgência na borda
+                card.style.borderLeftColor = borderLeft;
                 card.id = `row-${index}`;
                 card.innerHTML = `
                     <div class="sch-top">
@@ -853,7 +870,7 @@
                 containerPendentes.appendChild(card);
             });
 
-            // Renderiza Enviados na Tabela
+            // Renderiza Enviados (Agora do mais recente pro mais antigo)
             enviados.forEach((aluno) => {
                 let index = aluno.originalIndex;
                 let opcoesCursos = '';
@@ -889,10 +906,10 @@
         }
     }
 
-    // 5. EXPORTAÇÕES
+    // EXPORTAÇÕES
     async function exportarTabelaExcel() {
         try {
-            const res = await fetch(URL_PLANILHA);
+            const res = await fetch(URL_PLANILHA, { cache: "no-store" });
             let alunos = await res.json();
             if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
             const enviados = alunos.filter(a => a.status === "Enviado");
@@ -911,7 +928,7 @@
 
     async function exportarTabelaPDF() {
         try {
-            const res = await fetch(URL_PLANILHA);
+            const res = await fetch(URL_PLANILHA, { cache: "no-store" });
             let alunos = await res.json();
             if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
             if (!alunos.some(a => a.status === "Enviado")) { alert("Não existem registros!"); return; }
@@ -919,7 +936,7 @@
         } catch (err) { alert("Erro ao verificar dados."); }
     }
 
-    // 6. EDIÇÃO E DELEÇÃO
+    // EDIÇÃO E DELEÇÃO
     function habilitarEdicaoCard(index, ehTabela) {
         const sufixo = ehTabela ? "-tab" : "";
         const campos = [
@@ -990,7 +1007,10 @@
                 body: JSON.stringify(dados)
             });
 
-            renderizarPainelGerencial();
+            // ATENÇÃO: Espera 1.5 segundos pro Google Apps Script gravar a linha antes de atualizar a tela
+            setTimeout(() => {
+                renderizarPainelGerencial();
+            }, 1500);
 
         } catch (err) {
             alert("Erro ao salvar: " + err);
@@ -1017,7 +1037,10 @@
                     body: JSON.stringify(dados)
                 });
 
-                renderizarPainelGerencial();
+                // Espera o Google apagar antes de recarregar
+                setTimeout(() => {
+                    renderizarPainelGerencial();
+                }, 1500);
 
             } catch (err) {
                 alert("Erro ao excluir: " + err);
