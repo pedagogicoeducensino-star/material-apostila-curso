@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Controle de Materiais</title>
     
-    <!-- FONTES E ÍCONES (Padrão Educ/Nova Identidade) -->
+    <!-- FONTES E ÍCONES -->
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -16,291 +16,81 @@
             --escola-cinza-claro: #f4f5f7; 
             --escola-cinza-escuro: #4a4a4a; 
         }
-
         * { box-sizing: border-box; }
-        
-        body { 
-            background-color: var(--escola-cinza-claro); 
-            font-family: 'Jost', sans-serif; 
-            margin: 0; 
-            padding: 20px 10px; 
-            color: var(--escola-cinza-escuro); 
-        }
-        
-        /* Largura máxima para aproveitar telas grandes */
+        body { background-color: var(--escola-cinza-claro); font-family: 'Jost', sans-serif; margin: 0; padding: 20px 10px; color: var(--escola-cinza-escuro); }
         .container { max-width: 1450px; margin: 0 auto; }
-        
-        /* NAVEGAÇÃO / ABAS */
         .tabs { display: flex; gap: 10px; margin-bottom: 25px; }
-        .tab-btn { 
-            padding: 12px 24px; 
-            border: none; 
-            background: #e0e0e0; 
-            color: #555;
-            cursor: pointer; 
-            font-weight: 600; 
-            font-size: 15px;
-            font-family: 'Jost', sans-serif;
-            border-radius: 8px; 
-            transition: 0.3s; 
-        }
+        .tab-btn { padding: 12px 24px; border: none; background: #e0e0e0; color: #555; cursor: pointer; font-weight: 600; font-size: 15px; font-family: 'Jost', sans-serif; border-radius: 8px; transition: 0.3s; }
         .tab-btn:hover { background: #d5d5d5; }
-        .tab-btn.active { 
-            background: linear-gradient(145deg, #ff8226, #e65c00); 
-            color: white; 
-            box-shadow: 0 4px 12px rgba(230, 92, 0, 0.3);
-        }
-        
+        .tab-btn.active { background: linear-gradient(145deg, #ff8226, #e65c00); color: white; box-shadow: 0 4px 12px rgba(230, 92, 0, 0.3); }
         .page { display: none; }
         .page.active { display: block; }
-
-        /* CARDS PRINCIPAIS */
-        .card { 
-            background: #ffffff; 
-            padding: 25px; 
-            border-radius: 12px; 
-            border-top: 5px solid var(--escola-laranja); 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08); 
-            margin-bottom: 25px; 
-        }
-        
+        .card { background: #ffffff; padding: 25px; border-radius: 12px; border-top: 5px solid var(--escola-laranja); box-shadow: 0 8px 25px rgba(0,0,0,0.08); margin-bottom: 25px; }
         h2 { margin-top: 0; color: var(--escola-cinza-escuro); border-bottom: 2px solid #f0f4f8; padding-bottom: 12px; font-size: 22px; font-weight: 700; }
         h3 { margin-top: 30px; color: var(--escola-laranja); border-left: 4px solid var(--escola-laranja); padding-left: 10px; font-size: 20px; margin-bottom: 15px; font-weight: 600; }
-        
-        /* FORMULÁRIOS */
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14.5px; color: var(--escola-cinza-escuro); }
-        
-        input, select, textarea { 
-            width: 100%; 
-            padding: 8px 12px; 
-            border: 1px solid #ddd; 
-            border-radius: 6px; 
-            font-size: 14px; 
-            font-family: 'Jost', sans-serif;
-            background-color: #fff; 
-            transition: 0.2s;
-        }
-        input:focus, select:focus, textarea:focus { 
-            border-color: var(--escola-laranja); 
-            outline: none; 
-            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15); 
-        }
-        
-        input:disabled, select:disabled, textarea:disabled { 
-            background-color: transparent; 
-            color: #333; 
-            border-color: transparent; 
-            appearance: none; 
-            -webkit-appearance: none; 
-            opacity: 1; 
-            cursor: default; 
-            padding-left: 0; 
-            font-weight: 600; 
-        }
-        
-        /* BOTÕES GERAIS */
-        .btn-submit { 
-            background: linear-gradient(145deg, #ff8226, #e65c00); 
-            color: white; 
-            border: none; 
-            padding: 12px 20px; 
-            border-radius: 6px; 
-            font-size: 16px; 
-            cursor: pointer; 
-            font-weight: 600; 
-            font-family: 'Jost', sans-serif;
-            width: 100%; 
-            transition: 0.2s; 
-        }
-        .btn-submit:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 4px 12px rgba(230, 92, 0, 0.3); 
-        }
-
-        .btn-abrir-sutil { 
-            background: transparent; 
-            color: var(--escola-laranja); 
-            border: 2px dashed var(--escola-laranja); 
-            padding: 10px 20px; 
-            border-radius: 6px; 
-            font-size: 15px; 
-            cursor: pointer; 
-            font-weight: 600; 
-            height: 48px; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px; 
-            transition: 0.2s; 
-            white-space: nowrap; 
-            font-family: 'Jost', sans-serif;
-        }
+        input, select, textarea { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: 'Jost', sans-serif; background-color: #fff; transition: 0.2s; }
+        input:focus, select:focus, textarea:focus { border-color: var(--escola-laranja); outline: none; box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15); }
+        input:disabled, select:disabled, textarea:disabled { background-color: transparent; color: #333; border-color: transparent; appearance: none; -webkit-appearance: none; opacity: 1; cursor: default; padding-left: 0; font-weight: 600; }
+        .btn-submit { background: linear-gradient(145deg, #ff8226, #e65c00); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: 600; font-family: 'Jost', sans-serif; width: 100%; transition: 0.2s; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(230, 92, 0, 0.3); }
+        .btn-abrir-sutil { background: transparent; color: var(--escola-laranja); border: 2px dashed var(--escola-laranja); padding: 10px 20px; border-radius: 6px; font-size: 15px; cursor: pointer; font-weight: 600; height: 48px; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; white-space: nowrap; font-family: 'Jost', sans-serif; }
         .btn-abrir-sutil:hover { background: rgba(255,107,0,0.05); transform: translateY(-1px); }
-
         .search-action-bar { display: grid; grid-template-columns: 1fr auto auto; gap: 15px; align-items: end; }
         @media (max-width: 768px) { .search-action-bar { grid-template-columns: 1fr; } }
-        
         .alert { padding: 12px 15px; border-radius: 6px; margin-bottom: 15px; font-weight: 600; display: none; border-left: 4px solid; }
         .alert-error { background-color: #fff0f0; color: #dc3545; border-color: #dc3545; }
-        
-        .info-card-public { 
-            background: white; 
-            border-radius: 10px; 
-            border: 1px solid #eee; 
-            border-top: 4px solid var(--escola-laranja); 
-            padding: 25px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
-            margin-top: 20px; 
-        }
+        .info-card-public { background: white; border-radius: 10px; border: 1px solid #eee; border-top: 4px solid var(--escola-laranja); padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-top: 20px; }
         .info-card-public.success-border { border-top-color: #16a34a; }
-        
         .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px; }
         .card-row.full { grid-template-columns: 1fr; }
         .card-data-label { font-size: 11px; text-transform: uppercase; color: #888; font-weight: 700; margin-bottom: 2px; letter-spacing: 0.5px;}
 
-        /* ========================================================
-           SESSÃO DE PENDENTES (COM SCROLL PARA MAX 4 ITENS)
-           ======================================================== */
-#grid-pendentes { 
-            display: grid; 
-            grid-template-columns: 1fr; 
-            gap: 12px; 
-            max-height: 480px; /* Reduzido para forçar a barra de rolagem aparecer! */
-            overflow-y: auto; 
-            overflow-x: hidden;
-            padding-right: 8px; 
-        }
-        
-        /* Scrollbar exclusiva para os cards pendentes */
+        /* PENDENTES SCROLL */
+        #grid-pendentes { display: grid; grid-template-columns: 1fr; gap: 12px; max-height: 480px; overflow-y: auto; overflow-x: hidden; padding-right: 8px; }
         #grid-pendentes::-webkit-scrollbar { width: 8px; }
         #grid-pendentes::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         #grid-pendentes::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
         #grid-pendentes::-webkit-scrollbar-thumb:hover { background: var(--escola-laranja); }
 
-        .student-card-horizontal { 
-            background: white; 
-            border-radius: 8px; 
-            border: 1px solid #e2e8f0; 
-            border-left: 6px solid var(--escola-laranja); 
-            padding: 15px 20px; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
-            transition: 0.3s; 
-        }
+        .student-card-horizontal { background: white; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 6px solid var(--escola-laranja); padding: 15px 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: 0.3s; }
         .student-card-horizontal:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.06); border-color: #cbd5e0; }
+        .sch-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #f4f5f7; flex-wrap: wrap; gap: 10px; }
+        .sch-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; align-items: end; }
         
-        .sch-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #f4f5f7;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .sch-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 12px;
-            align-items: end;
-        }
-
-        /* Botões */
-        .btn-3d-premium {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 6px 12px;
-            font-size: 13px;
-            font-weight: 600;
-            font-family: 'Jost', sans-serif;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            outline: none;
-        }
-
+        /* BOTÕES 3D */
+        .btn-3d-premium { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 12px; font-size: 13px; font-weight: 600; font-family: 'Jost', sans-serif; color: white; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; outline: none; }
         .btn-3d-premium.btn-edit { background: #4a5568; }
         .btn-3d-premium.btn-edit:hover { background: #2d3748; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(74, 85, 104, 0.3);}
         .btn-3d-premium.btn-save { background: #16a34a; }
         .btn-3d-premium.btn-save:hover { background: #15803d; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3);}
         .btn-3d-premium.btn-del { background: #dc3545; }
         .btn-3d-premium.btn-del:hover { background: #b02a37; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);}
-
-        .table-btn-3d { 
-            padding: 6px 12px; 
-            font-size: 13px; 
-            border-radius: 6px; 
-            color: white; 
-            border: none; 
-            cursor: pointer; 
-            transition: all 0.2s ease; 
-        }
+        .table-btn-3d { padding: 6px 12px; font-size: 13px; border-radius: 6px; color: white; border: none; cursor: pointer; transition: all 0.2s ease; }
         .table-btn-3d.btn-edit { background: #4a5568; }
         .table-btn-3d.btn-save { background: #16a34a; }
         .table-btn-3d.btn-del { background: #dc3545; }
         .table-btn-3d:hover { transform: translateY(-2px); }
 
-        /* SESSÃO DE ENVIADOS (TABELÃO COM SCROLLBAR) */
-        .table-responsive { 
-            width: 100%; 
-            max-height: 650px; 
-            overflow-y: auto; 
-            overflow-x: auto; 
-            background: white; 
-            border-radius: 10px; 
-            border: 1px solid #eee; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-        }
-        
+        /* ENVIADOS (TABELA) */
+        .table-responsive { width: 100%; max-height: 650px; overflow-y: auto; overflow-x: auto; background: white; border-radius: 10px; border: 1px solid #eee; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
         .table-responsive::-webkit-scrollbar { width: 8px; height: 8px; }
         .table-responsive::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         .table-responsive::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
         .table-responsive::-webkit-scrollbar-thumb:hover { background: var(--escola-laranja); }
-
         .list-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
-        .list-table th { 
-            position: sticky; 
-            top: 0; 
-            background: #f8f9fa; 
-            color: #555; 
-            padding: 12px 15px; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            font-size: 12px; 
-            border-bottom: 2px solid #ddd;
-            z-index: 10;
-            box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
-        }
+        .list-table th { position: sticky; top: 0; background: #f8f9fa; color: #555; padding: 12px 15px; font-weight: 700; text-transform: uppercase; font-size: 12px; border-bottom: 2px solid #ddd; z-index: 10; box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); }
         .list-table td { padding: 10px 15px; border-bottom: 1px solid #f4f5f7; vertical-align: middle; white-space: nowrap; }
         .list-table tr:hover { background: #fffaf5; }
         .list-table .table-input { padding: 6px 8px; font-size: 14px; border-radius: 4px; }
         .list-table .table-input:disabled { padding-left: 0; background: transparent; }
-
         .action-buttons-group { display: flex; gap: 10px; }
-        .btn-export { 
-            color: white; 
-            border: none; 
-            padding: 10px 16px; 
-            border-radius: 6px; 
-            font-size: 14px; 
-            font-family: 'Jost', sans-serif;
-            cursor: pointer; 
-            font-weight: 600; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px; 
-            transition: 0.2s; 
-        }
+        .btn-export { color: white; border: none; padding: 10px 16px; border-radius: 6px; font-size: 14px; font-family: 'Jost', sans-serif; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
         .btn-pdf { background-color: #4a5568; }
         .btn-pdf:hover { background-color: #2d3748; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(74,85,104,0.2);}
         .btn-excel { background-color: #107c41; }
         .btn-excel:hover { background-color: #0b592e; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(16,124,65,0.2);}
-
         .login-box { max-width: 400px; margin: 80px auto; text-align: center; }
         .login-box i { font-size: 40px; color: var(--escola-laranja); margin-bottom: 15px; }
 
@@ -481,7 +271,6 @@
             </div>
             
             <h3>Pendentes de Envio</h3>
-            <!-- Container com rolagem limitando a exibição visual -->
             <div id="grid-pendentes"></div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 15px;">
@@ -520,6 +309,8 @@
 
 <script>
     let logado = false;
+    
+    // ATENÇÃO: Verifique se este é o link NOVO gerado após a implantação do Apps Script
     const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbznSlicmkBv0A5y5GuDvTmvTb8weWiFOYNGqdzmaU1fhlv0r8dIOYa6UGT5PIZ9QA/exec";
 
     const listaCursos = [
@@ -546,10 +337,47 @@
         }
     };
 
-    function formatarData(dataISO) {
-        if (!dataISO) return 'N/A';
-        const data = new Date(dataISO);
-        return data.toLocaleDateString('pt-BR');
+    // ==========================================
+    // NOVA TRAVA DE SEGURANÇA PARA AS DATAS (ANTI-TELA AZUL DO NAVEGADOR)
+    // ==========================================
+    function parseDateSafely(dataStr) {
+        if (!dataStr || dataStr === "Aguardando Envio" || dataStr === "-") return 0;
+        if (typeof dataStr === "number") return dataStr;
+        
+        let dataString = String(dataStr).trim();
+        
+        if (dataString.includes('T')) {
+            let d = new Date(dataString).getTime();
+            if (!isNaN(d)) return d;
+        }
+
+        // Se for a data antiga no formato DD/MM/YYYY
+        let partes = dataString.split(/[\s/:\-]+/); 
+        if (partes.length >= 3) {
+            let dia = parseInt(partes[0], 10);
+            let mes = parseInt(partes[1], 10) - 1;
+            let ano = parseInt(partes[2], 10);
+            if (ano > 2000 && dia <= 31 && mes <= 11) {
+                let hora = partes[3] ? parseInt(partes[3], 10) : 0;
+                let min = partes[4] ? parseInt(partes[4], 10) : 0;
+                let sec = partes[5] ? parseInt(partes[5], 10) : 0;
+                return new Date(ano, mes, dia, hora, min, sec).getTime();
+            }
+        }
+        
+        let fallback = new Date(dataString).getTime();
+        return isNaN(fallback) ? 0 : fallback;
+    }
+
+    function formatarData(dataStr) {
+        if (!dataStr || dataStr === "Aguardando Envio" || dataStr === "-") return 'N/A';
+        let ms = parseDateSafely(dataStr);
+        if (ms === 0) return dataStr; 
+        const data = new Date(ms);
+        const dia = String(data.getDate()).padStart(2, '0');
+        const mes = String(data.getMonth() + 1).padStart(2, '0');
+        const ano = data.getFullYear();
+        return `${dia}/${mes}/${ano}`;
     }
 
     function switchPage(page) {
@@ -575,7 +403,6 @@
         box.style.display = (box.style.display === 'none') ? 'block' : 'none';
     }
 
-    // CONSULTA PÚBLICA
     async function consultarMaterial() {
         const inputBusca = document.getElementById('search-matricula').value.trim();
         const erroBox = document.getElementById('search-error');
@@ -589,8 +416,7 @@
         resultadoBox.style.display = 'block';
 
         try {
-            // cache: "no-store" para evitar que o navegador puxe dados velhos
-            const res = await fetch(URL_PLANILHA, { cache: "no-store" });
+            const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let alunos = await res.json();
             
             if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) {
@@ -600,7 +426,11 @@
             const a = alunos.find(al => al.matricula == inputBusca);
 
             if (a) {
-                resultadoBox.className = `info-card-public ${a.status === 'Enviado' ? 'success-border' : ''}`;
+                let statusNormalizado = a.status ? a.status.toString().trim().toLowerCase() : "";
+                let classCor = statusNormalizado === 'enviado' ? 'success-border' : '';
+                let corStatus = statusNormalizado === 'enviado' ? '#16a34a' : '#ff6b00';
+
+                resultadoBox.className = `info-card-public ${classCor}`;
                 resultadoBox.innerHTML = `
                     <div class="card-row">
                         <div>
@@ -609,7 +439,7 @@
                         </div>
                         <div>
                             <div class="card-data-label">Data de Envio</div>
-                            <div style="font-size:15px; font-weight:700; color:${a.status === 'Enviado' ? '#16a34a' : '#4a5568'}"><i class="fas fa-paper-plane"></i> ${a.dataEnvio ? formatarData(a.dataEnvio) : 'Aguardando Envio'}</div>
+                            <div style="font-size:15px; font-weight:700; color:${statusNormalizado === 'enviado' ? '#16a34a' : '#4a5568'}"><i class="fas fa-paper-plane"></i> ${a.dataEnvio ? formatarData(a.dataEnvio) : 'Aguardando Envio'}</div>
                         </div>
                     </div>
                     <div class="card-row">
@@ -635,7 +465,7 @@
                     <div class="card-row full">
                         <div style="padding-top:12px; border-top:1px dashed #eee;">
                             <div class="card-data-label">Situação de Envio</div>
-                            <span style="font-size: 15px; font-weight:bold; color:${a.status === 'Enviado' ? '#16a34a' : '#ff6b00'}">${a.status}</span>
+                            <span style="font-size: 15px; font-weight:bold; color:${corStatus}">${a.status}</span>
                         </div>
                         <div style="margin-top:5px;">
                             <div class="card-data-label">Observações da Operação</div>
@@ -648,12 +478,10 @@
                 erroBox.style.display = 'block'; 
             }
         } catch (err) {
-            console.error("Erro ao consultar:", err);
             resultadoBox.innerHTML = `<div style="color:#dc3545; text-align:center;"><i class="fas fa-times-circle"></i> Erro ao conectar com a base de dados.</div>`;
         }
     }
 
-    // CADASTRO DE ALUNOS
     function cadastrarAluno(e) {
         e.preventDefault();
         const matricula = document.getElementById('cad-matricula').value.trim();
@@ -679,8 +507,7 @@
             document.getElementById('form-cadastro').reset();
             
             if(logado) {
-                // Aguarda um pouquinho pro Google gravar antes de recarregar a tela
-                setTimeout(() => { renderizarPainelGerencial(); }, 1500);
+                setTimeout(() => { renderizarPainelGerencial(); }, 2500);
             }
         })
         .catch(err => alert("Erro ao gravar na planilha."));
@@ -690,7 +517,6 @@
         input.value = input.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     }
 
-    // SEGURANÇA
     function autenticar() {
         const senha = document.getElementById('admin-password').value;
         if (senha === "1312892099") { 
@@ -711,8 +537,7 @@
         document.getElementById('admin-panel').style.display = 'none';
     }
 
-    // ESTRUTURA OPERACIONAL ASYNC
-async function renderizarPainelGerencial() {
+    async function renderizarPainelGerencial() {
         const containerPendentes = document.getElementById('grid-pendentes');
         const tbodyEnviados = document.getElementById('tbody-enviados');
         
@@ -720,9 +545,7 @@ async function renderizarPainelGerencial() {
         tbodyEnviados.innerHTML = "<tr><td colspan='13' style='text-align:center; padding: 30px; font-weight:600;'><i class='fas fa-spinner fa-spin text-muted'></i> Atualizando base de dados...</td></tr>";
         
         try {
-            // TRUQUE ANTI-CACHE: Adicionar a hora atual no final da URL obriga o Google a mandar a planilha atualizada na hora.
-            const urlSemCache = URL_PLANILHA + "?t=" + new Date().getTime();
-            const res = await fetch(urlSemCache);
+            const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let alunos = await res.json();
             
             containerPendentes.innerHTML = "";
@@ -735,23 +558,26 @@ async function renderizarPainelGerencial() {
             let pendentes = [];
             let enviados = [];
             
+            // SEPARAÇÃO COM CHECAGEM BLINDADA DE NOME (ignora espaços)
             alunos.forEach((a, index) => {
                 a.originalIndex = index; 
-                if(a.status === 'Pendente de Envio') pendentes.push(a);
-                else if(a.status === 'Enviado') enviados.push(a);
+                let st = a.status ? a.status.toString().trim().toLowerCase() : "";
+                
+                if (st === 'pendente de envio' || st === 'pendente') {
+                    pendentes.push(a);
+                } else if (st === 'enviado') {
+                    enviados.push(a);
+                }
             });
 
-            // Lógica PENDENTES: Do mais antigo (atrasado) para o mais recente (topo da fila) [Ordem Crescente]
-            pendentes.sort((a, b) => new Date(a.dataCadastro) - new Date(b.dataCadastro));
-            
-            // Nova Lógica ENVIADOS: Do MAIS RECENTE para o MAIS ANTIGO [Ordem Decrescente]
+            // ORDENAÇÃO USANDO A FUNÇÃO SEGURA
+            pendentes.sort((a, b) => parseDateSafely(a.dataCadastro) - parseDateSafely(b.dataCadastro));
             enviados.sort((a, b) => {
-                let valA = a.dataEnvio ? new Date(a.dataEnvio) : new Date(a.dataCadastro);
-                let valB = b.dataEnvio ? new Date(b.dataEnvio) : new Date(b.dataCadastro);
-                return valB - valA; // O maior (mais recente) vem primeiro
+                let valA = parseDateSafely(a.dataEnvio) || parseDateSafely(a.dataCadastro);
+                let valB = parseDateSafely(b.dataEnvio) || parseDateSafely(b.dataCadastro);
+                return valB - valA;
             });
             
-            // Renderiza Pendentes
             pendentes.forEach((aluno) => {
                 let index = aluno.originalIndex;
                 let opcoesCursos = '';
@@ -761,10 +587,10 @@ async function renderizarPainelGerencial() {
                 let timerStyle = 'background: #fff5eb; color: var(--escola-laranja); border-color: #ffe8cc;';
                 let borderLeft = 'var(--escola-laranja)';
                 
-                if (aluno.dataCadastro) {
-                    const dataCad = new Date(aluno.dataCadastro);
-                    const hoje = new Date();
-                    const diffMs = hoje - dataCad;
+                // SISTEMA DE AVISO (CORRIGIDO)
+                let msCad = parseDateSafely(aluno.dataCadastro);
+                if (msCad > 0) {
+                    const diffMs = new Date().getTime() - msCad;
                     const horasPassadas = Math.floor(diffMs / (1000 * 60 * 60));
 
                     if (horasPassadas <= 48) {
@@ -871,7 +697,6 @@ async function renderizarPainelGerencial() {
                 containerPendentes.appendChild(card);
             });
 
-            // Renderiza Enviados (Agora do mais recente pro mais antigo)
             enviados.forEach((aluno) => {
                 let index = aluno.originalIndex;
                 let opcoesCursos = '';
@@ -907,18 +732,22 @@ async function renderizarPainelGerencial() {
         }
     }
 
-    // EXPORTAÇÕES
     async function exportarTabelaExcel() {
         try {
-            const res = await fetch(URL_PLANILHA, { cache: "no-store" });
+            const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let alunos = await res.json();
             if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
-            const enviados = alunos.filter(a => a.status === "Enviado");
+            
+            const enviados = alunos.filter(a => {
+                let st = a.status ? a.status.toString().trim().toLowerCase() : "";
+                return st === "enviado";
+            });
+            
             if (enviados.length === 0) { alert("Não existem registros!"); return; }
 
             let conteudoHTML = `<meta charset="utf-8"><table border="1"><tr style="background-color: #f8f9fa; color: #333; font-weight: bold;"><th>Data Cadastro</th><th>Data Envio</th><th>Matrícula</th><th>Campanha</th><th>Aluno(a)</th><th>Curso</th><th>Dia</th><th>Horário</th><th>Vendedor</th><th>E-mail</th><th>Situação</th><th>Observações</th></tr>`;
             enviados.forEach(aluno => {
-                conteudoHTML += `<tr><td>${aluno.dataCadastro||''}</td><td>${aluno.dataEnvio||''}</td><td>${aluno.matricula||''}</td><td>${aluno.campanha||''}</td><td>${aluno.nome||''}</td><td>${aluno.curso||''}</td><td>${aluno.dia||''}</td><td>${aluno.horario||''}</td><td>${aluno.vendedor||''}</td><td>${aluno.email||''}</td><td>${aluno.status||''}</td><td>${aluno.observacoes||''}</td></tr>`;
+                conteudoHTML += `<tr><td>${formatarData(aluno.dataCadastro)||''}</td><td>${formatarData(aluno.dataEnvio)||''}</td><td>${aluno.matricula||''}</td><td>${aluno.campanha||''}</td><td>${aluno.nome||''}</td><td>${aluno.curso||''}</td><td>${aluno.dia||''}</td><td>${aluno.horario||''}</td><td>${aluno.vendedor||''}</td><td>${aluno.email||''}</td><td>${aluno.status||''}</td><td>${aluno.observacoes||''}</td></tr>`;
             });
             conteudoHTML += '</table>';
             const blobUri = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(conteudoHTML);
@@ -929,15 +758,14 @@ async function renderizarPainelGerencial() {
 
     async function exportarTabelaPDF() {
         try {
-            const res = await fetch(URL_PLANILHA, { cache: "no-store" });
+            const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let alunos = await res.json();
             if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
-            if (!alunos.some(a => a.status === "Enviado")) { alert("Não existem registros!"); return; }
+            if (!alunos.some(a => a.status && a.status.toString().trim().toLowerCase() === "enviado")) { alert("Não existem registros!"); return; }
             window.print();
         } catch (err) { alert("Erro ao verificar dados."); }
     }
 
-    // EDIÇÃO E DELEÇÃO
     function habilitarEdicaoCard(index, ehTabela) {
         const sufixo = ehTabela ? "-tab" : "";
         const campos = [
@@ -1008,14 +836,10 @@ async function renderizarPainelGerencial() {
                 body: JSON.stringify(dados)
             });
 
-// Dá tempo suficiente (2.5 segundos) para o servidor do Google processar a mudança e então recarrega
-            setTimeout(() => {
-                renderizarPainelGerencial();
-            }, 2500);
+            setTimeout(() => { renderizarPainelGerencial(); }, 2500);
 
         } catch (err) {
             alert("Erro ao salvar: " + err);
-            console.error(err);
             btnSalvar.innerHTML = '<i class="fas fa-save"></i> Salvar';
             btnSalvar.disabled = false;
         }
@@ -1038,15 +862,9 @@ async function renderizarPainelGerencial() {
                     body: JSON.stringify(dados)
                 });
 
-                // Espera o Google apagar antes de recarregar
-                setTimeout(() => {
-                    renderizarPainelGerencial();
-                }, 1500);
+                setTimeout(() => { renderizarPainelGerencial(); }, 2500);
 
-            } catch (err) {
-                alert("Erro ao excluir: " + err);
-                console.error(err);
-            }
+            } catch (err) { alert("Erro ao excluir: " + err); }
         }
     }
 </script>
