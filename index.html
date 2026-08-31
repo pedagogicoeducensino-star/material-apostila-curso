@@ -161,14 +161,14 @@
         /* ========================================================
            SESSÃO DE PENDENTES (COM SCROLL PARA MAX 4 ITENS)
            ======================================================== */
-        #grid-pendentes { 
+#grid-pendentes { 
             display: grid; 
             grid-template-columns: 1fr; 
             gap: 12px; 
-            max-height: 620px; /* Altura ideal para exibir aprox. 4 cards */
+            max-height: 480px; /* Reduzido para forçar a barra de rolagem aparecer! */
             overflow-y: auto; 
             overflow-x: hidden;
-            padding-right: 8px; /* Espaço para não colar a scrollbar no card */
+            padding-right: 8px; 
         }
         
         /* Scrollbar exclusiva para os cards pendentes */
@@ -712,16 +712,17 @@
     }
 
     // ESTRUTURA OPERACIONAL ASYNC
-    async function renderizarPainelGerencial() {
+async function renderizarPainelGerencial() {
         const containerPendentes = document.getElementById('grid-pendentes');
         const tbodyEnviados = document.getElementById('tbody-enviados');
         
-        containerPendentes.innerHTML = "<p style='padding: 20px; font-weight:600;'><i class='fas fa-spinner fa-spin text-muted'></i> Carregando dados da planilha...</p>";
-        tbodyEnviados.innerHTML = "<tr><td colspan='13' style='text-align:center; padding: 30px; font-weight:600;'><i class='fas fa-spinner fa-spin text-muted'></i> Carregando dados da planilha...</td></tr>";
+        containerPendentes.innerHTML = "<p style='padding: 20px; font-weight:600;'><i class='fas fa-spinner fa-spin text-muted'></i> Atualizando base de dados...</p>";
+        tbodyEnviados.innerHTML = "<tr><td colspan='13' style='text-align:center; padding: 30px; font-weight:600;'><i class='fas fa-spinner fa-spin text-muted'></i> Atualizando base de dados...</td></tr>";
         
         try {
-            // "no-store" desativa totalmente o cache para forçar a busca do dado mais fresco possível
-            const res = await fetch(URL_PLANILHA, { cache: "no-store" });
+            // TRUQUE ANTI-CACHE: Adicionar a hora atual no final da URL obriga o Google a mandar a planilha atualizada na hora.
+            const urlSemCache = URL_PLANILHA + "?t=" + new Date().getTime();
+            const res = await fetch(urlSemCache);
             let alunos = await res.json();
             
             containerPendentes.innerHTML = "";
@@ -1007,10 +1008,10 @@
                 body: JSON.stringify(dados)
             });
 
-            // ATENÇÃO: Espera 1.5 segundos pro Google Apps Script gravar a linha antes de atualizar a tela
+// Dá tempo suficiente (2.5 segundos) para o servidor do Google processar a mudança e então recarrega
             setTimeout(() => {
                 renderizarPainelGerencial();
-            }, 1500);
+            }, 2500);
 
         } catch (err) {
             alert("Erro ao salvar: " + err);
