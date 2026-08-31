@@ -8,6 +8,9 @@
     <!-- FONTES E ÍCONES -->
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- BIBLIOTECA DE ALERTAS PREMIUM (SweetAlert2) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root { 
@@ -18,7 +21,6 @@
         }
 
         * { box-sizing: border-box; }
-        
         body { background-color: var(--escola-cinza-claro); font-family: 'Jost', sans-serif; margin: 0; padding: 20px 10px; color: var(--escola-cinza-escuro); }
         .container { max-width: 1450px; margin: 0 auto; }
         
@@ -31,13 +33,11 @@
         .page.active { display: block; }
 
         .card { background: #ffffff; padding: 25px; border-radius: 12px; border-top: 5px solid var(--escola-laranja); box-shadow: 0 8px 25px rgba(0,0,0,0.08); margin-bottom: 25px; }
-        
         h2 { margin-top: 0; color: var(--escola-cinza-escuro); border-bottom: 2px solid #f0f4f8; padding-bottom: 12px; font-size: 22px; font-weight: 700; }
         h3 { margin-top: 30px; color: var(--escola-laranja); border-left: 4px solid var(--escola-laranja); padding-left: 10px; font-size: 20px; margin-bottom: 15px; font-weight: 600; }
         
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14.5px; color: var(--escola-cinza-escuro); }
-        
         input, select, textarea { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: 'Jost', sans-serif; background-color: #fff; transition: 0.2s; }
         input:focus, select:focus, textarea:focus { border-color: var(--escola-laranja); outline: none; box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15); }
         input:disabled, select:disabled, textarea:disabled { background-color: transparent; color: #333; border-color: transparent; appearance: none; -webkit-appearance: none; opacity: 1; cursor: default; padding-left: 0; font-weight: 600; }
@@ -61,40 +61,18 @@
         .card-row.full { grid-template-columns: 1fr; }
         .card-data-label { font-size: 11px; text-transform: uppercase; color: #888; font-weight: 700; margin-bottom: 2px; letter-spacing: 0.5px;}
 
-        /* ========================================================
-           CORREÇÃO DA BARRA DE ROLAGEM VERTICAL DOS PENDENTES
-           ======================================================== */
-        #grid-pendentes { 
-            display: flex; /* Mudança para Flexbox para garantir a rolagem vertical perfeita */
-            flex-direction: column;
-            gap: 15px; 
-            max-height: 500px; /* Limite de altura equivalente a aprox 4 cards */
-            overflow-y: auto; 
-            overflow-x: hidden; 
-            padding-right: 8px; 
-        }
-        
+        #grid-pendentes { display: flex; flex-direction: column; gap: 15px; max-height: 500px; overflow-y: auto; overflow-x: hidden; padding-right: 8px; }
         #grid-pendentes::-webkit-scrollbar { width: 8px; }
         #grid-pendentes::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         #grid-pendentes::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
         #grid-pendentes::-webkit-scrollbar-thumb:hover { background: var(--escola-laranja); }
 
-        .student-card-horizontal { 
-            flex: 0 0 auto; /* REGRA CRUCIAL: Impede que o card "amasse", forçando a barra de rolagem! */
-            background: white; 
-            border-radius: 8px; 
-            border: 1px solid #e2e8f0; 
-            border-left: 6px solid var(--escola-laranja); 
-            padding: 15px 20px; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
-            transition: all 0.3s ease; /* Animação de transição suave */
-        }
+        .student-card-horizontal { flex: 0 0 auto; background: white; border-radius: 8px; border: 1px solid #e2e8f0; border-left: 6px solid var(--escola-laranja); padding: 15px 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.3s ease; }
         .student-card-horizontal:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.06); border-color: #cbd5e0; }
         
         .sch-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #f4f5f7; flex-wrap: wrap; gap: 10px; }
         .sch-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; align-items: end; }
 
-        /* Botões */
         .btn-3d-premium { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 12px; font-size: 13px; font-weight: 600; font-family: 'Jost', sans-serif; color: white; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; outline: none; }
         .btn-3d-premium.btn-edit { background: #4a5568; }
         .btn-3d-premium.btn-edit:hover { background: #2d3748; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(74, 85, 104, 0.3);}
@@ -109,7 +87,6 @@
         .table-btn-3d.btn-del { background: #dc3545; }
         .table-btn-3d:hover { transform: translateY(-2px); }
 
-        /* SESSÃO DE ENVIADOS */
         .table-responsive { width: 100%; max-height: 320px; overflow-y: auto; overflow-x: auto; background: white; border-radius: 10px; border: 1px solid #eee; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
         .table-responsive::-webkit-scrollbar { width: 8px; height: 8px; }
         .table-responsive::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
@@ -131,6 +108,9 @@
 
         .login-box { max-width: 400px; margin: 80px auto; text-align: center; }
         .login-box i { font-size: 40px; color: var(--escola-laranja); margin-bottom: 15px; }
+        
+        /* Ajuste do SweetAlert para a fonte do sistema */
+        .swal2-popup { font-family: 'Jost', sans-serif; }
 
         @media print {
             @page { size: landscape; margin: 10mm; }
@@ -348,8 +328,7 @@
 <script>
     let logado = false;
     
-    // ATENÇÃO EXTREMA AQUI: Se você fez a limpeza no Apps Script, a Google te deu um NOVO link ao clicar em "Nova Implantação".
-    // Você DEVE colar esse link novo aqui. O link antigo que estava aqui antes não funciona mais corretamente!
+    // --- COLE AQUI O SEU NOVO LINK DO GOOGLE APPS SCRIPT ---
     const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbznSlicmkBv0A5y5GuDvTmvTb8weWiFOYNGqdzmaU1fhlv0r8dIOYa6UGT5PIZ9QA/exec";
 
     const listaCursos = [
@@ -381,7 +360,6 @@
         if (typeof dataStr === "number") return dataStr;
         
         let dataString = String(dataStr).trim();
-        
         if (dataString.includes('T')) {
             let d = new Date(dataString).getTime();
             if (!isNaN(d)) return d;
@@ -530,6 +508,11 @@
 
         const dados = { matricula, nome, dia, horario, curso, email, vendedor, campanha };
 
+        // Troca o botão para estado de carregamento
+        const btnCadastrar = e.target.querySelector('button[type="submit"]');
+        btnCadastrar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gravando...';
+        btnCadastrar.disabled = true;
+
         fetch(URL_PLANILHA, {
             method: "POST",
             mode: "no-cors",
@@ -537,15 +520,30 @@
             body: JSON.stringify(dados)
         })
         .then(() => {
-            alert("Aluno gravado com sucesso na planilha!");
+            // ALERTA PREMIUM AQUI
+            Swal.fire({
+                title: 'Tudo Certo!',
+                text: 'Aluno gravado com sucesso na planilha.',
+                icon: 'success',
+                confirmButtonColor: '#16a34a',
+                confirmButtonText: 'Ótimo'
+            });
+            
             document.getElementById('area-cadastro-box').style.display = 'none';
             document.getElementById('form-cadastro').reset();
             
+            btnCadastrar.innerHTML = '<i class="fas fa-save me-2"></i> Gravar Registro na Base';
+            btnCadastrar.disabled = false;
+
             if(logado) {
-                setTimeout(() => { renderizarPainelGerencial(true); }, 1500); // Modo silencioso
+                setTimeout(() => { renderizarPainelGerencial(true); }, 1500);
             }
         })
-        .catch(err => alert("Erro ao gravar na planilha."));
+        .catch(err => {
+            Swal.fire('Erro!', 'Não foi possível gravar na base de dados.', 'error');
+            btnCadastrar.innerHTML = '<i class="fas fa-save me-2"></i> Gravar Registro na Base';
+            btnCadastrar.disabled = false;
+        });
     }
 
     function validarEmailInput(input) {
@@ -560,7 +558,7 @@
             document.getElementById('lock-screen').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
             document.getElementById('login-error').style.display = 'none';
-            renderizarPainelGerencial(false); // Falso = Mostra aviso inicial de carregando
+            renderizarPainelGerencial(false); 
         } else { document.getElementById('login-error').style.display = 'block'; }
     }
 
@@ -572,7 +570,6 @@
         document.getElementById('admin-panel').style.display = 'none';
     }
 
-    // MODIFICAÇÃO CHAVE: Passamos um parâmetro 'silencioso' para não travar a tela visualmente.
     async function renderizarPainelGerencial(silencioso = false) {
         const containerPendentes = document.getElementById('grid-pendentes');
         const tbodyEnviados = document.getElementById('tbody-enviados');
@@ -778,7 +775,10 @@
                 return st === "enviado";
             });
             
-            if (enviados.length === 0) { alert("Não existem registros!"); return; }
+            if (enviados.length === 0) { 
+                Swal.fire('Aviso', 'Não existem registros enviados para exportar!', 'info'); 
+                return; 
+            }
 
             let conteudoHTML = `<meta charset="utf-8"><table border="1"><tr style="background-color: #f8f9fa; color: #333; font-weight: bold;"><th>Data Cadastro</th><th>Data Envio</th><th>Matrícula</th><th>Campanha</th><th>Aluno(a)</th><th>Curso</th><th>Dia</th><th>Horário</th><th>Vendedor</th><th>E-mail</th><th>Situação</th><th>Observações</th></tr>`;
             enviados.forEach(aluno => {
@@ -788,7 +788,7 @@
             const blobUri = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(conteudoHTML);
             const linkInvisivel = document.createElement("a");
             linkInvisivel.href = blobUri; linkInvisivel.download = "relatorio_materiais_enviados.xls"; document.body.appendChild(linkInvisivel); linkInvisivel.click(); document.body.removeChild(linkInvisivel);
-        } catch (err) { alert("Erro ao buscar dados."); }
+        } catch (err) { Swal.fire('Erro!', 'Não foi possível gerar o arquivo Excel.', 'error'); }
     }
 
     async function exportarTabelaPDF() {
@@ -796,9 +796,12 @@
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let alunos = await res.json();
             if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
-            if (!alunos.some(a => a.status && a.status.toString().trim().toLowerCase() === "enviado")) { alert("Não existem registros!"); return; }
+            if (!alunos.some(a => a.status && a.status.toString().trim().toLowerCase() === "enviado")) { 
+                Swal.fire('Aviso', 'Não existem registros para imprimir!', 'info'); 
+                return; 
+            }
             window.print();
-        } catch (err) { alert("Erro ao verificar dados."); }
+        } catch (err) { Swal.fire('Erro!', 'Falha ao processar os dados para impressão.', 'error'); }
     }
 
     function habilitarEdicaoCard(index, ehTabela) {
@@ -847,19 +850,37 @@
         const novoStatus = document.getElementById(`card-status-${index}${sufixo}`).value;
         const observacoes = document.getElementById(`card-obs-${index}${sufixo}`).value.trim();
 
-        // ----------------------------------------------------
-        // MÁGICA VISUAL (UX Otimista): Oculta o card instantaneamente!
-        // ----------------------------------------------------
         if (!ehTabela && novoStatus.toLowerCase() === "enviado") {
             const cardRow = document.getElementById(`row-${index}`);
             if (cardRow) {
-                cardRow.style.opacity = '0'; // Esmaece
-                cardRow.style.transform = 'translateX(50px)'; // Joga pro lado rapidinho
-                setTimeout(() => { cardRow.style.display = 'none'; }, 300); // Apaga de vez
+                cardRow.style.opacity = '0'; 
+                cardRow.style.transform = 'translateX(50px)'; 
+                setTimeout(() => { cardRow.style.display = 'none'; }, 300); 
             }
+            
+            // Toast de sucesso no canto (não atrapalha a tela)
+            Swal.fire({
+                title: 'Enviado!',
+                text: 'O material foi disparado para o e-mail do aluno.',
+                icon: 'success',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            
         } else {
             btnSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; 
             btnSalvar.disabled = true;
+            Swal.fire({
+                title: 'Atualizado!',
+                text: 'Os dados foram salvos.',
+                icon: 'success',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000
+            });
         }
 
         const dados = {
@@ -884,14 +905,10 @@
                 body: JSON.stringify(dados)
             });
 
-            // Recarrega a tabela por baixo dos panos (silencioso), 
-            // sem travar sua tela com o aviso de 'Atualizando...'
-            setTimeout(() => { 
-                renderizarPainelGerencial(true); 
-            }, 1500);
+            setTimeout(() => { renderizarPainelGerencial(true); }, 1500);
 
         } catch (err) {
-            alert("Erro ao salvar: " + err);
+            Swal.fire('Erro!', 'Ocorreu um problema ao tentar salvar a alteração.', 'error');
             btnSalvar.innerHTML = '<i class="fas fa-save"></i> Salvar';
             btnSalvar.disabled = false;
         }
@@ -901,23 +918,38 @@
         const sufixo = ehTabela ? "-tab" : "";
         const matricula = document.getElementById(`card-mat-${index}${sufixo}`).value.trim();
 
-        if (confirm("Deseja remover o aluno de matrícula " + matricula + " definitivamente?")) {
-            const dados = { action: "delete", matricula: matricula };
+        // ALERTA PREMIUM DE EXCLUSÃO
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: "Deseja remover o aluno de matrícula " + matricula + " definitivamente?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#4a5568',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const dados = { action: "delete", matricula: matricula };
 
-            try {
-                document.getElementById(`row-${index}`) ? document.getElementById(`row-${index}`).style.opacity = '0.5' : null;
+                try {
+                    document.getElementById(`row-${index}`) ? document.getElementById(`row-${index}`).style.opacity = '0.5' : null;
 
-                await fetch(URL_PLANILHA, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(dados)
-                });
+                    await fetch(URL_PLANILHA, {
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(dados)
+                    });
 
-                setTimeout(() => { renderizarPainelGerencial(true); }, 1500);
+                    Swal.fire({ title: 'Excluído!', text: 'O registro foi removido.', icon: 'success', timer: 2000, showConfirmButton: false});
+                    setTimeout(() => { renderizarPainelGerencial(true); }, 1500);
 
-            } catch (err) { alert("Erro ao excluir: " + err); }
-        }
+                } catch (err) {
+                    Swal.fire('Erro!', 'Não foi possível excluir o aluno.', 'error');
+                }
+            }
+        });
     }
 </script>
 </body>
