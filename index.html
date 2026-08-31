@@ -85,6 +85,7 @@
         .table-btn-3d.btn-edit { background: #4a5568; }
         .table-btn-3d.btn-save { background: #16a34a; }
         .table-btn-3d.btn-del { background: #dc3545; }
+        .table-btn-3d.btn-resend { background: #3b82f6; } /* Cor Azul para Reenviar */
         .table-btn-3d:hover { transform: translateY(-2px); }
 
         .table-responsive { width: 100%; max-height: 320px; overflow-y: auto; overflow-x: auto; background: white; border-radius: 10px; border: 1px solid #eee; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
@@ -382,6 +383,7 @@
         return isNaN(fallback) ? 0 : fallback;
     }
 
+    // NOVA FUNÇÃO FORMATAR DATA COM HORA
     function formatarData(dataStr) {
         if (!dataStr || dataStr === "Aguardando Envio" || dataStr === "-") return 'N/A';
         let ms = parseDateSafely(dataStr);
@@ -390,10 +392,37 @@
         const dia = String(data.getDate()).padStart(2, '0');
         const mes = String(data.getMonth() + 1).padStart(2, '0');
         const ano = data.getFullYear();
-        return `${dia}/${mes}/${ano}`;
+        const hora = String(data.getHours()).padStart(2, '0');
+        const min = String(data.getMinutes()).padStart(2, '0');
+        
+        return `${dia}/${mes}/${ano} às ${hora}:${min}`;
     }
 
+    // NOVA FUNÇÃO SWITCH PAGE (SEGURANÇA E ALERTA)
     function switchPage(page) {
+        if (page === 'publica' && logado) {
+            Swal.fire({
+                title: 'Sair do Painel?',
+                text: 'Por segurança, sua sessão gerencial será encerrada ao voltar para a área de consulta.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ff6b00',
+                cancelButtonColor: '#4a5568',
+                confirmButtonText: 'Sim, sair com segurança',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    logout(); 
+                    executarTrocaDeAba('publica');
+                }
+            });
+            return; 
+        }
+        
+        executarTrocaDeAba(page);
+    }
+
+    function executarTrocaDeAba(page) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(`page-${page}`).classList.add('active');
@@ -508,7 +537,6 @@
 
         const dados = { matricula, nome, dia, horario, curso, email, vendedor, campanha };
 
-        // Troca o botão para estado de carregamento
         const btnCadastrar = e.target.querySelector('button[type="submit"]');
         btnCadastrar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gravando...';
         btnCadastrar.disabled = true;
@@ -520,7 +548,6 @@
             body: JSON.stringify(dados)
         })
         .then(() => {
-            // ALERTA PREMIUM AQUI
             Swal.fire({
                 title: 'Tudo Certo!',
                 text: 'Material registrado com sucesso! Aguarde o envio do material em até 72 horas.',
@@ -748,7 +775,9 @@
                     <td><input type="text" id="card-email-${index}-tab" value="${aluno.email}" disabled class="table-input" style="width:150px; color: #333;"></td>
                     <td><select id="card-status-${index}-tab" disabled class="table-input" style="width:145px; font-weight:bold; color:#16a34a;"><option value="Pendente de Envio">Pendente de Envio</option><option value="Enviado" selected>Enviado</option></select></td>
                     <td><input type="text" id="card-obs-${index}-tab" disabled class="table-input" value="${aluno.observacoes || ''}" style="width:130px; color: #333;"></td>
-                    <td><div style="display:flex; gap:6px;"><button type="button" title="Editar" class="table-btn-3d btn-edit" id="card-btn-edit-${index}-tab" onclick="habilitarEdicaoCard(${index}, true)"><i class="fas fa-edit"></i></button><button type="button" title="Salvar" class="table-btn-3d btn-save" id="card-btn-save-${index}-tab" onclick="salvarEdicaoCard(${index}, true)" style="display:none;"><i class="fas fa-save"></i></button><button type="button" title="Excluir" class="table-btn-3d btn-del" onclick="deletarAluno(${index}, true)"><i class="fas fa-trash"></i></button></div></td>
+                    
+                    <!-- LINHA DO BOTÃO DE AÇÕES ATUALIZADA AQUI -->
+                    <td><div style="display:flex; gap:6px;"><button type="button" title="Reenviar E-mail" class="table-btn-3d btn-resend" onclick="reenviarEmail(${index})"><i class="fas fa-paper-plane"></i></button><button type="button" title="Editar" class="table-btn-3d btn-edit" id="card-btn-edit-${index}-tab" onclick="habilitarEdicaoCard(${index}, true)"><i class="fas fa-edit"></i></button><button type="button" title="Salvar" class="table-btn-3d btn-save" id="card-btn-save-${index}-tab" onclick="salvarEdicaoCard(${index}, true)" style="display:none;"><i class="fas fa-save"></i></button><button type="button" title="Excluir" class="table-btn-3d btn-del" onclick="deletarAluno(${index}, true)"><i class="fas fa-trash"></i></button></div></td>
                 `;
                 tbodyEnviados.appendChild(tr);
             });
@@ -858,7 +887,6 @@
                 setTimeout(() => { cardRow.style.display = 'none'; }, 300); 
             }
             
-            // Toast de sucesso no canto (não atrapalha a tela)
             Swal.fire({
                 title: 'Enviado!',
                 text: 'O material foi disparado para o e-mail do aluno.',
@@ -918,7 +946,6 @@
         const sufixo = ehTabela ? "-tab" : "";
         const matricula = document.getElementById(`card-mat-${index}${sufixo}`).value.trim();
 
-        // ALERTA PREMIUM DE EXCLUSÃO
         Swal.fire({
             title: 'Tem certeza?',
             text: "Deseja remover o aluno de matrícula " + matricula + " definitivamente?",
@@ -947,6 +974,51 @@
 
                 } catch (err) {
                     Swal.fire('Erro!', 'Não foi possível excluir o aluno.', 'error');
+                }
+            }
+        });
+    }
+
+    // NOVA FUNÇÃO REENVIAR EMAIL
+    async function reenviarEmail(index) {
+        const matricula = document.getElementById(`card-mat-${index}-tab`).value.trim();
+        const nome = document.getElementById(`card-nome-${index}-tab`).value.trim();
+        const campanha = document.getElementById(`card-campanha-${index}-tab`).value;
+        const curso = document.getElementById(`card-curso-${index}-tab`).value;
+        const dia = document.getElementById(`card-dia-${index}-tab`).value;
+        const horario = document.getElementById(`card-horario-${index}-tab`).value;
+        const vendedor = document.getElementById(`card-vendedor-${index}-tab`).value;
+        const email = document.getElementById(`card-email-${index}-tab`).value.trim();
+        const observacoes = document.getElementById(`card-obs-${index}-tab`).value.trim();
+
+        Swal.fire({
+            title: 'Reenviar Material?',
+            text: `Deseja enviar a apostila novamente para o e-mail de ${nome}?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3b82f6',
+            cancelButtonColor: '#4a5568',
+            confirmButtonText: 'Sim, reenviar!',
+            cancelButtonText: 'Cancelar'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Disparando E-mail...',
+                    text: 'Aguarde um momento.',
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading() }
+                });
+
+                const dadosBase = { action: "update", matricula, nome, campanha, curso, dia, horario, vendedor, email, observacoes };
+
+                try {
+                    await fetch(URL_PLANILHA, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({...dadosBase, status: "Pendente de Envio"}) });
+                    await fetch(URL_PLANILHA, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({...dadosBase, status: "Enviado"}) });
+
+                    Swal.fire({ title: 'Enviado!', text: 'O material foi reenviado com sucesso.', icon: 'success', timer: 2500, showConfirmButton: false });
+                    setTimeout(() => { renderizarPainelGerencial(true); }, 1500);
+                } catch (err) {
+                    Swal.fire('Erro!', 'Ocorreu um problema ao tentar reenviar o e-mail.', 'error');
                 }
             }
         });
