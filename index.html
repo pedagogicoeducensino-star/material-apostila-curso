@@ -85,7 +85,7 @@
         .table-btn-3d.btn-edit { background: #4a5568; }
         .table-btn-3d.btn-save { background: #16a34a; }
         .table-btn-3d.btn-del { background: #dc3545; }
-        .table-btn-3d.btn-resend { background: #3b82f6; } /* Cor Azul para Reenviar */
+        .table-btn-3d.btn-resend { background: #3b82f6; } 
         .table-btn-3d:hover { transform: translateY(-2px); }
 
         .table-responsive { width: 100%; max-height: 320px; overflow-y: auto; overflow-x: auto; background: white; border-radius: 10px; border: 1px solid #eee; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
@@ -143,7 +143,8 @@
             <div class="search-action-bar">
                 <div style="width: 100%;">
                     <label style="margin-bottom: 4px;">Consultar Envio de Material:</label>
-                    <input type="text" id="search-matricula" placeholder="Digite o número da matrícula do aluno...">
+                    <!-- AQUI: Adicionado evento onkeypress para buscar ao pressionar Enter -->
+                    <input type="text" id="search-matricula" placeholder="Digite o número da matrícula do aluno..." onkeypress="if(event.key==='Enter') consultarMaterial()">
                 </div>
                 <button type="button" style="width: auto; padding: 0 25px; background-color: #333; height: 48px;" class="btn-submit" onclick="consultarMaterial()"><i class="fas fa-search"></i> Buscar</button>
                 <button type="button" id="btn-abrir-cadastro" class="btn-abrir-sutil" onclick="mostrarFormulario()"><i class="fas fa-user-plus"></i> Novo Aluno</button>
@@ -229,7 +230,6 @@
                             <option value="CN - Operador de Caixa Plus">CN - Operador de Caixa Plus</option>
                             <option value="CN - Secretariado">CN - Secretariado</option>
                             <option value="CN - Tabelas, Gráficos e Excel Completo - Adulto">CN - Tabelas, Gráficos e Excel Completo - Adulto</option>
-                            <option value="CN - Telemarketing">CN - Telemarketing</option>
                             <option value="CN- Informática Essencial - Terceira Idade">CN- Informática Essencial - Terceira Idade</option>
                         </select>
                     </div>
@@ -384,7 +384,6 @@
         return isNaN(fallback) ? 0 : fallback;
     }
 
-    // NOVA FUNÇÃO FORMATAR DATA COM HORA
     function formatarData(dataStr) {
         if (!dataStr || dataStr === "Aguardando Envio" || dataStr === "-") return 'N/A';
         let ms = parseDateSafely(dataStr);
@@ -399,7 +398,6 @@
         return `${dia}/${mes}/${ano} às ${hora}:${min}`;
     }
 
-    // NOVA FUNÇÃO SWITCH PAGE (SEGURANÇA E ALERTA)
     function switchPage(page) {
         if (page === 'publica' && logado) {
             Swal.fire({
@@ -525,7 +523,8 @@
         }
     }
 
-    function cadastrarAluno(e) {
+    // AQUI: Função transformada em Async para fazer a verificação de duplicidade antes do envio final
+    async function cadastrarAluno(e) {
         e.preventDefault();
         const matricula = document.getElementById('cad-matricula').value.trim();
         const nome = document.getElementById('cad-nome').value.trim();
@@ -536,11 +535,45 @@
         const vendedor = document.getElementById('cad-vendedor').value;
         const campanha = document.getElementById('cad-campanha').value;
 
-        const dados = { matricula, nome, dia, horario, curso, email, vendedor, campanha };
-
         const btnCadastrar = e.target.querySelector('button[type="submit"]');
-        btnCadastrar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gravando...';
+        
+        // Etapa 1: Validando Duplicidade
+        btnCadastrar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Verificando Matrícula...';
         btnCadastrar.disabled = true;
+
+        try {
+            const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
+            let alunos = await res.json();
+            
+            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) {
+                alunos = alunos.slice(1);
+            }
+            
+            // Procura se a matrícula já existe
+            const existe = alunos.find(al => String(al.matricula) === String(matricula));
+            
+            if (existe) {
+                Swal.fire({
+                    title: 'Cadastro Duplicado!',
+                    text: 'Esta matrícula já possui uma solicitação. Por favor, procure a coordenação para não gerar duplicidade.',
+                    icon: 'warning',
+                    confirmButtonColor: '#ff6b00'
+                });
+                
+                btnCadastrar.innerHTML = '<i class="fas fa-save me-2"></i> Gravar Registro na Base';
+                btnCadastrar.disabled = false;
+                return; // Impede que continue e salve duplicado
+            }
+        } catch (err) {
+            Swal.fire('Erro de Conexão', 'Não foi possível verificar a base de dados no momento. Tente novamente.', 'error');
+            btnCadastrar.innerHTML = '<i class="fas fa-save me-2"></i> Gravar Registro na Base';
+            btnCadastrar.disabled = false;
+            return;
+        }
+
+        // Etapa 2: Tudo certo, enviando para gravar...
+        btnCadastrar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gravando...';
+        const dados = { matricula, nome, dia, horario, curso, email, vendedor, campanha };
 
         fetch(URL_PLANILHA, {
             method: "POST",
@@ -777,7 +810,6 @@
                     <td><select id="card-status-${index}-tab" disabled class="table-input" style="width:145px; font-weight:bold; color:#16a34a;"><option value="Pendente de Envio">Pendente de Envio</option><option value="Enviado" selected>Enviado</option></select></td>
                     <td><input type="text" id="card-obs-${index}-tab" disabled class="table-input" value="${aluno.observacoes || ''}" style="width:130px; color: #333;"></td>
                     
-                    <!-- LINHA DO BOTÃO DE AÇÕES ATUALIZADA AQUI -->
                     <td><div style="display:flex; gap:6px;"><button type="button" title="Reenviar E-mail" class="table-btn-3d btn-resend" onclick="reenviarEmail(${index})"><i class="fas fa-paper-plane"></i></button><button type="button" title="Editar" class="table-btn-3d btn-edit" id="card-btn-edit-${index}-tab" onclick="habilitarEdicaoCard(${index}, true)"><i class="fas fa-edit"></i></button><button type="button" title="Salvar" class="table-btn-3d btn-save" id="card-btn-save-${index}-tab" onclick="salvarEdicaoCard(${index}, true)" style="display:none;"><i class="fas fa-save"></i></button><button type="button" title="Excluir" class="table-btn-3d btn-del" onclick="deletarAluno(${index}, true)"><i class="fas fa-trash"></i></button></div></td>
                 `;
                 tbodyEnviados.appendChild(tr);
@@ -980,7 +1012,6 @@
         });
     }
 
-    // NOVA FUNÇÃO REENVIAR EMAIL
     async function reenviarEmail(index) {
         const matricula = document.getElementById(`card-mat-${index}-tab`).value.trim();
         const nome = document.getElementById(`card-nome-${index}-tab`).value.trim();
