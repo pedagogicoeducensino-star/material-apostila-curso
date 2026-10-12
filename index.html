@@ -87,6 +87,8 @@
         .table-btn-3d.btn-del { background: #dc3545; }
         .table-btn-3d.btn-resend { background: #3b82f6; } 
         .table-btn-3d:hover { transform: translateY(-2px); }
+        
+        .config-list-item { display:flex; justify-content:space-between; align-items:center; background:#fff; padding:8px 15px; margin-bottom:8px; border-radius:6px; border:1px solid #eee; font-weight: 500; font-size: 14px;}
 
         .table-responsive { width: 100%; max-height: 320px; overflow-y: auto; overflow-x: auto; background: white; border-radius: 10px; border: 1px solid #eee; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
         .table-responsive::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -110,7 +112,6 @@
         .login-box { max-width: 400px; margin: 80px auto; text-align: center; }
         .login-box i { font-size: 40px; color: var(--escola-laranja); margin-bottom: 15px; }
         
-        /* Ajuste do SweetAlert para a fonte do sistema */
         .swal2-popup { font-family: 'Jost', sans-serif; }
 
         @media print {
@@ -143,7 +144,6 @@
             <div class="search-action-bar">
                 <div style="width: 100%;">
                     <label style="margin-bottom: 4px;">Consultar Envio de Material:</label>
-                    <!-- AQUI: Adicionado evento onkeypress para buscar ao pressionar Enter -->
                     <input type="text" id="search-matricula" placeholder="Digite o número da matrícula do aluno..." onkeypress="if(event.key==='Enter') consultarMaterial()">
                 </div>
                 <button type="button" style="width: auto; padding: 0 25px; background-color: #333; height: 48px;" class="btn-submit" onclick="consultarMaterial()"><i class="fas fa-search"></i> Buscar</button>
@@ -242,10 +242,9 @@
                     </div>
                     <div>
                         <label>Campanha:</label>
+                        <!-- Agora populado via JS -->
                         <select id="cad-campanha" required>
-                            <option value="">Selecione...</option>
-                            <option value="Suporte">Suporte</option>
-                            <option value="Padrão">Padrão</option>
+                            <option value="">Aguarde, carregando...</option>
                         </select>
                     </div>
                 </div>
@@ -253,13 +252,9 @@
                 <div class="card-row full">
                     <div>
                         <label>Nome do Vendedor/Consultor:</label>
+                        <!-- Agora populado via JS -->
                         <select id="cad-vendedor" required>
-                            <option value="">Selecione...</option>
-                            <option value="Emison Nascimento Santos">Emison Nascimento Santos</option>
-                             <option value="Bruna Rabelo Rodrigues">Bruna Rabelo Rodrigues</option>
-                            <option value="Thamyres Cardoso Alves">Thamyres Cardoso Alves</option>
-                            <option value="Secretaria">Secretaria</option>
-                            <option value="Sala de Aula">Sala de Aula</option>
+                            <option value="">Aguarde, carregando...</option>
                         </select>
                     </div>
                 </div>
@@ -287,6 +282,29 @@
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h2 style="border:none; margin:0; padding:0;"><i class="fas fa-cogs" style="color: var(--escola-laranja);"></i> Gestão Operacional de Envios</h2>
                     <button type="button" style="width:auto; background:#dc3545; padding: 10px 20px; font-size:14px; box-shadow: none;" class="btn-submit" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair / Bloquear</button>
+                </div>
+            </div>
+
+            <!-- NOVA SESSÃO: CONFIGURAÇÕES GLOBAIS DE VENDEDORES E CAMPANHAS -->
+            <div class="card" style="margin-bottom: 25px; background: #fafafa;">
+                <h3 style="margin-top: 0; color:#333; border-left: 4px solid #333;"><i class="fas fa-sliders-h"></i> Configurações de Vendedores e Campanhas</h3>
+                <div class="card-row">
+                    <div>
+                        <label>Adicionar Vendedor/Consultor:</label>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" id="novo-vendedor" placeholder="Digite o nome do vendedor...">
+                            <button class="btn-3d-premium btn-save" onclick="adicionarConfig('Vendedores', 'novo-vendedor')"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <ul id="lista-vendedores" style="list-style: none; padding: 0; margin-top: 15px; max-height: 200px; overflow-y: auto;"></ul>
+                    </div>
+                    <div>
+                        <label>Adicionar Campanha:</label>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" id="nova-campanha" placeholder="Digite o nome da campanha...">
+                            <button class="btn-3d-premium btn-save" onclick="adicionarConfig('Campanhas', 'nova-campanha')"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <ul id="lista-campanhas" style="list-style: none; padding: 0; margin-top: 15px; max-height: 200px; overflow-y: auto;"></ul>
+                    </div>
                 </div>
             </div>
             
@@ -329,9 +347,11 @@
 
 <script>
     let logado = false;
+    let vendedoresData = []; // Armazena os dados da aba "Vendedores"
+    let campanhasData = [];  // Armazena os dados da aba "Campanhas"
     
     // --- COLE AQUI O SEU NOVO LINK DO GOOGLE APPS SCRIPT ---
-    const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbznSlicmkBv0A5y5GuDvTmvTb8weWiFOYNGqdzmaU1fhlv0r8dIOYa6UGT5PIZ9QA/exec";
+    const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbznSlicmkBv0A5y5GuDvTmvTb8weWiFOYNGqdzmaU1fhlv0r8dIOYa6UGT5PIZ9QA/exec"; 
 
     const listaCursos = [
         "Assistente Administrativo - AA", "Assistente Administrativo Plus - AAP",
@@ -351,12 +371,106 @@
         "CN- Informática Essencial - Terceira Idade"
     ];
 
-    window.onload = () => {
+    window.onload = async () => {
         if (sessionStorage.getItem('logadoMaster') === 'true') {
             logado = true;
         }
+        await carregarConfiguracoesGerais(); // Carrega Vendedores e Campanhas dinamicamente no início
     };
 
+    // FUNÇÃO QUE PUXA OS DADOS E POPULA OS SELECTS INICIAIS
+    async function carregarConfiguracoesGerais() {
+        try {
+            const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
+            let data = await res.json();
+            
+            if (data.vendedores) vendedoresData = data.vendedores;
+            if (data.campanhas) campanhasData = data.campanhas;
+            
+            preencherSelectsPublicos();
+        } catch (err) {
+            console.error("Erro ao puxar dados globais.");
+        }
+    }
+
+    function preencherSelectsPublicos() {
+        const selVend = document.getElementById('cad-vendedor');
+        const selCamp = document.getElementById('cad-campanha');
+        
+        selVend.innerHTML = '<option value="">Selecione...</option>';
+        vendedoresData.forEach(v => { selVend.innerHTML += `<option value="${v}">${v}</option>`; });
+        
+        selCamp.innerHTML = '<option value="">Selecione...</option>';
+        campanhasData.forEach(c => { selCamp.innerHTML += `<option value="${c}">${c}</option>`; });
+    }
+
+    // FUNÇÕES DE GERENCIAMENTO (ADICIONAR/EXCLUIR VENDEDOR E CAMPANHA)
+    async function adicionarConfig(tipo, inputId) {
+        const input = document.getElementById(inputId);
+        const valor = input.value.trim();
+        if(!valor) return;
+        
+        input.disabled = true;
+        const btn = input.nextElementSibling;
+        const btnOldHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        
+        try {
+            await fetch(URL_PLANILHA, {
+                method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "addConfig", tipo: tipo, valor: valor })
+            });
+            input.value = '';
+            Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Adicionado com sucesso!', showConfirmButton: false, timer: 1500});
+            renderizarPainelGerencial(true);
+        } catch(e) {
+            Swal.fire('Erro', 'Falha ao adicionar.', 'error');
+        }
+        input.disabled = false;
+        btn.innerHTML = btnOldHtml;
+    }
+
+    async function deletarConfig(tipo, valor) {
+        Swal.fire({
+            title: 'Confirmar Exclusão?',
+            text: `Deseja remover "${valor}" da lista?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonText: 'Cancelar'
+        }).then(async (result) => {
+            if(result.isConfirmed) {
+                try {
+                    await fetch(URL_PLANILHA, {
+                        method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ action: "deleteConfig", tipo: tipo, valor: valor })
+                    });
+                    Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Removido!', showConfirmButton: false, timer: 1500});
+                    renderizarPainelGerencial(true);
+                } catch(e) {
+                    Swal.fire('Erro', 'Falha ao remover.', 'error');
+                }
+            }
+        });
+    }
+
+    function renderizarListasAdmin() {
+        const listaVend = document.getElementById('lista-vendedores');
+        const listaCamp = document.getElementById('lista-campanhas');
+        
+        listaVend.innerHTML = '';
+        listaCamp.innerHTML = '';
+        
+        vendedoresData.forEach(v => {
+            listaVend.innerHTML += `<li class="config-list-item">${v} <button class="table-btn-3d btn-del" onclick="deletarConfig('Vendedores', '${v}')" style="padding:4px 8px; font-size:11px;"><i class="fas fa-trash"></i></button></li>`;
+        });
+        
+        campanhasData.forEach(c => {
+            listaCamp.innerHTML += `<li class="config-list-item">${c} <button class="table-btn-3d btn-del" onclick="deletarConfig('Campanhas', '${c}')" style="padding:4px 8px; font-size:11px;"><i class="fas fa-trash"></i></button></li>`;
+        });
+    }
+
+    // FUNÇÕES DE DADOS (Resto do código mantido mas adaptado para o novo retorno da Planilha)
     function parseDateSafely(dataStr) {
         if (!dataStr || dataStr === "Aguardando Envio" || dataStr === "-") return 0;
         if (typeof dataStr === "number") return dataStr;
@@ -458,7 +572,8 @@
 
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
-            let alunos = await res.json();
+            let data = await res.json();
+            let alunos = data.alunos ? data.alunos : data; // Retrocompatibilidade
             
             if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) {
                 alunos = alunos.slice(1);
@@ -500,7 +615,7 @@
                         </div>
                         <div>
                             <div class="card-data-label">Campanha</div>
-                            <div style="font-size:15px; font-weight:500;">${a.campanha || 'Padrão'}</div>
+                            <div style="font-size:15px; font-weight:500;">${a.campanha || '-'}</div>
                         </div>
                     </div>
                     <div class="card-row full">
@@ -523,7 +638,6 @@
         }
     }
 
-    // AQUI: Função transformada em Async para fazer a verificação de duplicidade antes do envio final
     async function cadastrarAluno(e) {
         e.preventDefault();
         const matricula = document.getElementById('cad-matricula').value.trim();
@@ -537,19 +651,18 @@
 
         const btnCadastrar = e.target.querySelector('button[type="submit"]');
         
-        // Etapa 1: Validando Duplicidade
         btnCadastrar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Verificando Matrícula...';
         btnCadastrar.disabled = true;
 
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
-            let alunos = await res.json();
+            let data = await res.json();
+            let alunos = data.alunos ? data.alunos : data;
             
             if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) {
                 alunos = alunos.slice(1);
             }
             
-            // Procura se a matrícula já existe
             const existe = alunos.find(al => String(al.matricula) === String(matricula));
             
             if (existe) {
@@ -562,7 +675,7 @@
                 
                 btnCadastrar.innerHTML = '<i class="fas fa-save me-2"></i> Gravar Registro na Base';
                 btnCadastrar.disabled = false;
-                return; // Impede que continue e salve duplicado
+                return;
             }
         } catch (err) {
             Swal.fire('Erro de Conexão', 'Não foi possível verificar a base de dados no momento. Tente novamente.', 'error');
@@ -571,13 +684,11 @@
             return;
         }
 
-        // Etapa 2: Tudo certo, enviando para gravar...
         btnCadastrar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gravando...';
         const dados = { matricula, nome, dia, horario, curso, email, vendedor, campanha };
 
         fetch(URL_PLANILHA, {
-            method: "POST",
-            mode: "no-cors",
+            method: "POST", mode: "no-cors",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(dados)
         })
@@ -642,7 +753,15 @@
         
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
-            let alunos = await res.json();
+            let data = await res.json();
+            
+            let alunos = data.alunos ? data.alunos : data;
+            if(data.vendedores) vendedoresData = data.vendedores;
+            if(data.campanhas) campanhasData = data.campanhas;
+            
+            // Mantem os selects do painel publico atualizados caso algo tenha mudado
+            preencherSelectsPublicos();
+            renderizarListasAdmin(); 
             
             containerPendentes.innerHTML = "";
             tbodyEnviados.innerHTML = "";
@@ -676,6 +795,13 @@
                 let index = aluno.originalIndex;
                 let opcoesCursos = '';
                 listaCursos.forEach(c => { opcoesCursos += `<option value="${c}" ${aluno.curso === c ? 'selected' : ''}>${c}</option>`; });
+                
+                // Opções dinâmicas para esse Card
+                let opcoesVendedores = '<option value="">Selecione...</option>';
+                vendedoresData.forEach(v => { opcoesVendedores += `<option value="${v}" ${aluno.vendedor === v ? 'selected' : ''}>${v}</option>`; });
+                
+                let opcoesCampanhas = '<option value="">Selecione...</option>';
+                campanhasData.forEach(c => { opcoesCampanhas += `<option value="${c}" ${aluno.campanha === c ? 'selected' : ''}>${c}</option>`; });
 
                 let timerHTML = '<i class="fas fa-clock"></i> Aguardando Envio';
                 let timerStyle = 'background: #fff5eb; color: var(--escola-laranja); border-color: #ffe8cc;';
@@ -729,10 +855,7 @@
                         </div>
                         <div>
                             <div class="card-data-label">Campanha</div>
-                            <select id="card-campanha-${index}" disabled style="color: #333;">
-                                <option value="Padrão" ${aluno.campanha === 'Padrão' ? 'selected' : ''}>Padrão</option>
-                                <option value="Suporte" ${aluno.campanha === 'Suporte' ? 'selected' : ''}>Suporte</option>
-                            </select>
+                            <select id="card-campanha-${index}" disabled style="color: #333;">${opcoesCampanhas}</select>
                         </div>
                         <div style="grid-column: span 2;">
                             <div class="card-data-label">Curso Escolhido</div>
@@ -763,12 +886,7 @@
                         </div>
                         <div>
                             <div class="card-data-label">Vendedor</div>
-                            <select id="card-vendedor-${index}" disabled style="color: #333;">
-                                <option value="Emison Nascimento Santos" ${aluno.vendedor === 'Emison Nascimento Santos' ? 'selected' : ''}>Emison Nascimento Santos</option>
-                                <option value="Thamyres Cardoso Alves" ${aluno.vendedor === 'Thamyres Cardoso Alves' ? 'selected' : ''}>Thamyres Cardoso Alves</option>
-                                <option value="Secretaria" ${aluno.vendedor === 'Secretaria' ? 'selected' : ''}>Secretaria</option>
-                                <option value="Sala de Aula" ${aluno.vendedor === 'Sala de Aula' ? 'selected' : ''}>Sala de Aula</option>
-                            </select>
+                            <select id="card-vendedor-${index}" disabled style="color: #333;">${opcoesVendedores}</select>
                         </div>
                         <div>
                             <div class="card-data-label">E-mail</div>
@@ -794,18 +912,24 @@
                 let index = aluno.originalIndex;
                 let opcoesCursos = '';
                 listaCursos.forEach(c => { opcoesCursos += `<option value="${c}" ${aluno.curso === c ? 'selected' : ''}>${c}</option>`; });
+                
+                let opcoesVendedores = '<option value="">Selecione...</option>';
+                vendedoresData.forEach(v => { opcoesVendedores += `<option value="${v}" ${aluno.vendedor === v ? 'selected' : ''}>${v}</option>`; });
+                
+                let opcoesCampanhas = '<option value="">Selecione...</option>';
+                campanhasData.forEach(c => { opcoesCampanhas += `<option value="${c}" ${aluno.campanha === c ? 'selected' : ''}>${c}</option>`; });
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${formatarData(aluno.dataCadastro)}</td>
                     <td style="color:#16a34a; font-weight:700;"><i class="fas fa-check-circle"></i> ${formatarData(aluno.dataEnvio)}</td>
                     <td><input type="text" id="card-mat-${index}-tab" value="${aluno.matricula}" disabled class="table-input" style="width:75px; font-weight:bold; color: #333;"></td>
-                    <td><select id="card-campanha-${index}-tab" disabled class="table-input" style="width:105px; color: #333;"><option value="Padrão" ${aluno.campanha === 'Padrão' ? 'selected' : ''}>Padrão</option><option value="Suporte" ${aluno.campanha === 'Suporte' ? 'selected' : ''}>Suporte</option></select></td>
+                    <td><select id="card-campanha-${index}-tab" disabled class="table-input" style="width:105px; color: #333;">${opcoesCampanhas}</select></td>
                     <td><input type="text" id="card-nome-${index}-tab" value="${aluno.nome}" disabled class="table-input" style="width:150px; font-weight:600; color: #333;"></td>
                     <td><select id="card-curso-${index}-tab" disabled class="table-input" style="width:190px; color: #333;">${opcoesCursos}</select></td>
                     <td><select id="card-dia-${index}-tab" disabled class="table-input" style="width:115px; color: #333;"><option value="Segunda-feira" ${aluno.dia === 'Segunda-feira' ? 'selected' : ''}>Segunda-feira</option><option value="Terça-feira" ${aluno.dia === 'Terça-feira' ? 'selected' : ''}>Terça-feira</option><option value="Quarta-feira" ${aluno.dia === 'Quarta-feira' ? 'selected' : ''}>Quarta-feira</option><option value="Quinta-feira" ${aluno.dia === 'Quinta-feira' ? 'selected' : ''}>Quinta-feira</option><option value="Sexta-feira" ${aluno.dia === 'Sexta-feira' ? 'selected' : ''}>Sexta-feira</option><option value="Sábado" ${aluno.dia === 'Sábado' ? 'selected' : ''}>Sábado</option></select></td>
                     <td><select id="card-horario-${index}-tab" disabled class="table-input" style="width:125px; color: #333;"><option value="07:00 às 09:00" ${aluno.horario === '07:00 às 09:00' ? 'selected' : ''}>07:00 às 09:00</option><option value="09:00 às 11:00" ${aluno.horario === '09:00 às 11:00' ? 'selected' : ''}>09:00 às 11:00</option><option value="11:00 às 13:00" ${aluno.horario === '11:00 às 13:00' ? 'selected' : ''}>11:00 às 13:00</option><option value="13:00 às 15:00" ${aluno.horario === '13:00 às 15:00' ? 'selected' : ''}>13:00 às 15:00</option><option value="15:00 às 17:00" ${aluno.horario === '15:00 às 17:00' ? 'selected' : ''}>15:00 às 17:00</option><option value="17:00 às 19:00" ${aluno.horario === '17:00 às 19:00' ? 'selected' : ''}>17:00 às 19:00</option></select></td>
-                    <td><select id="card-vendedor-${index}-tab" disabled class="table-input" style="width:155px; color: #333;"><option value="Emison Nascimento Santos" ${aluno.vendedor === 'Emison Nascimento Santos' ? 'selected' : ''}>Emison Nascimento Santos</option><option value="Thamyres Cardoso Alves" ${aluno.vendedor === 'Thamyres Cardoso Alves' ? 'selected' : ''}>Thamyres Cardoso Alves</option><option value="Secretaria" ${aluno.vendedor === 'Secretaria' ? 'selected' : ''}>Secretaria</option><option value="Sala de Aula" ${aluno.vendedor === 'Sala de Aula' ? 'selected' : ''}>Sala de Aula</option></select></td>
+                    <td><select id="card-vendedor-${index}-tab" disabled class="table-input" style="width:155px; color: #333;">${opcoesVendedores}</select></td>
                     <td><input type="text" id="card-email-${index}-tab" value="${aluno.email}" disabled class="table-input" style="width:150px; color: #333;"></td>
                     <td><select id="card-status-${index}-tab" disabled class="table-input" style="width:145px; font-weight:bold; color:#16a34a;"><option value="Pendente de Envio">Pendente de Envio</option><option value="Enviado" selected>Enviado</option></select></td>
                     <td><input type="text" id="card-obs-${index}-tab" disabled class="table-input" value="${aluno.observacoes || ''}" style="width:130px; color: #333;"></td>
@@ -829,7 +953,9 @@
     async function exportarTabelaExcel() {
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
-            let alunos = await res.json();
+            let data = await res.json();
+            let alunos = data.alunos ? data.alunos : data;
+            
             if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
             
             const enviados = alunos.filter(a => {
@@ -856,7 +982,9 @@
     async function exportarTabelaPDF() {
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
-            let alunos = await res.json();
+            let data = await res.json();
+            let alunos = data.alunos ? data.alunos : data;
+            
             if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
             if (!alunos.some(a => a.status && a.status.toString().trim().toLowerCase() === "enviado")) { 
                 Swal.fire('Aviso', 'Não existem registros para imprimir!', 'info'); 
@@ -960,12 +1088,10 @@
 
         try {
             await fetch(URL_PLANILHA, {
-                method: "POST",
-                mode: "no-cors",
+                method: "POST", mode: "no-cors",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(dados)
             });
-
             setTimeout(() => { renderizarPainelGerencial(true); }, 1500);
 
         } catch (err) {
@@ -996,8 +1122,7 @@
                     document.getElementById(`row-${index}`) ? document.getElementById(`row-${index}`).style.opacity = '0.5' : null;
 
                     await fetch(URL_PLANILHA, {
-                        method: "POST",
-                        mode: "no-cors",
+                        method: "POST", mode: "no-cors",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(dados)
                     });
