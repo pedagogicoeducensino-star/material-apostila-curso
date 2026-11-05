@@ -242,7 +242,6 @@
                     </div>
                     <div>
                         <label>Campanha:</label>
-                        <!-- Agora populado via JS -->
                         <select id="cad-campanha" required>
                             <option value="">Aguarde, carregando...</option>
                         </select>
@@ -252,7 +251,6 @@
                 <div class="card-row full">
                     <div>
                         <label>Nome do Vendedor/Consultor:</label>
-                        <!-- Agora populado via JS -->
                         <select id="cad-vendedor" required>
                             <option value="">Aguarde, carregando...</option>
                         </select>
@@ -285,7 +283,7 @@
                 </div>
             </div>
 
-            <!-- NOVA SESSÃO: CONFIGURAÇÕES GLOBAIS DE VENDEDORES E CAMPANHAS -->
+            <!-- CONFIGURAÇÕES GLOBAIS DE VENDEDORES E CAMPANHAS -->
             <div class="card" style="margin-bottom: 25px; background: #fafafa;">
                 <h3 style="margin-top: 0; color:#333; border-left: 4px solid #333;"><i class="fas fa-sliders-h"></i> Configurações de Vendedores e Campanhas</h3>
                 <div class="card-row">
@@ -347,10 +345,9 @@
 
 <script>
     let logado = false;
-    let vendedoresData = []; // Armazena os dados da aba "Vendedores"
-    let campanhasData = [];  // Armazena os dados da aba "Campanhas"
+    let vendedoresData = []; 
+    let campanhasData = [];  
     
-    // --- COLE AQUI O SEU NOVO LINK DO GOOGLE APPS SCRIPT ---
     const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbznSlicmkBv0A5y5GuDvTmvTb8weWiFOYNGqdzmaU1fhlv0r8dIOYa6UGT5PIZ9QA/exec"; 
 
     const listaCursos = [
@@ -375,10 +372,9 @@
         if (sessionStorage.getItem('logadoMaster') === 'true') {
             logado = true;
         }
-        await carregarConfiguracoesGerais(); // Carrega Vendedores e Campanhas dinamicamente no início
+        await carregarConfiguracoesGerais();
     };
 
-    // FUNÇÃO QUE PUXA OS DADOS E POPULA OS SELECTS INICIAIS
     async function carregarConfiguracoesGerais() {
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
@@ -404,7 +400,6 @@
         campanhasData.forEach(c => { selCamp.innerHTML += `<option value="${c}">${c}</option>`; });
     }
 
-    // FUNÇÕES DE GERENCIAMENTO (ADICIONAR/EXCLUIR VENDEDOR E CAMPANHA)
     async function adicionarConfig(tipo, inputId) {
         const input = document.getElementById(inputId);
         const valor = input.value.trim();
@@ -470,7 +465,6 @@
         });
     }
 
-    // FUNÇÕES DE DADOS (Resto do código mantido mas adaptado para o novo retorno da Planilha)
     function parseDateSafely(dataStr) {
         if (!dataStr || dataStr === "Aguardando Envio" || dataStr === "-") return 0;
         if (typeof dataStr === "number") return dataStr;
@@ -558,6 +552,7 @@
         box.style.display = (box.style.display === 'none') ? 'block' : 'none';
     }
 
+    /* --- FUNÇÃO CONSULTAR MATERIAL ATUALIZADA --- */
     async function consultarMaterial() {
         const inputBusca = document.getElementById('search-matricula').value.trim();
         const erroBox = document.getElementById('search-error');
@@ -573,7 +568,7 @@
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let data = await res.json();
-            let alunos = data.alunos ? data.alunos : data; // Retrocompatibilidade
+            let alunos = data.alunos ? data.alunos : data;
             
             if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) {
                 alunos = alunos.slice(1);
@@ -606,6 +601,16 @@
                         <div>
                             <div class="card-data-label">Matrícula</div>
                             <div style="font-size:16px; font-weight:bold;">${a.matricula}</div>
+                        </div>
+                    </div>
+                    <div class="card-row">
+                        <div>
+                            <div class="card-data-label">E-mail Cadastrado</div>
+                            <div style="font-size:15px; font-weight:500;"><i class="fas fa-envelope text-muted"></i> ${a.email || '-'}</div>
+                        </div>
+                        <div>
+                            <div class="card-data-label">Vendedor / Consultor</div>
+                            <div style="font-size:15px; font-weight:600;"><i class="fas fa-user-tag text-muted"></i> ${a.vendedor || '-'}</div>
                         </div>
                     </div>
                     <div class="card-row">
@@ -759,7 +764,6 @@
             if(data.vendedores) vendedoresData = data.vendedores;
             if(data.campanhas) campanhasData = data.campanhas;
             
-            // Mantem os selects do painel publico atualizados caso algo tenha mudado
             preencherSelectsPublicos();
             renderizarListasAdmin(); 
             
@@ -796,7 +800,6 @@
                 let opcoesCursos = '';
                 listaCursos.forEach(c => { opcoesCursos += `<option value="${c}" ${aluno.curso === c ? 'selected' : ''}>${c}</option>`; });
                 
-                // Opções dinâmicas para esse Card
                 let opcoesVendedores = '<option value="">Selecione...</option>';
                 vendedoresData.forEach(v => { opcoesVendedores += `<option value="${v}" ${aluno.vendedor === v ? 'selected' : ''}>${v}</option>`; });
                 
