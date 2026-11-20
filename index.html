@@ -9,8 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- BIBLIOTECA DE ALERTAS PREMIUM (SweetAlert2) -->
+    <!-- BIBLIOTECA DE ALERTAS PREMIUM (SweetAlert2) & CHART.JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root { 
@@ -24,8 +25,8 @@
         body { background-color: var(--escola-cinza-claro); font-family: 'Jost', sans-serif; margin: 0; padding: 20px 10px; color: var(--escola-cinza-escuro); }
         .container { max-width: 1450px; margin: 0 auto; }
         
-        .tabs { display: flex; gap: 10px; margin-bottom: 25px; }
-        .tab-btn { padding: 12px 24px; border: none; background: #e0e0e0; color: #555; cursor: pointer; font-weight: 600; font-size: 15px; font-family: 'Jost', sans-serif; border-radius: 8px; transition: 0.3s; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+        .tab-btn { padding: 12px 20px; border: none; background: #e0e0e0; color: #555; cursor: pointer; font-weight: 600; font-size: 15px; font-family: 'Jost', sans-serif; border-radius: 8px; transition: 0.3s; }
         .tab-btn:hover { background: #d5d5d5; }
         .tab-btn.active { background: linear-gradient(145deg, #ff8226, #e65c00); color: white; box-shadow: 0 4px 12px rgba(230, 92, 0, 0.3); }
         
@@ -45,10 +46,7 @@
         .btn-submit { background: linear-gradient(145deg, #ff8226, #e65c00); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: 600; font-family: 'Jost', sans-serif; width: 100%; transition: 0.2s; }
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(230, 92, 0, 0.3); }
 
-        .btn-abrir-sutil { background: transparent; color: var(--escola-laranja); border: 2px dashed var(--escola-laranja); padding: 10px 20px; border-radius: 6px; font-size: 15px; cursor: pointer; font-weight: 600; height: 48px; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; white-space: nowrap; font-family: 'Jost', sans-serif; }
-        .btn-abrir-sutil:hover { background: rgba(255,107,0,0.05); transform: translateY(-1px); }
-
-        .search-action-bar { display: grid; grid-template-columns: 1fr auto auto; gap: 15px; align-items: end; }
+        .search-action-bar { display: grid; grid-template-columns: 1fr auto; gap: 15px; align-items: end; }
         @media (max-width: 768px) { .search-action-bar { grid-template-columns: 1fr; } }
         
         .alert { padding: 12px 15px; border-radius: 6px; margin-bottom: 15px; font-weight: 600; display: none; border-left: 4px solid; }
@@ -112,6 +110,11 @@
         .login-box { max-width: 400px; margin: 80px auto; text-align: center; }
         .login-box i { font-size: 40px; color: var(--escola-laranja); margin-bottom: 15px; }
         
+        .auth-container { max-width: 420px; margin: 40px auto; }
+        .auth-toggle { display: flex; margin-bottom: 20px; background: #e0e0e0; border-radius: 8px; padding: 4px; }
+        .auth-toggle-btn { flex: 1; padding: 10px; border: none; background: transparent; font-weight: 600; cursor: pointer; border-radius: 6px; transition: 0.3s; font-family: 'Jost', sans-serif; }
+        .auth-toggle-btn.active { background: white; color: var(--escola-laranja); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
         .swal2-popup { font-family: 'Jost', sans-serif; }
 
         @media print {
@@ -134,131 +137,130 @@
 
 <div class="container">
     <div class="tabs">
-        <button class="tab-btn active" id="tab-publica" onclick="switchPage('publica')"><i class="fas fa-search me-2"></i> Consultar e Cadastrar Material</button>
+        <button class="tab-btn active" id="tab-publica" onclick="switchPage('publica')"><i class="fas fa-search me-2"></i> Consultar Material</button>
+        <button class="tab-btn" id="tab-colaborador" onclick="switchPage('colaborador')"><i class="fas fa-user-tie me-2"></i> Ambiente do Colaborador</button>
         <button class="tab-btn" id="tab-restrita" onclick="switchPage('restrita')"><i class="fas fa-user-shield me-2"></i> Painel Restrito</button>
     </div>
 
-    <!-- PÁGINA PÚBLICA -->
+    <!-- PÁGINA PÚBLICA (APENAS CONSULTA) -->
     <div id="page-publica" class="page active">
         <div class="card" style="padding: 25px;">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-search" style="color: var(--escola-laranja);"></i> Consultar Status do Envio de Material</h2>
             <div class="search-action-bar">
                 <div style="width: 100%;">
-                    <label style="margin-bottom: 4px;">Consultar Envio de Material:</label>
-                    <input type="text" id="search-matricula" placeholder="Digite o número da matrícula do aluno..." onkeypress="if(event.key==='Enter') consultarMaterial()">
+                    <label style="margin-bottom: 4px;">Número da Matrícula do Aluno:</label>
+                    <input type="text" id="search-matricula" placeholder="Digite o número da matrícula..." onkeypress="if(event.key==='Enter') consultarMaterial()">
                 </div>
-                <button type="button" style="width: auto; padding: 0 25px; background-color: #333; height: 48px;" class="btn-submit" onclick="consultarMaterial()"><i class="fas fa-search"></i> Buscar</button>
-                <button type="button" id="btn-abrir-cadastro" class="btn-abrir-sutil" onclick="mostrarFormulario()"><i class="fas fa-user-plus"></i> Novo Aluno</button>
+                <button type="button" style="width: auto; padding: 0 30px; height: 48px;" class="btn-submit" onclick="consultarMaterial()"><i class="fas fa-search"></i> Buscar</button>
             </div>
             
             <div id="search-error" class="alert alert-error" style="margin-top: 20px; margin-bottom: 0;"><i class="fas fa-exclamation-triangle"></i> Matrícula não encontrada no sistema!</div>
             <div id="search-result" class="info-card-public" style="display:none;"></div>
         </div>
+    </div>
 
-        <div id="area-cadastro-box" class="info-card-public" style="display: none; margin-bottom: 25px;">
-            <h2 style="font-size: 20px; margin-bottom: 20px;"><i class="fas fa-clipboard-list" style="color: var(--escola-laranja);"></i> Ficha de Cadastro de Aluno</h2>
-            
-            <form id="form-cadastro" onsubmit="cadastrarAluno(event)">
-                <div class="card-row">
-                    <div>
-                        <label>Nome Completo do Aluno(a):</label>
-                        <input type="text" id="cad-nome" required>
-                    </div>
-                    <div>
-                        <label>Matrícula (Única):</label>
-                        <input type="text" id="cad-matricula" required placeholder="Ex: 2026">
-                    </div>
+    <!-- AMBIENTE DO COLABORADOR -->
+    <div id="page-colaborador" class="page">
+        <!-- TELA DE LOGIN / CADASTRO DE COLABORADOR -->
+        <div id="colaborador-auth-box" class="card auth-container">
+            <div class="auth-toggle">
+                <button class="auth-toggle-btn active" id="btn-toggle-login" onclick="alternarAuthColab('login')">Fazer Login</button>
+                <button class="auth-toggle-btn" id="btn-toggle-cad" onclick="alternarAuthColab('cad')">Cadastrar-se</button>
+            </div>
+
+            <!-- FORMULÁRIO DE LOGIN -->
+            <div id="form-login-colab">
+                <h3 style="margin-top:0; border:none; padding:0; text-align:center;">Login do Colaborador</h3>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>E-mail:</label>
+                    <input type="email" id="login-colab-email" placeholder="seu.email@escola.com">
                 </div>
+                <div class="form-group">
+                    <label>Senha:</label>
+                    <input type="password" id="login-colab-senha" placeholder="Sua senha">
+                </div>
+                <button type="button" class="btn-submit" onclick="fazerLoginColaborador()">Entrar no Sistema</button>
+            </div>
 
-                <div class="card-row">
-                    <div>
-                        <label>Dia de Aula:</label>
-                        <select id="cad-dia" required>
+            <!-- FORMULÁRIO DE CADASTRO -->
+            <div id="form-cad-colab" style="display: none;">
+                <h3 style="margin-top:0; border:none; padding:0; text-align:center;">Novo Colaborador</h3>
+                <form id="form-colab-reg" onsubmit="cadastrarColaborador(event)">
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>Nome Completo:</label>
+                        <input type="text" id="reg-colab-nome" required placeholder="Nome e sobrenome">
+                    </div>
+                    <div class="form-group">
+                        <label>Setor:</label>
+                        <select id="reg-colab-setor" required>
                             <option value="">Selecione...</option>
-                            <option value="Segunda-feira">Segunda-feira</option>
-                            <option value="Terça-feira">Terça-feira</option>
-                            <option value="Quarta-feira">Quarta-feira</option>
-                            <option value="Quinta-feira">Quinta-feira</option>
-                            <option value="Sexta-feira">Sexta-feira</option>
-                            <option value="Sábado">Sábado</option>
+                            <option value="Comercial">Comercial</option>
+                            <option value="Pedagógico">Pedagógico</option>
+                            <option value="Secretaria">Secretaria</option>
                         </select>
                     </div>
-                    <div>
-                        <label>Horário de estudo:</label>
-                        <select id="cad-horario" required>
-                            <option value="">Selecione...</option>
-                            <option value="07:00 às 09:00">07:00 às 09:00</option>
-                            <option value="09:00 às 11:00">09:00 às 11:00</option>
-                            <option value="11:00 às 13:00">11:00 às 13:00</option>
-                            <option value="13:00 às 15:00">13:00 às 15:00</option>
-                            <option value="15:00 às 17:00">15:00 às 17:00</option>
-                            <option value="17:00 às 19:00">17:00 às 19:00</option>
-                        </select>
+                    <div class="form-group">
+                        <label>E-mail (Login):</label>
+                        <input type="email" id="reg-colab-email" required placeholder="seu.email@escola.com">
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label>Criar Senha (Mínimo 6 caracteres):</label>
+                        <input type="password" id="reg-colab-senha" required minlength="6" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmar Senha:</label>
+                        <input type="password" id="reg-colab-confirma" required minlength="6" placeholder="Repita a senha">
+                    </div>
+                    <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #16a34a, #15803d);">Concluir Cadastro</button>
+                </form>
+            </div>
+        </div>
 
-                <div class="card-row full">
-                    <div>
-                        <label>Curso:</label>
-                        <select id="cad-curso" required>
-                            <option value="">Selecione...</option>
-                            <option value="Assistente Administrativo - AA">Assistente Administrativo - AA</option>
-                            <option value="Assistente Administrativo Plus - AAP">Assistente Administrativo Plus - AAP</option>
-                            <option value="Atendente de Farmácia - AF">Atendente de Farmácia - AF</option>
-                            <option value="Atendente de Farmácia Plus - AFP">Atendente de Farmácia Plus - AFP</option>
-                            <option value="Cuidador de Idosos - CI">Cuidador de Idosos - CI</option>
-                            <option value="Design de Games e Edições - DGE">Design de Games e Edições - DGE</option>
-                            <option value="Design Gráfico Plus - DGP">Design Gráfico Plus - DGP</option>
-                            <option value="Informática Essencial Adulto - IEA">Informática Essencial Adulto - IEA</option>
-                            <option value="Informática Essencial Kids - IEK">Informática Essencial Kids - IEK</option>
-                            <option value="Marketing Digital Criativo">Marketing Digital Criativo</option>
-                            <option value="Operador de Caixa - OC">Operador de Caixa - OC</option>
-                            <option value="Operador de Caixa Plus - OCP">Operador de Caixa Plus - OCP</option>
-                            <option value="Programador Web Profissional - PWP">Programador Web Profissional - PWP</option>
-                            <option value="Secretariado - S">Secretariado - S</option>
-                            <option value="Telemarketing - T">Telemarketing - T</option>
-                            <option value="CN - Assistente em Administração">CN - Assistente em Administração</option>
-                            <option value="CN - Assistente em Administração Plus">CN - Assistente em Administração Plus</option>
-                            <option value="CN - Atendente de Farmácia">CN - Atendente de Farmácia</option>
-                            <option value="CN - Atendente de Farmácia Plus">CN - Atendente de Farmácia Plus</option>
-                            <option value="CN - Cuidador de Idosos">CN - Cuidador de Idosos</option>
-                            <option value="CN - Design Desenvolvedor de Games">CN - Design Desenvolvedor de Games</option>
-                            <option value="CN - Design Gráfico">CN - Design Gráfico</option>
-                            <option value="CN - Design Gráfico Plus">CN - Design Gráfico Plus</option>
-                            <option value="CN - Informática Essencial - Adulto">CN - Informática Essencial - Adulto</option>
-                            <option value="CN - Informática Essencial - Kids">CN - Informática Essencial - Kids</option>
-                            <option value="CN - Operador de Caixa">CN - Operador de Caixa</option>
-                            <option value="CN - Operador de Caixa Plus">CN - Operador de Caixa Plus</option>
-                            <option value="CN - Secretariado">CN - Secretariado</option>
-                            <option value="CN - Tabelas, Gráficos e Excel Completo - Adulto">CN - Tabelas, Gráficos e Excel Completo - Adulto</option>
-                            <option value="CN- Informática Essencial - Terceira Idade">CN- Informática Essencial - Terceira Idade</option>
-                        </select>
-                    </div>
+        <!-- PAINEL LOGADO DO COLABORADOR -->
+        <div id="colaborador-painel" style="display: none;">
+            <div class="card" style="padding: 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
+                <div>
+                    <h2 style="border:none; margin:0; padding:0;"><i class="fas fa-id-badge" style="color: var(--escola-laranja);"></i> Painel do Colaborador: <span id="colab-logado-nome" style="color:var(--escola-laranja);"></span></h2>
+                    <p style="margin:5px 0 0 0; font-size:14px; color:#666;">Setor: <strong id="colab-logado-setor"></strong> | E-mail: <span id="colab-logado-email"></span></p>
                 </div>
-
-                <div class="card-row">
-                    <div>
-                        <label>E-mail para enviar o Material (Sem acentuações):</label>
-                        <input type="email" id="cad-email" required oninput="validarEmailInput(this)">
-                    </div>
-                    <div>
-                        <label>Campanha:</label>
-                        <select id="cad-campanha" required>
-                            <option value="">Aguarde, carregando...</option>
-                        </select>
-                    </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-submit" style="width:auto; background:#16a34a;" onclick="abrirModalNovoEnvio()"><i class="fas fa-plus-circle"></i> Cadastrar Novo Envio</button>
+                    <button class="btn-submit" style="width:auto; background:#dc3545;" onclick="logoutColaborador()"><i class="fas fa-sign-out-alt"></i> Sair</button>
                 </div>
+            </div>
 
-                <div class="card-row full">
-                    <div>
-                        <label>Nome do Vendedor/Consultor:</label>
-                        <select id="cad-vendedor" required>
-                            <option value="">Aguarde, carregando...</option>
-                        </select>
-                    </div>
+            <!-- GRÁFICO DE DEMONSTRAÇÃO DO MÊS -->
+            <div class="card" style="display:grid; grid-template-columns: 1fr 2fr; gap:20px; align-items:center;">
+                <div>
+                    <h3 style="margin-top:0;">Seu Desempenho (Mês Atual)</h3>
+                    <p style="font-size:14px; color:#555;">Gráfico demonstrativo dos seus envios cadastrados divididos entre padrão e pedagógicos/outros.</p>
+                    <div id="colab-stats-texto" style="font-size:15px; font-weight:600; margin-top:15px;"></div>
                 </div>
+                <div style="max-height: 250px; display:flex; justify-content:center;">
+                    <canvas id="graficoColaborador"></canvas>
+                </div>
+            </div>
 
-                <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #16a34a, #15803d); margin-top: 15px;"><i class="fas fa-save me-2"></i> Gravar Registro na Base</button>
-            </form>
+            <!-- CENTRAL DE MATERIAIS DO COLABORADOR -->
+            <div class="card">
+                <h3>Central de Materiais Cadastrados por Você</h3>
+                <div class="table-responsive">
+                    <table class="list-table">
+                        <thead>
+                            <tr>
+                                <th>Data Cadastro</th>
+                                <th>Matrícula</th>
+                                <th>Aluno(a)</th>
+                                <th>Curso</th>
+                                <th>E-mail</th>
+                                <th>Status</th>
+                                <th>Observação da Coordenação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-materiais-colab"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -305,6 +307,25 @@
                     </div>
                 </div>
             </div>
+
+            <!-- CONTROLE DE COLABORADORES PELO ADMIN -->
+            <div class="card" style="margin-bottom: 25px;">
+                <h3 style="margin-top: 0; border-left: 4px solid #333;"><i class="fas fa-users-cog"></i> Gestão de Colaboradores (Acessos e Bloqueios)</h3>
+                <div class="table-responsive">
+                    <table class="list-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Setor</th>
+                                <th>E-mail</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-admin-colaboradores"></tbody>
+                    </table>
+                </div>
+            </div>
             
             <h3>Materiais Pendentes de Envio - Lembre-se: o envio do material deverá ocorrer em até 72 horas, contadas a partir da data e horário do registro da solicitação.</h3>
             <div id="grid-pendentes"></div>
@@ -345,10 +366,12 @@
 
 <script>
     let logado = false;
+    let colabLogado = null;
+    let meuGrafico = null;
     let vendedoresData = []; 
     let campanhasData = [];  
     
-    const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbznSlicmkBv0A5y5GuDvTmvTb8weWiFOYNGqdzmaU1fhlv0r8dIOYa6UGT5PIZ9QA/exec"; 
+    const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbxkur8vT4X0uTv4atLYsfLAdl4anAx4jhjAxsmH10F5IqWeJIPZlELCdtNI0DDC8M1Z/exec"; 
 
     const listaCursos = [
         "Assistente Administrativo - AA", "Assistente Administrativo Plus - AAP",
@@ -372,6 +395,11 @@
         if (sessionStorage.getItem('logadoMaster') === 'true') {
             logado = true;
         }
+        let salvoColab = sessionStorage.getItem('colabLogado');
+        if (salvoColab) {
+            colabLogado = JSON.parse(salvoColab);
+            carregarPainelColaborador();
+        }
         await carregarConfiguracoesGerais();
     };
 
@@ -383,21 +411,14 @@
             if (data.vendedores) vendedoresData = data.vendedores;
             if (data.campanhas) campanhasData = data.campanhas;
             
-            preencherSelectsPublicos();
+            preencherSelectsAdmin();
         } catch (err) {
             console.error("Erro ao puxar dados globais.");
         }
     }
 
-    function preencherSelectsPublicos() {
-        const selVend = document.getElementById('cad-vendedor');
-        const selCamp = document.getElementById('cad-campanha');
-        
-        selVend.innerHTML = '<option value="">Selecione...</option>';
-        vendedoresData.forEach(v => { selVend.innerHTML += `<option value="${v}">${v}</option>`; });
-        
-        selCamp.innerHTML = '<option value="">Selecione...</option>';
-        campanhasData.forEach(c => { selCamp.innerHTML += `<option value="${c}">${c}</option>`; });
+    function preencherSelectsAdmin() {
+        // Mantém compatibilidade com funções existentes
     }
 
     async function adicionarConfig(tipo, inputId) {
@@ -453,16 +474,18 @@
         const listaVend = document.getElementById('lista-vendedores');
         const listaCamp = document.getElementById('lista-campanhas');
         
-        listaVend.innerHTML = '';
-        listaCamp.innerHTML = '';
-        
-        vendedoresData.forEach(v => {
-            listaVend.innerHTML += `<li class="config-list-item">${v} <button class="table-btn-3d btn-del" onclick="deletarConfig('Vendedores', '${v}')" style="padding:4px 8px; font-size:11px;"><i class="fas fa-trash"></i></button></li>`;
-        });
-        
-        campanhasData.forEach(c => {
-            listaCamp.innerHTML += `<li class="config-list-item">${c} <button class="table-btn-3d btn-del" onclick="deletarConfig('Campanhas', '${c}')" style="padding:4px 8px; font-size:11px;"><i class="fas fa-trash"></i></button></li>`;
-        });
+        if(listaVend && listaCamp) {
+            listaVend.innerHTML = '';
+            listaCamp.innerHTML = '';
+            
+            vendedoresData.forEach(v => {
+                listaVend.innerHTML += `<li class="config-list-item">${v} <button class="table-btn-3d btn-del" onclick="deletarConfig('Vendedores', '${v}')" style="padding:4px 8px; font-size:11px;"><i class="fas fa-trash"></i></button></li>`;
+            });
+            
+            campanhasData.forEach(c => {
+                listaCamp.innerHTML += `<li class="config-list-item">${c} <button class="table-btn-3d btn-del" onclick="deletarConfig('Campanhas', '${c}')" style="padding:4px 8px; font-size:11px;"><i class="fas fa-trash"></i></button></li>`;
+            });
+        }
     }
 
     function parseDateSafely(dataStr) {
@@ -507,25 +530,9 @@
     }
 
     function switchPage(page) {
-        if (page === 'publica' && logado) {
-            Swal.fire({
-                title: 'Sair do Painel?',
-                text: 'Por segurança, sua sessão gerencial será encerrada ao voltar para a área de consulta.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ff6b00',
-                cancelButtonColor: '#4a5568',
-                confirmButtonText: 'Sim, sair com segurança',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    logout(); 
-                    executarTrocaDeAba('publica');
-                }
-            });
-            return; 
+        if (page === 'restrita' && logado) {
+            // Já logado como admin
         }
-        
         executarTrocaDeAba(page);
     }
 
@@ -547,12 +554,7 @@
         }
     }
 
-    function mostrarFormulario() {
-        const box = document.getElementById('area-cadastro-box');
-        box.style.display = (box.style.display === 'none') ? 'block' : 'none';
-    }
-
-    /* --- FUNÇÃO CONSULTAR MATERIAL ATUALIZADA --- */
+    // --- CONSULTA PÚBLICA ---
     async function consultarMaterial() {
         const inputBusca = document.getElementById('search-matricula').value.trim();
         const erroBox = document.getElementById('search-error');
@@ -643,90 +645,211 @@
         }
     }
 
-    async function cadastrarAluno(e) {
-        e.preventDefault();
-        const matricula = document.getElementById('cad-matricula').value.trim();
-        const nome = document.getElementById('cad-nome').value.trim();
-        const dia = document.getElementById('cad-dia').value;
-        const horario = document.getElementById('cad-horario').value;
-        const curso = document.getElementById('cad-curso').value;
-        const email = document.getElementById('cad-email').value.trim();
-        const vendedor = document.getElementById('cad-vendedor').value;
-        const campanha = document.getElementById('cad-campanha').value;
+    // --- AMBIENTE DO COLABORADOR ---
+    function alternarAuthColab(tipo) {
+        if(tipo === 'login') {
+            document.getElementById('form-login-colab').style.display = 'block';
+            document.getElementById('form-cad-colab').style.display = 'none';
+            document.getElementById('btn-toggle-login').classList.add('active');
+            document.getElementById('btn-toggle-cad').classList.remove('active');
+        } else {
+            document.getElementById('form-login-colab').style.display = 'none';
+            document.getElementById('form-cad-colab').style.display = 'block';
+            document.getElementById('btn-toggle-cad').classList.add('active');
+            document.getElementById('btn-toggle-login').classList.remove('active');
+        }
+    }
 
-        const btnCadastrar = e.target.querySelector('button[type="submit"]');
-        
-        btnCadastrar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Verificando Matrícula...';
-        btnCadastrar.disabled = true;
+    async function cadastrarColaborador(e) {
+        e.preventDefault();
+        const nome = document.getElementById('reg-colab-nome').value.trim();
+        const setor = document.getElementById('reg-colab-setor').value;
+        const email = document.getElementById('reg-colab-email').value.trim();
+        const senha = document.getElementById('reg-colab-senha').value;
+        const conf = document.getElementById('reg-colab-confirma').value;
+
+        if(senha !== conf) {
+            Swal.fire('Erro', 'As senhas não coincidem!', 'error');
+            return;
+        }
+
+        Swal.fire({title: 'Cadastrando...', didOpen: () => Swal.showLoading()});
+        try {
+            const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
+            let data = await res.json();
+            let colabs = data.colaboradores || [];
+            if(colabs.some(c => String(c.email).trim().toLowerCase() === email.toLowerCase())) {
+                Swal.fire('Aviso', 'Este e-mail já está cadastrado!', 'warning');
+                return;
+            }
+
+            await fetch(URL_PLANILHA, {
+                method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({action: "cadastrarColaborador", nome, setor, email, senha})
+            });
+
+            Swal.fire('Sucesso!', 'Cadastro realizado. Faça seu login.', 'success');
+            alternarAuthColab('login');
+            document.getElementById('form-colab-reg').reset();
+        } catch(err) {
+            Swal.fire('Erro', 'Falha ao registrar colaborador.', 'error');
+        }
+    }
+
+    async function fazerLoginColaborador() {
+        const email = document.getElementById('login-colab-email').value.trim();
+        const senha = document.getElementById('login-colab-senha').value;
+        if(!email || !senha) return Swal.fire('Aviso', 'Preencha e-mail e senha.', 'info');
+
+        Swal.fire({title: 'Entrando...', didOpen: () => Swal.showLoading()});
+        try {
+            const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
+            let data = await res.json();
+            let colabs = data.colaboradores || [];
+            let c = colabs.find(x => String(x.email).trim().toLowerCase() === email.toLowerCase() && String(x.senha) === senha);
+
+            if(c) {
+                if(String(c.status).toLowerCase() === 'bloqueado') {
+                    Swal.fire('Acesso Negado', 'Sua conta está bloqueada pela coordenação.', 'error');
+                    return;
+                }
+                colabLogado = c;
+                sessionStorage.setItem('colabLogado', JSON.stringify(c));
+                Swal.close();
+                carregarPainelColaborador();
+            } else {
+                Swal.fire('Erro', 'E-mail ou senha incorretos.', 'error');
+            }
+        } catch(e) {
+            Swal.fire('Erro', 'Erro ao conectar.', 'error');
+        }
+    }
+
+    function logoutColaborador() {
+        colabLogado = null;
+        sessionStorage.removeItem('colabLogado');
+        document.getElementById('colaborador-auth-box').style.display = 'block';
+        document.getElementById('colaborador-painel').style.display = 'none';
+    }
+
+    async function carregarPainelColaborador() {
+        document.getElementById('colaborador-auth-box').style.display = 'none';
+        document.getElementById('colaborador-painel').style.display = 'block';
+        document.getElementById('colab-logado-nome').innerText = colabLogado.nome;
+        document.getElementById('colab-logado-setor').innerText = colabLogado.setor;
+        document.getElementById('colab-logado-email').innerText = colabLogado.email;
 
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let data = await res.json();
-            let alunos = data.alunos ? data.alunos : data;
-            
-            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) {
-                alunos = alunos.slice(1);
-            }
-            
-            const existe = alunos.find(al => String(al.matricula) === String(matricula));
-            
-            if (existe) {
-                Swal.fire({
-                    title: 'Cadastro Duplicado!',
-                    text: 'Esta matrícula já possui uma solicitação. Por favor, procure a coordenação para não gerar duplicidade.',
-                    icon: 'warning',
-                    confirmButtonColor: '#ff6b00'
-                });
-                
-                btnCadastrar.innerHTML = '<i class="fas fa-save me-2"></i> Gravar Registro na Base';
-                btnCadastrar.disabled = false;
-                return;
-            }
-        } catch (err) {
-            Swal.fire('Erro de Conexão', 'Não foi possível verificar a base de dados no momento. Tente novamente.', 'error');
-            btnCadastrar.innerHTML = '<i class="fas fa-save me-2"></i> Gravar Registro na Base';
-            btnCadastrar.disabled = false;
-            return;
-        }
+            let alunos = data.alunos || [];
+            let meusMateriais = alunos.filter(a => String(a.vendedor).trim().toLowerCase() === colabLogado.nome.trim().toLowerCase());
 
-        btnCadastrar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gravando...';
-        const dados = { matricula, nome, dia, horario, curso, email, vendedor, campanha };
+            let tbody = document.getElementById('tbody-materiais-colab');
+            tbody.innerHTML = '';
+            let totalPadrao = 0, totalPedagogico = 0;
 
-        fetch(URL_PLANILHA, {
-            method: "POST", mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(dados)
-        })
-        .then(() => {
-            Swal.fire({
-                title: 'Tudo Certo!',
-                text: 'Material registrado com sucesso! Aguarde o envio do material em até 72 horas.',
-                icon: 'success',
-                confirmButtonColor: '#16a34a',
-                confirmButtonText: 'Ok'
+            meusMateriais.forEach(m => {
+                let cursoLower = String(m.curso).toLowerCase();
+                if(cursoLower.includes('pedag') || cursoLower.includes('cn -') || cursoLower.includes('farmácia')) {
+                    totalPedagogico++;
+                } else {
+                    totalPadrao++;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${formatarData(m.dataCadastro)}</td>
+                        <td><b>${m.matricula}</b></td>
+                        <td>${m.nome}</td>
+                        <td>${m.curso}</td>
+                        <td>${m.email}</td>
+                        <td><span style="font-weight:bold; color:${String(m.status).toLowerCase()==='enviado'?'#16a34a':'#ff6b00'}">${m.status}</span></td>
+                        <td>${m.observacoes || '-'}</td>
+                    </tr>
+                `;
             });
-            
-            document.getElementById('area-cadastro-box').style.display = 'none';
-            document.getElementById('form-cadastro').reset();
-            
-            btnCadastrar.innerHTML = '<i class="fas fa-save me-2"></i> Gravar Registro na Base';
-            btnCadastrar.disabled = false;
 
-            if(logado) {
-                setTimeout(() => { renderizarPainelGerencial(true); }, 1500);
+            if(meusMateriais.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#777;">Nenhum material cadastrado por você ainda.</td></tr>`;
             }
-        })
-        .catch(err => {
-            Swal.fire('Erro!', 'Não foi possível gravar na base de dados.', 'error');
-            btnCadastrar.innerHTML = '<i class="fas fa-save me-2"></i> Gravar Registro na Base';
-            btnCadastrar.disabled = false;
+
+            document.getElementById('colab-stats-texto').innerHTML = `Total de Envios: ${meusMateriais.length}<br>• Padrão: ${totalPadrao}<br>• Pedagógico / Especiais: ${totalPedagogico}`;
+
+            const ctx = document.getElementById('graficoColaborador').getContext('2d');
+            if(meuGrafico) meuGrafico.destroy();
+            meuGrafico = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Padrão', 'Pedagógico / Outros'],
+                    datasets: [{
+                        data: [totalPadrao, totalPedagogico],
+                        backgroundColor: ['#ff6b00', '#16a34a']
+                    }]
+                },
+                options: {responsive: true, maintainAspectRatio: false}
+            });
+
+        } catch(e) {
+            console.error(e);
+        }
+    }
+
+    async function abrirModalNovoEnvio() {
+        let optionsCursos = listaCursos.map(c => `<option value="${c}">${c}</option>`).join('');
+        
+        let res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
+        let data = await res.json();
+        let campanhas = data.campanhas || ['Padrão', 'Suporte'];
+        let optionsCamp = campanhas.map(cp => `<option value="${cp}">${cp}</option>`).join('');
+
+        Swal.fire({
+            title: 'Cadastrar Novo Envio',
+            html: `
+                <div style="text-align:left; display:flex; flex-direction:column; gap:10px; max-height:400px; overflow-y:auto; padding:5px;">
+                    <label>Nome do Aluno(a):</label><input type="text" id="swal-nome" class="swal2-input" style="margin:0; width:100%;">
+                    <label>Matrícula:</label><input type="text" id="swal-matricula" class="swal2-input" style="margin:0; width:100%;">
+                    <label>Curso:</label><select id="swal-curso" class="swal2-input" style="margin:0; width:100%;">${optionsCursos}</select>
+                    <label>Campanha:</label><select id="swal-campanha" class="swal2-input" style="margin:0; width:100%;">${optionsCamp}</select>
+                    <label>Dia de Aula:</label><select id="swal-dia" class="swal2-input" style="margin:0; width:100%;"><option value="Segunda-feira">Segunda-feira</option><option value="Terça-feira">Terça-feira</option><option value="Quarta-feira">Quarta-feira</option><option value="Quinta-feira">Quinta-feira</option><option value="Sexta-feira">Sexta-feira</option><option value="Sábado">Sábado</option></select>
+                    <label>Horário:</label><select id="swal-horario" class="swal2-input" style="margin:0; width:100%;"><option value="07:00 às 09:00">07:00 às 09:00</option><option value="09:00 às 11:00">09:00 às 11:00</option><option value="11:00 às 13:00">11:00 às 13:00</option><option value="13:00 às 15:00">13:00 às 15:00</option><option value="15:00 às 17:00">15:00 às 17:00</option></select>
+                    <label>E-mail do Aluno:</label><input type="email" id="swal-email" class="swal2-input" style="margin:0; width:100%;">
+                </div>
+            `,
+            confirmButtonText: 'Gravar Registro',
+            confirmButtonColor: '#16a34a',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            preConfirm: () => {
+                return {
+                    nome: document.getElementById('swal-nome').value.trim(),
+                    matricula: document.getElementById('swal-matricula').value.trim(),
+                    curso: document.getElementById('swal-curso').value,
+                    campanha: document.getElementById('swal-campanha').value,
+                    dia: document.getElementById('swal-dia').value,
+                    horario: document.getElementById('swal-horario').value,
+                    email: document.getElementById('swal-email').value.trim(),
+                    vendedor: colabLogado.nome
+                }
+            }
+        }).then(async (result) => {
+            if(result.isConfirmed) {
+                let dados = result.value;
+                if(!dados.nome || !dados.matricula || !dados.email) {
+                    return Swal.fire('Erro', 'Preencha os campos obrigatórios.', 'error');
+                }
+                Swal.fire({title: 'Gravando...', didOpen: () => Swal.showLoading()});
+                await fetch(URL_PLANILHA, {
+                    method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(dados)
+                });
+                Swal.fire('Sucesso!', 'Material cadastrado com sucesso.', 'success');
+                carregarPainelColaborador();
+            }
         });
     }
 
-    function validarEmailInput(input) {
-        input.value = input.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    }
-
+    // --- PAINEL RESTRITO (ADMIN) ---
     function autenticar() {
         const senha = document.getElementById('admin-password').value;
         if (senha === "Educ@2023E") { 
@@ -750,6 +873,7 @@
     async function renderizarPainelGerencial(silencioso = false) {
         const containerPendentes = document.getElementById('grid-pendentes');
         const tbodyEnviados = document.getElementById('tbody-enviados');
+        const tbodyColabAdmin = document.getElementById('tbody-admin-colaboradores');
         
         if (!silencioso) {
             containerPendentes.innerHTML = "<p style='padding: 20px; font-weight:600;'><i class='fas fa-spinner fa-spin text-muted'></i> Atualizando base de dados...</p>";
@@ -763,9 +887,32 @@
             let alunos = data.alunos ? data.alunos : data;
             if(data.vendedores) vendedoresData = data.vendedores;
             if(data.campanhas) campanhasData = data.campanhas;
+            let colabs = data.colaboradores || [];
             
-            preencherSelectsPublicos();
             renderizarListasAdmin(); 
+            
+            // Renderizar tabela de colaboradores no painel admin
+            if(tbodyColabAdmin) {
+                tbodyColabAdmin.innerHTML = '';
+                colabs.forEach(c => {
+                    let bloqueado = String(c.status).toLowerCase() === 'bloqueado';
+                    tbodyColabAdmin.innerHTML += `
+                        <tr>
+                            <td><b>${c.nome}</b></td>
+                            <td>${c.setor}</td>
+                            <td>${c.email}</td>
+                            <td><span style="color:${bloqueado?'#dc3545':'#16a34a'}; font-weight:bold;">${c.status || 'Ativo'}</span></td>
+                            <td>
+                                <button class="btn-3d-premium ${bloqueado?'btn-save':'btn-del'}" onclick="alternarBloqueioColaborador('${c.email}', '${bloqueado?'Ativo':'Bloqueado'}')">${bloqueado?'Desbloquear':'Bloquear'}</button>
+                                <button class="btn-3d-premium btn-edit" onclick="resetarSenhaColaborador('${c.email}')">Mudar Senha</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                if(colabs.length === 0) {
+                    tbodyColabAdmin.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:15px; color:#777;">Nenhum colaborador cadastrado ainda.</td></tr>`;
+                }
+            }
             
             containerPendentes.innerHTML = "";
             tbodyEnviados.innerHTML = "";
@@ -950,6 +1097,35 @@
             console.error(e);
             tbodyEnviados.innerHTML = "<tr><td colspan='13' style='text-align:center; color:#dc3545; padding:30px; font-weight:600;'><i class='fas fa-times-circle'></i> Erro ao carregar dados da planilha.</td></tr>";
             containerPendentes.innerHTML = "<p style='color:#dc3545; padding:20px; font-weight:600;'><i class='fas fa-times-circle'></i> Erro ao carregar dados da planilha.</p>";
+        }
+    }
+
+    async function alternarBloqueioColaborador(email, novoStatus) {
+        await fetch(URL_PLANILHA, {
+            method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({action: "updateColaborador", email, status: novoStatus})
+        });
+        Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Status do colaborador alterado!', showConfirmButton: false, timer: 1500});
+        setTimeout(() => renderizarPainelGerencial(true), 1500);
+    }
+
+    async function resetarSenhaColaborador(email) {
+        const { value: novaSenha } = await Swal.fire({
+            title: 'Nova Senha',
+            input: 'password',
+            inputLabel: 'Digite a nova senha (mínimo 6 caracteres):',
+            inputAttributes: {minlength: 6},
+            showCancelButton: true
+        });
+
+        if(novaSenha && novaSenha.length >= 6) {
+            await fetch(URL_PLANILHA, {
+                method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({action: "updateColaborador", email, senha: novaSenha})
+            });
+            Swal.fire('Sucesso!', 'Senha alterada com sucesso.', 'success');
+        } else if(novaSenha) {
+            Swal.fire('Erro', 'A senha deve ter no mínimo 6 caracteres.', 'error');
         }
     }
 
