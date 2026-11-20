@@ -142,7 +142,7 @@
         <button class="tab-btn" id="tab-restrita" onclick="switchPage('restrita')"><i class="fas fa-user-shield me-2"></i> Painel Restrito</button>
     </div>
 
-    <!-- PÁGINA PÚBLICA (APENAS CONSULTA) -->
+    <!-- PÁGINA PÚBLICA -->
     <div id="page-publica" class="page active">
         <div class="card" style="padding: 25px;">
             <h2 style="margin-bottom: 20px;"><i class="fas fa-search" style="color: var(--escola-laranja);"></i> Consultar Status do Envio de Material</h2>
@@ -161,14 +161,12 @@
 
     <!-- AMBIENTE DO COLABORADOR -->
     <div id="page-colaborador" class="page">
-        <!-- TELA DE LOGIN / CADASTRO DE COLABORADOR -->
         <div id="colaborador-auth-box" class="card auth-container">
             <div class="auth-toggle">
                 <button class="auth-toggle-btn active" id="btn-toggle-login" onclick="alternarAuthColab('login')">Fazer Login</button>
                 <button class="auth-toggle-btn" id="btn-toggle-cad" onclick="alternarAuthColab('cad')">Cadastrar-se</button>
             </div>
 
-            <!-- FORMULÁRIO DE LOGIN -->
             <div id="form-login-colab">
                 <h3 style="margin-top:0; border:none; padding:0; text-align:center;">Login do Colaborador</h3>
                 <div class="form-group" style="margin-top: 15px;">
@@ -182,7 +180,6 @@
                 <button type="button" class="btn-submit" onclick="fazerLoginColaborador()">Entrar no Sistema</button>
             </div>
 
-            <!-- FORMULÁRIO DE CADASTRO -->
             <div id="form-cad-colab" style="display: none;">
                 <h3 style="margin-top:0; border:none; padding:0; text-align:center;">Novo Colaborador</h3>
                 <form id="form-colab-reg" onsubmit="cadastrarColaborador(event)">
@@ -216,7 +213,6 @@
             </div>
         </div>
 
-        <!-- PAINEL LOGADO DO COLABORADOR -->
         <div id="colaborador-painel" style="display: none;">
             <div class="card" style="padding: 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
                 <div>
@@ -233,7 +229,7 @@
             <div class="card" style="display:grid; grid-template-columns: 1fr 2fr; gap:20px; align-items:center;">
                 <div>
                     <h3 style="margin-top:0;" id="colab-grafico-titulo">Seu Desempenho</h3>
-                    <p style="font-size:14px; color:#555;">Gráfico demonstrativo dos seus envios cadastrados divididos por campanhas ativas no mês atual.</p>
+                    <p style="font-size:14px; color:#555;">Gráfico demonstrativo dos seus envios cadastrados divididos pelas campanhas ativas no mês atual.</p>
                     <div id="colab-stats-texto" style="font-size:15px; font-weight:600; margin-top:15px;"></div>
                 </div>
                 <div style="max-height: 250px; display:flex; justify-content:center;">
@@ -265,7 +261,7 @@
         </div>
     </div>
 
-    <!-- PÁGINA RESTRITA -->
+    <!-- PÁGINA RESTRITA (REORGANIZADA) -->
     <div id="page-restrita" class="page">
         <div id="lock-screen" class="card login-box">
             <i class="fas fa-lock"></i>
@@ -285,52 +281,12 @@
                     <button type="button" style="width:auto; background:#dc3545; padding: 10px 20px; font-size:14px; box-shadow: none;" class="btn-submit" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair / Bloquear</button>
                 </div>
             </div>
-
-            <!-- CONFIGURAÇÕES GLOBAIS DE VENDEDORES E CAMPANHAS -->
-            <div class="card" style="margin-bottom: 25px; background: #fafafa;">
-                <h3 style="margin-top: 0; color:#333; border-left: 4px solid #333;"><i class="fas fa-sliders-h"></i> Configurações de Vendedores e Campanhas</h3>
-                <div class="card-row">
-                    <div>
-                        <label>Adicionar Vendedor/Consultor:</label>
-                        <div style="display:flex; gap:10px;">
-                            <input type="text" id="novo-vendedor" placeholder="Digite o nome do vendedor...">
-                            <button class="btn-3d-premium btn-save" onclick="adicionarConfig('Vendedores', 'novo-vendedor')"><i class="fas fa-plus"></i></button>
-                        </div>
-                        <ul id="lista-vendedores" style="list-style: none; padding: 0; margin-top: 15px; max-height: 200px; overflow-y: auto;"></ul>
-                    </div>
-                    <div>
-                        <label>Adicionar Campanha:</label>
-                        <div style="display:flex; gap:10px;">
-                            <input type="text" id="nova-campanha" placeholder="Digite o nome da campanha...">
-                            <button class="btn-3d-premium btn-save" onclick="adicionarConfig('Campanhas', 'nova-campanha')"><i class="fas fa-plus"></i></button>
-                        </div>
-                        <ul id="lista-campanhas" style="list-style: none; padding: 0; margin-top: 15px; max-height: 200px; overflow-y: auto;"></ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CONTROLE DE COLABORADORES PELO ADMIN -->
-            <div class="card" style="margin-bottom: 25px;">
-                <h3 style="margin-top: 0; border-left: 4px solid #333;"><i class="fas fa-users-cog"></i> Gestão de Colaboradores (Acessos e Bloqueios)</h3>
-                <div class="table-responsive">
-                    <table class="list-table">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Setor</th>
-                                <th>E-mail</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-admin-colaboradores"></tbody>
-                    </table>
-                </div>
-            </div>
             
+            <!-- 1. MATERIAIS PENDENTES DE ENVIO -->
             <h3>Materiais Pendentes de Envio - Lembre-se: o envio do material deverá ocorrer em até 72 horas, contadas a partir da data e horário do registro da solicitação.</h3>
             <div id="grid-pendentes"></div>
 
+            <!-- 2. MATERIAIS ENVIADOS -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 15px;">
                 <h3 style="margin: 0; border-left: 4px solid #16a34a;">Materiais Enviados</h3>
                 <div class="action-buttons-group">
@@ -339,7 +295,7 @@
                 </div>
             </div>
             
-            <div class="table-responsive">
+            <div class="table-responsive" style="margin-bottom: 30px;">
                 <table class="list-table" id="tabela-enviados-raiz">
                     <thead>
                         <tr>
@@ -361,6 +317,77 @@
                     <tbody id="tbody-enviados"></tbody>
                 </table>
             </div>
+
+            <!-- 3. PAINEL GERENCIAL (CONFIGURAÇÕES, COLABORADORES E RELATÓRIO/ESTATÍSTICAS) -->
+            <div class="card" style="background: #fafafa; border-top-color: #333;">
+                <h2 style="margin-bottom: 20px;"><i class="fas fa-sliders-h" style="color: var(--escola-laranja);"></i> Painel Gerencial e Relatórios</h2>
+
+                <!-- Gestão de Colaboradores -->
+                <h3 style="margin-top: 0; border-left: 4px solid #333;"><i class="fas fa-users-cog"></i> Gestão de Colaboradores (Edições e Bloqueios)</h3>
+                <div class="table-responsive" style="margin-bottom: 25px;">
+                    <table class="list-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Setor</th>
+                                <th>E-mail</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-admin-colaboradores"></tbody>
+                    </table>
+                </div>
+
+                <!-- Adicionar Campanha -->
+                <h3 style="margin-top: 0; border-left: 4px solid #333;"><i class="fas fa-bullhorn"></i> Adicionar Campanha</h3>
+                <div style="display:flex; gap:10px; max-width: 500px; margin-bottom: 25px;">
+                    <input type="text" id="nova-campanha" placeholder="Digite o nome da campanha...">
+                    <button class="btn-3d-premium btn-save" onclick="adicionarConfig('Campanhas', 'nova-campanha')"><i class="fas fa-plus"></i> Adicionar</button>
+                </div>
+                <ul id="lista-campanhas" style="list-style: none; padding: 0; margin-bottom: 30px; max-width: 500px;"></ul>
+
+                <!-- Relatório de Cadastros e Estatísticas com Filtros -->
+                <h3 style="margin-top: 0; border-left: 4px solid var(--escola-laranja);"><i class="fas fa-chart-pie"></i> Relatório de Cadastros e Estatísticas</h3>
+                
+                <div class="card" style="background: #fff; padding: 15px; margin-bottom: 15px;">
+                    <div class="card-row" style="grid-template-columns: repeat(4, 1fr);">
+                        <div>
+                            <label>Filtrar por Campanha:</label>
+                            <select id="filtro-campanha" onchange="renderizarRelatorioEstatistico()">
+                                <option value="">Todas as Campanhas</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Filtrar por Colaborador:</label>
+                            <select id="filtro-colaborador" onchange="renderizarRelatorioEstatistico()">
+                                <option value="">Todos os Colaboradores</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Data Início:</label>
+                            <input type="date" id="filtro-data-inicio" onchange="renderizarRelatorioEstatistico()">
+                        </div>
+                        <div>
+                            <label>Data Fim:</label>
+                            <input type="date" id="filtro-data-fim" onchange="renderizarRelatorioEstatistico()">
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <button class="btn-export btn-excel" onclick="exportarRelatorioFiltradoExcel()"><i class="fas fa-file-excel"></i> Exportar Relatório Filtrado (Excel)</button>
+                        <button class="btn-export btn-pdf" onclick="window.print()"><i class="fas fa-print"></i> Imprimir Relatório</button>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 2fr; gap:20px; align-items:center; background: #fff; padding: 20px; border-radius: 8px;">
+                    <div>
+                        <div id="estatisticas-texto-resumo" style="font-size: 15px; font-weight: 600; line-height: 1.6;"></div>
+                    </div>
+                    <div style="max-height: 250px; display:flex; justify-content:center;">
+                        <canvas id="graficoAdminRelatorio"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -369,10 +396,13 @@
     let logado = false;
     let colabLogado = null;
     let meuGrafico = null;
+    let graficoAdmin = null;
     let vendedoresData = []; 
     let campanhasData = [];  
+    let alunosGlobalCache = [];
+    let colabsGlobalCache = [];
     
-    const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbx8EDTc_EBhNd3WJ_Nj6kWhX2qc-DwNmo5JXQB8MZAHokoReh_M8cRiG24178DCCY9H/exec"; 
+    const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbyqYkmZyG6dkgm5bJBXEHwE1ttx2Nrik47RyVvbAvSBnsWuQ3MLy2BcSVdjRwWIx3WM/exec"; 
 
     const listaCursos = [
         "Assistente Administrativo - AA", "Assistente Administrativo Plus - AAP",
@@ -408,10 +438,10 @@
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let data = await res.json();
-            
             if (data.vendedores) vendedoresData = data.vendedores;
             if (data.campanhas) campanhasData = data.campanhas;
-            
+            if (data.alunos) alunosGlobalCache = data.alunos;
+            if (data.colaboradores) colabsGlobalCache = data.colaboradores;
         } catch (err) {
             console.error("Erro ao puxar dados globais.");
         }
@@ -467,17 +497,9 @@
     }
 
     function renderizarListasAdmin() {
-        const listaVend = document.getElementById('lista-vendedores');
         const listaCamp = document.getElementById('lista-campanhas');
-        
-        if(listaVend && listaCamp) {
-            listaVend.innerHTML = '';
+        if(listaCamp) {
             listaCamp.innerHTML = '';
-            
-            vendedoresData.forEach(v => {
-                listaVend.innerHTML += `<li class="config-list-item">${v} <button class="table-btn-3d btn-del" onclick="deletarConfig('Vendedores', '${v}')" style="padding:4px 8px; font-size:11px;"><i class="fas fa-trash"></i></button></li>`;
-            });
-            
             campanhasData.forEach(c => {
                 listaCamp.innerHTML += `<li class="config-list-item">${c} <button class="table-btn-3d btn-del" onclick="deletarConfig('Campanhas', '${c}')" style="padding:4px 8px; font-size:11px;"><i class="fas fa-trash"></i></button></li>`;
             });
@@ -506,7 +528,6 @@
                 return new Date(ano, mes, dia, hora, min, sec).getTime();
             }
         }
-        
         let fallback = new Date(dataString).getTime();
         return isNaN(fallback) ? 0 : fallback;
     }
@@ -521,11 +542,23 @@
         const ano = data.getFullYear();
         const hora = String(data.getHours()).padStart(2, '0');
         const min = String(data.getMinutes()).padStart(2, '0');
-        
         return `${dia}/${mes}/${ano} às ${hora}:${min}`;
     }
 
     function switchPage(page) {
+        if (page === 'publica' && colabLogado) {
+            Swal.fire({
+                title: 'Deseja sair?',
+                text: 'Ao sair do Ambiente do Colaborador, sua sessão será encerrada.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sim, sair',
+                cancelButtonText: 'Ficar'
+            }).then((res) => {
+                if(res.isConfirmed) { logoutColaborador(); executarTrocaDeAba(page); }
+            });
+            return;
+        }
         executarTrocaDeAba(page);
     }
 
@@ -564,10 +597,7 @@
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let data = await res.json();
             let alunos = data.alunos ? data.alunos : data;
-            
-            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) {
-                alunos = alunos.slice(1);
-            }
+            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
 
             const a = alunos.find(al => al.matricula == inputBusca);
 
@@ -661,10 +691,7 @@
         const senha = document.getElementById('reg-colab-senha').value;
         const conf = document.getElementById('reg-colab-confirma').value;
 
-        if(senha !== conf) {
-            Swal.fire('Erro', 'As senhas não coincidem!', 'error');
-            return;
-        }
+        if(senha !== conf) { Swal.fire('Erro', 'As senhas não coincidem!', 'error'); return; }
 
         Swal.fire({title: 'Cadastrando...', didOpen: () => Swal.showLoading()});
         try {
@@ -723,21 +750,19 @@
         sessionStorage.removeItem('colabLogado');
         document.getElementById('colaborador-auth-box').style.display = 'block';
         document.getElementById('colaborador-painel').style.display = 'none';
+        document.getElementById('form-login-colab').reset ? document.getElementById('form-login-colab').reset() : null;
     }
 
     async function carregarPainelColaborador() {
         document.getElementById('colaborador-auth-box').style.display = 'none';
         document.getElementById('colaborador-painel').style.display = 'block';
 
-        // Saudação por horário
         const horaAtual = new Date().getHours();
         let saudacao = "Bom dia";
-        if (horaAtual >= 12 && horaAtual < 18) {
-            saudacao = "Boa tarde";
-        } else if (horaAtual >= 18) {
-            saudacao = "Boa noite";
-        }
-        document.getElementById('colab-saudacao-texto').innerHTML = `${saudacao}, <span style="color:var(--escola-laranja);">${colabLogado.nome}</span>! Tenha um excelente dia.`;
+        if (horaAtual >= 12 && horaAtual < 18) saudacao = "Boa tarde";
+        else if (horaAtual >= 18) saudacao = "Boa noite";
+
+        document.getElementById('colab-saudacao-texto').innerHTML = `${saudacao}, ${colabLogado.nome}! Tenha um excelente dia.`;
         document.getElementById('colab-logado-setor').innerText = colabLogado.setor;
         document.getElementById('colab-logado-email').innerText = colabLogado.email;
 
@@ -751,13 +776,11 @@
             let tbody = document.getElementById('tbody-materiais-colab');
             tbody.innerHTML = '';
 
-            // Contagem dinâmica baseada nas campanhas cadastradas
             let contagemCampanhas = {};
             campanhasData.forEach(cp => { contagemCampanhas[cp] = 0; });
 
             const mesAtual = new Date().getMonth();
             const anoAtual = new Date().getFullYear();
-
             let totalMesAtual = 0;
             let nomeMesAtual = new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date());
 
@@ -768,11 +791,8 @@
                     if(dCad.getMonth() === mesAtual && dCad.getFullYear() === anoAtual) {
                         totalMesAtual++;
                         let camp = m.campanha || 'Padrão';
-                        if(contagemCampanhas[camp] !== undefined) {
-                            contagemCampanhas[camp]++;
-                        } else {
-                            contagemCampanhas[camp] = 1;
-                        }
+                        if(contagemCampanhas[camp] !== undefined) contagemCampanhas[camp]++;
+                        else contagemCampanhas[camp] = 1;
                     }
                 }
 
@@ -797,11 +817,8 @@
             document.getElementById('colab-grafico-titulo').innerText = `Seu Desempenho (${nomeMesAtual.charAt(0).toUpperCase() + nomeMesAtual.slice(1)})`;
             
             let textoStats = `Total no mês: ${totalMesAtual}<br>`;
-            let labelsGrafico = [];
-            let dadosGrafico = [];
-            let coresGrafico = ['#ff6b00', '#16a34a', '#3b82f6', '#d97706', '#8b5cf6', '#ec4899'];
-            let corIndex = 0;
-            let bgCores = [];
+            let labelsGrafico = [], dadosGrafico = [], coresGrafico = ['#ff6b00', '#16a34a', '#3b82f6', '#d97706', '#8b5cf6', '#ec4899'];
+            let corIndex = 0, bgCores = [];
 
             for(let cp in contagemCampanhas) {
                 labelsGrafico.push(cp);
@@ -817,73 +834,59 @@
             if(meuGrafico) meuGrafico.destroy();
             meuGrafico = new Chart(ctx, {
                 type: 'doughnut',
-                data: {
-                    labels: labelsGrafico,
-                    datasets: [{
-                        data: dadosGrafico,
-                        backgroundColor: bgCores
-                    }]
-                },
-                options: {responsive: true, maintainAspectRatio: false}
+                data: { labels: labelsGrafico, datasets: [{ data: dadosGrafico, backgroundColor: bgCores }] },
+                options: { responsive: true, maintainAspectRatio: false }
             });
 
-        } catch(e) {
-            console.error(e);
-        }
+        } catch(e) { console.error(e); }
     }
 
     async function abrirModalNovoEnvio() {
         let optionsCursos = listaCursos.map(c => `<option value="${c}">${c}</option>`).join('');
-        
         let res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
         let data = await res.json();
-        let campanhas = data.campanhas || ['Padrão', 'Suporte'];
+        let campanhas = data.campanhas || ['Padrão'];
         let optionsCamp = campanhas.map(cp => `<option value="${cp}">${cp}</option>`).join('');
 
         Swal.fire({
             title: 'Cadastrar Novo Envio',
-            width: '650px',
+            width: '750px',
             html: `
-                <div style="text-align:left; display:flex; flex-direction:column; gap:12px; max-height:450px; overflow-y:auto; padding:10px;">
-                    <div>
+                <div style="text-align:left; display:grid; grid-template-columns: 1fr 1fr; gap:15px; max-height:480px; overflow-y:auto; padding:10px;">
+                    <div style="grid-column: span 2;">
                         <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Nome do Aluno(a):</label>
                         <input type="text" id="swal-nome" class="swal2-input" style="margin:0; width:100%; height:40px;">
                     </div>
                     <div>
                         <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Matrícula:</label>
-                        <input type="text" id="swal-matricula" class="swal2-input" style="margin:0; width:100%; height:40px;">
-                    </div>
-                    <div>
-                        <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Curso:</label>
-                        <select id="swal-curso" class="swal2-input" style="margin:0; width:100%; height:40px;">${optionsCursos}</select>
+                        <input type="text" id="swal-matricula" class="swal2-input" style="margin:0; width:100%; height:40px;" onblur="verificarDuplicidadeInput(this.value)">
+                        <div id="swal-duplicidade-aviso" style="font-size:12px; color:#dc3545; font-weight:bold; margin-top:4px; display:none;"></div>
                     </div>
                     <div>
                         <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Campanha:</label>
                         <select id="swal-campanha" class="swal2-input" style="margin:0; width:100%; height:40px;">${optionsCamp}</select>
                     </div>
+                    <div style="grid-column: span 2;">
+                        <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Curso:</label>
+                        <select id="swal-curso" class="swal2-input" style="margin:0; width:100%; height:40px;">${optionsCursos}</select>
+                    </div>
                     <div>
                         <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Dia de Aula:</label>
                         <select id="swal-dia" class="swal2-input" style="margin:0; width:100%; height:40px;">
-                            <option value="Segunda-feira">Segunda-feira</option>
-                            <option value="Terça-feira">Terça-feira</option>
-                            <option value="Quarta-feira">Quarta-feira</option>
-                            <option value="Quinta-feira">Quinta-feira</option>
-                            <option value="Sexta-feira">Sexta-feira</option>
-                            <option value="Sábado">Sábado</option>
+                            <option value="Segunda-feira">Segunda-feira</option><option value="Terça-feira">Terça-feira</option>
+                            <option value="Quarta-feira">Quarta-feira</option><option value="Quinta-feira">Quinta-feira</option>
+                            <option value="Sexta-feira">Sexta-feira</option><option value="Sábado">Sábado</option>
                         </select>
                     </div>
                     <div>
                         <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Horário:</label>
                         <select id="swal-horario" class="swal2-input" style="margin:0; width:100%; height:40px;">
-                            <option value="07:00 às 09:00">07:00 às 09:00</option>
-                            <option value="09:00 às 11:00">09:00 às 11:00</option>
-                            <option value="11:00 às 13:00">11:00 às 13:00</option>
-                            <option value="13:00 às 15:00">13:00 às 15:00</option>
-                            <option value="15:00 às 17:00">15:00 às 17:00</option>
-                            <option value="17:00 às 19:00">17:00 às 19:00</option>
+                            <option value="07:00 às 09:00">07:00 às 09:00</option><option value="09:00 às 11:00">09:00 às 11:00</option>
+                            <option value="11:00 às 13:00">11:00 às 13:00</option><option value="13:00 às 15:00">13:00 às 15:00</option>
+                            <option value="15:00 às 17:00">15:00 às 17:00</option><option value="17:00 às 19:00">17:00 às 19:00</option>
                         </select>
                     </div>
-                    <div>
+                    <div style="grid-column: span 2;">
                         <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">E-mail do Aluno:</label>
                         <input type="email" id="swal-email" class="swal2-input" style="margin:0; width:100%; height:40px;">
                     </div>
@@ -907,23 +910,18 @@
                     return false;
                 }
 
-                // Validação de Duplicidade
                 try {
                     const resCheck = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
                     let dataCheck = await resCheck.json();
                     let listaAlunos = dataCheck.alunos || [];
-                    if(listaAlunos.length > 0 && (listaAlunos[0].matricula === "Matrícula" || !listaAlunos[0].nome)) {
-                        listaAlunos = listaAlunos.slice(1);
-                    }
+                    if(listaAlunos.length > 0 && (listaAlunos[0].matricula === "Matrícula" || !listaAlunos[0].nome)) listaAlunos = listaAlunos.slice(1);
 
                     const existente = listaAlunos.find(al => String(al.matricula).trim() === String(matricula).trim());
                     if(existente) {
-                        Swal.showValidationMessage(`Atenção: material da Matrícula ${matricula} já possui cadastro por outro colaborador (${existente.vendedor || 'Outro'}). Por favor, buscar orientação à Coordenação Pedagógica ou Corrigir a matrícula em caso de erro.`);
+                        Swal.showValidationMessage(`Atenção, material da Matrícula ${matricula} já possui cadastro por outro colaborador (${existente.vendedor || 'Outro'}). Por favor, buscar orientação à Coordenação Pedagógica ou Corrigir a matrícula em caso de erro.`);
                         return false;
                     }
-                } catch(err) {
-                    console.error(err);
-                }
+                } catch(err) { console.error(err); }
 
                 return { nome, matricula, curso, campanha, dia, horario, email, vendedor: colabLogado.nome };
             }
@@ -939,7 +937,6 @@
                     body: JSON.stringify(dados)
                 });
 
-                // Texto gerado para o CGD
                 let textoCGD = `Eu, ${colabLogado.nome}, identificado(a), formalizo o registro do cadastro do Material/Apostila do(a) aluno(a) ${dados.nome}, matrícula ${dados.matricula}, realizado em ${dataRegistroFormatada}, às ${horaRegistroFormatada}, referente ao curso ${dados.curso}, vinculado à campanha ${dados.campanha}, com e-mail de cadastro ${dados.email}.`;
 
                 Swal.fire({
@@ -953,14 +950,30 @@
                     confirmButtonColor: '#16a34a'
                 }).then(() => {
                     const textarea = document.getElementById('cgd-texto-copiar');
-                    if(textarea) {
-                        textarea.select();
-                        navigator.clipboard.writeText(textarea.value);
-                    }
+                    if(textarea) { textarea.select(); navigator.clipboard.writeText(textarea.value); }
                     carregarPainelColaborador();
                 });
             }
         });
+    }
+
+    async function verificarDuplicidadeInput(matriculaVal) {
+        if(!matriculaVal) return;
+        const avisoDiv = document.getElementById('swal-duplicidade-aviso');
+        if(!avisoDiv) return;
+        try {
+            const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
+            let data = await res.json();
+            let alunos = data.alunos || [];
+            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
+            let existente = alunos.find(al => String(al.matricula).trim() === String(matriculaVal).trim());
+            if(existente) {
+                avisoDiv.style.display = 'block';
+                avisoDiv.innerText = `Atenção, material da Matrícula ${matriculaVal} já possui cadastro por outro colaborador (${existente.vendedor || 'Outro'}). Por favor, buscar orientação à Coordenação Pedagógica ou Corrigir a matrícula em caso de erro.`;
+            } else {
+                avisoDiv.style.display = 'none';
+            }
+        } catch(e) {}
     }
 
     // --- PAINEL RESTRITO (ADMIN) ---
@@ -977,11 +990,21 @@
     }
 
     function logout() {
-        logado = false;
-        sessionStorage.removeItem('logadoMaster'); 
-        document.getElementById('admin-password').value = "";
-        document.getElementById('lock-screen').style.display = 'block';
-        document.getElementById('admin-panel').style.display = 'none';
+        Swal.fire({
+            title: 'Bloquear Painel?',
+            text: 'Sua sessão administrativa será encerrada.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, bloquear'
+        }).then(res => {
+            if(res.isConfirmed) {
+                logado = false;
+                sessionStorage.removeItem('logadoMaster'); 
+                document.getElementById('admin-password').value = "";
+                document.getElementById('lock-screen').style.display = 'block';
+                document.getElementById('admin-panel').style.display = 'none';
+            }
+        });
     }
 
     async function renderizarPainelGerencial(silencioso = false) {
@@ -998,16 +1021,18 @@
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let data = await res.json();
             
-            let alunos = data.alunos ? data.alunos : data;
+            alunosGlobalCache = data.alunos ? data.alunos : data;
             if(data.vendedores) vendedoresData = data.vendedores;
             if(data.campanhas) campanhasData = data.campanhas;
-            let colabs = data.colaboradores || [];
+            colabsGlobalCache = data.colaboradores || [];
             
             renderizarListasAdmin(); 
+            popularFiltrosRelatorio();
+            renderizarRelatorioEstatistico();
             
             if(tbodyColabAdmin) {
                 tbodyColabAdmin.innerHTML = '';
-                colabs.forEach(c => {
+                colabsGlobalCache.forEach(c => {
                     let bloqueado = String(c.status).toLowerCase() === 'bloqueado';
                     tbodyColabAdmin.innerHTML += `
                         <tr>
@@ -1016,13 +1041,13 @@
                             <td>${c.email}</td>
                             <td><span style="color:${bloqueado?'#dc3545':'#16a34a'}; font-weight:bold;">${c.status || 'Ativo'}</span></td>
                             <td>
+                                <button class="btn-3d-premium btn-edit" onclick="editarColaboradorModal('${c.email}')"><i class="fas fa-edit"></i> Editar</button>
                                 <button class="btn-3d-premium ${bloqueado?'btn-save':'btn-del'}" onclick="alternarBloqueioColaborador('${c.email}', '${bloqueado?'Ativo':'Bloqueado'}')">${bloqueado?'Desbloquear':'Bloquear'}</button>
-                                <button class="btn-3d-premium btn-edit" onclick="resetarSenhaColaborador('${c.email}')">Mudar Senha</button>
                             </td>
                         </tr>
                     `;
                 });
-                if(colabs.length === 0) {
+                if(colabsGlobalCache.length === 0) {
                     tbodyColabAdmin.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:15px; color:#777;">Nenhum colaborador cadastrado ainda.</td></tr>`;
                 }
             }
@@ -1030,41 +1055,25 @@
             containerPendentes.innerHTML = "";
             tbodyEnviados.innerHTML = "";
             
-            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) {
-                alunos = alunos.slice(1);
-            }
+            let alunos = alunosGlobalCache;
+            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
             
-            let pendentes = [];
-            let enviados = [];
-            
+            let pendentes = [], enviados = [];
             alunos.forEach((a, index) => {
                 a.originalIndex = index; 
                 let st = a.status ? a.status.toString().trim().toLowerCase() : "";
-                
-                if (st === 'pendente de envio' || st === 'pendente') {
-                    pendentes.push(a);
-                } else if (st === 'enviado') {
-                    enviados.push(a);
-                }
+                if (st === 'pendente de envio' || st === 'pendente') pendentes.push(a);
+                else if (st === 'enviado') enviados.push(a);
             });
 
             pendentes.sort((a, b) => parseDateSafely(a.dataCadastro) - parseDateSafely(b.dataCadastro));
-            enviados.sort((a, b) => {
-                let valA = parseDateSafely(a.dataEnvio) || parseDateSafely(a.dataCadastro);
-                let valB = parseDateSafely(b.dataEnvio) || parseDateSafely(b.dataCadastro);
-                return valB - valA;
-            });
+            enviados.sort((a, b) => (parseDateSafely(a.dataEnvio) || parseDateSafely(a.dataCadastro)) - (parseDateSafely(b.dataEnvio) || parseDateSafely(b.dataCadastro)));
             
             pendentes.forEach((aluno) => {
                 let index = aluno.originalIndex;
-                let opcoesCursos = '';
-                listaCursos.forEach(c => { opcoesCursos += `<option value="${c}" ${aluno.curso === c ? 'selected' : ''}>${c}</option>`; });
-                
-                let opcoesVendedores = '<option value="">Selecione...</option>';
-                vendedoresData.forEach(v => { opcoesVendedores += `<option value="${v}" ${aluno.vendedor === v ? 'selected' : ''}>${v}</option>`; });
-                
-                let opcoesCampanhas = '<option value="">Selecione...</option>';
-                campanhasData.forEach(c => { opcoesCampanhas += `<option value="${c}" ${aluno.campanha === c ? 'selected' : ''}>${c}</option>`; });
+                let opcoesCursos = listaCursos.map(c => `<option value="${c}" ${aluno.curso === c ? 'selected' : ''}>${c}</option>`).join('');
+                let opcoesVendedores = '<option value="">Selecione...</option>' + vendedoresData.map(v => `<option value="${v}" ${aluno.vendedor === v ? 'selected' : ''}>${v}</option>`).join('');
+                let opcoesCampanhas = '<option value="">Selecione...</option>' + campanhasData.map(c => `<option value="${c}" ${aluno.campanha === c ? 'selected' : ''}>${c}</option>`).join('');
 
                 let timerHTML = '<i class="fas fa-clock"></i> Aguardando Envio';
                 let timerStyle = 'background: #fff5eb; color: var(--escola-laranja); border-color: #ffe8cc;';
@@ -1072,21 +1081,16 @@
                 
                 let msCad = parseDateSafely(aluno.dataCadastro);
                 if (msCad > 0) {
-                    const diffMs = new Date().getTime() - msCad;
-                    const horasPassadas = Math.floor(diffMs / (1000 * 60 * 60));
-
+                    const horasPassadas = Math.floor((new Date().getTime() - msCad) / (1000 * 60 * 60));
                     if (horasPassadas <= 48) {
                         timerHTML = `<i class="fas fa-check-circle"></i> No Prazo (${horasPassadas}h decorridas)`;
-                        timerStyle = `background: #f0fdf4; color: #16a34a; border-color: #bbf7d0;`;
-                        borderLeft = '#16a34a';
+                        timerStyle = `background: #f0fdf4; color: #16a34a; border-color: #bbf7d0;`; borderLeft = '#16a34a';
                     } else if (horasPassadas <= 72) {
-                        timerHTML = `<i class="fas fa-exclamation-triangle"></i> Atenção, prazo acabando (${horasPassadas}h decorridas)`;
-                        timerStyle = `background: #fffbeb; color: #d97706; border-color: #fde68a;`;
-                        borderLeft = '#d97706';
+                        timerHTML = `<i class="fas fa-exclamation-triangle"></i> Atenção, prazo acabando (${horasPassadas}h)`;
+                        timerStyle = `background: #fffbeb; color: #d97706; border-color: #fde68a;`; borderLeft = '#d97706';
                     } else {
-                        timerHTML = `<i class="fas fa-fire"></i> Atrasado (${horasPassadas}h decorridas)`;
-                        timerStyle = `background: #fef2f2; color: #dc2626; border-color: #fecaca;`;
-                        borderLeft = '#dc2626';
+                        timerHTML = `<i class="fas fa-fire"></i> Atrasado (${horasPassadas}h)`;
+                        timerStyle = `background: #fef2f2; color: #dc2626; border-color: #fecaca;`; borderLeft = '#dc2626';
                     }
                 }
 
@@ -1173,14 +1177,9 @@
 
             enviados.forEach((aluno) => {
                 let index = aluno.originalIndex;
-                let opcoesCursos = '';
-                listaCursos.forEach(c => { opcoesCursos += `<option value="${c}" ${aluno.curso === c ? 'selected' : ''}>${c}</option>`; });
-                
-                let opcoesVendedores = '<option value="">Selecione...</option>';
-                vendedoresData.forEach(v => { opcoesVendedores += `<option value="${v}" ${aluno.vendedor === v ? 'selected' : ''}>${v}</option>`; });
-                
-                let opcoesCampanhas = '<option value="">Selecione...</option>';
-                campanhasData.forEach(c => { opcoesCampanhas += `<option value="${c}" ${aluno.campanha === c ? 'selected' : ''}>${c}</option>`; });
+                let opcoesCursos = listaCursos.map(c => `<option value="${c}" ${aluno.curso === c ? 'selected' : ''}>${c}</option>`).join('');
+                let opcoesVendedores = '<option value="">Selecione...</option>' + vendedoresData.map(v => `<option value="${v}" ${aluno.vendedor === v ? 'selected' : ''}>${v}</option>`).join('');
+                let opcoesCampanhas = '<option value="">Selecione...</option>' + campanhasData.map(c => `<option value="${c}" ${aluno.campanha === c ? 'selected' : ''}>${c}</option>`).join('');
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -1196,8 +1195,7 @@
                     <td><input type="text" id="card-email-${index}-tab" value="${aluno.email}" disabled class="table-input" style="width:150px; color: #333;"></td>
                     <td><select id="card-status-${index}-tab" disabled class="table-input" style="width:145px; font-weight:bold; color:#16a34a;"><option value="Pendente de Envio">Pendente de Envio</option><option value="Enviado" selected>Enviado</option></select></td>
                     <td><input type="text" id="card-obs-${index}-tab" disabled class="table-input" value="${aluno.observacoes || ''}" style="width:130px; color: #333;"></td>
-                    
-                    <td><div style="display:flex; gap:6px;"><button type="button" title="Reenviar E-mail" class="table-btn-3d btn-resend" onclick="reenviarEmail(${index})"><i class="fas fa-paper-plane"></i></button><button type="button" title="Editar" class="table-btn-3d btn-edit" id="card-btn-edit-${index}-tab" onclick="habilitarEdicaoCard(${index}, true)"><i class="fas fa-edit"></i></button><button type="button" title="Salvar" class="table-btn-3d btn-save" id="card-btn-save-${index}-tab" onclick="salvarEdicaoCard(${index}, true)" style="display:none;"><i class="fas fa-save"></i></button><button type="button" title="Excluir" class="table-btn-3d btn-del" onclick="deletarAluno(${index}, true)"><i class="fas fa-trash"></i></button></div></td>
+                    <td><div style="display:flex; gap:6px;"><button type="button" title="Reenviar" class="table-btn-3d btn-resend" onclick="reenviarEmail(${index})"><i class="fas fa-paper-plane"></i></button><button type="button" title="Editar" class="table-btn-3d btn-edit" id="card-btn-edit-${index}-tab" onclick="habilitarEdicaoCard(${index}, true)"><i class="fas fa-edit"></i></button><button type="button" title="Salvar" class="table-btn-3d btn-save" id="card-btn-save-${index}-tab" onclick="salvarEdicaoCard(${index}, true)" style="display:none;"><i class="fas fa-save"></i></button><button type="button" title="Excluir" class="table-btn-3d btn-del" onclick="deletarAluno(${index}, true)"><i class="fas fa-trash"></i></button></div></td>
                 `;
                 tbodyEnviados.appendChild(tr);
             });
@@ -1206,11 +1204,151 @@
                 containerPendentes.innerHTML = "<div style='grid-column: 1 / -1; padding: 20px; color: #16a34a; font-weight: 600;'><i class='fas fa-check-circle'></i> Nenhum material pendente de envio. Parabéns!</div>";
             }
 
-        } catch (e) {
-            console.error(e);
-            tbodyEnviados.innerHTML = "<tr><td colspan='13' style='text-align:center; color:#dc3545; padding:30px; font-weight:600;'><i class='fas fa-times-circle'></i> Erro ao carregar dados da planilha.</td></tr>";
-            containerPendentes.innerHTML = "<p style='color:#dc3545; padding:20px; font-weight:600;'><i class='fas fa-times-circle'></i> Erro ao carregar dados da planilha.</p>";
+        } catch (e) { console.error(e); }
+    }
+
+    // --- RELATÓRIO ESTATÍSTICO COM FILTROS NO PAINEL ADMIN ---
+    function popularFiltrosRelatorio() {
+        const selCamp = document.getElementById('filtro-campanha');
+        const selColab = document.getElementById('filtro-colaborador');
+        if(!selCamp || !selColab) return;
+
+        let campAtual = selCamp.value;
+        let colabAtual = selColab.value;
+
+        selCamp.innerHTML = '<option value="">Todas as Campanhas</option>';
+        campanhasData.forEach(c => { selCamp.innerHTML += `<option value="${c}">${c}</option>`; });
+        selCamp.value = campAtual;
+
+        selColab.innerHTML = '<option value="">Todos os Colaboradores</option>';
+        colabsGlobalCache.forEach(cb => { selColab.innerHTML += `<option value="${cb.nome}">${cb.nome}</option>`; });
+        selColab.value = colabAtual;
+    }
+
+    function renderizarRelatorioEstatistico() {
+        const fCamp = document.getElementById('filtro-campanha')?.value || "";
+        const fColab = document.getElementById('filtro-colaborador')?.value || "";
+        const fInicio = document.getElementById('filtro-data-inicio')?.value || "";
+        const fFim = document.getElementById('filtro-data-fim')?.value || "";
+
+        let lista = alunosGlobalCache.slice();
+        if(lista.length > 0 && (lista[0].matricula === "Matrícula" || !lista[0].nome)) lista = lista.slice(1);
+
+        let filtrados = lista.filter(a => {
+            let matchCamp = !fCamp || String(a.campanha).trim() === fCamp.trim();
+            let matchColab = !fColab || String(a.vendedor).trim().toLowerCase() === fColab.trim().toLowerCase();
+            let ms = parseDateSafely(a.dataCadastro);
+            let matchData = true;
+            if(fInicio && ms) {
+                let dIni = new Date(fInicio + "T00:00:00").getTime();
+                if(ms < dIni) matchData = false;
+            }
+            if(fFim && ms) {
+                let dFim = new Date(fFim + "T23:59:59").getTime();
+                if(ms > dFim) matchData = false;
+            }
+            return matchCamp && matchColab && matchData;
+        });
+
+        let contCamp = {};
+        campanhasData.forEach(c => { contCamp[c] = 0; });
+        filtrados.forEach(a => {
+            let cp = a.campanha || 'Padrão';
+            if(contCamp[cp] !== undefined) contCamp[cp]++;
+            else contCamp[cp] = 1;
+        });
+
+        let textoResumo = `Total Filtrado: ${filtrados.length} registros<br>`;
+        let labels = [], dados = [], cores = ['#ff6b00', '#16a34a', '#3b82f6', '#d97706', '#8b5cf6', '#ec4899'];
+        let bgCores = [], idx = 0;
+
+        for(let cp in contCamp) {
+            labels.push(cp);
+            dados.push(contCamp[cp]);
+            textoResumo += `• Campanha ${cp}: ${contCamp[cp]}<br>`;
+            bgCores.push(cores[idx % cores.length]);
+            idx++;
         }
+
+        const elResumo = document.getElementById('estatisticas-texto-resumo');
+        if(elResumo) elResumo.innerHTML = textoResumo;
+
+        const ctx = document.getElementById('graficoAdminRelatorio')?.getContext('2d');
+        if(ctx) {
+            if(graficoAdmin) graficoAdmin.destroy();
+            graficoAdmin = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: labels, datasets: [{ data: dados, backgroundColor: bgCores }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+    }
+
+    function exportarRelatorioFiltradoExcel() {
+        const fCamp = document.getElementById('filtro-campanha')?.value || "";
+        const fColab = document.getElementById('filtro-colaborador')?.value || "";
+        let lista = alunosGlobalCache.slice();
+        if(lista.length > 0 && (lista[0].matricula === "Matrícula" || !lista[0].nome)) lista = lista.slice(1);
+
+        let filtrados = lista.filter(a => {
+            let matchCamp = !fCamp || String(a.campanha).trim() === fCamp.trim();
+            let matchColab = !fColab || String(a.vendedor).trim().toLowerCase() === fColab.trim().toLowerCase();
+            return matchCamp && matchColab;
+        });
+
+        if(filtrados.length === 0) { Swal.fire('Aviso', 'Nenhum registro para exportar com esses filtros!', 'info'); return; }
+
+        let html = `<meta charset="utf-8"><table border="1"><tr style="background:#f8f9fa;"><th>Cadastro</th><th>Matrícula</th><th>Aluno(a)</th><th>Curso</th><th>Campanha</th><th>Colaborador</th><th>E-mail</th><th>Situação</th></tr>`;
+        filtrados.forEach(a => {
+            html += `<tr><td>${formatarData(a.dataCadastro)}</td><td>${a.matricula}</td><td>${a.nome}</td><td>${a.curso}</td><td>${a.campanha}</td><td>${a.vendedor}</td><td>${a.email}</td><td>${a.status}</td></tr>`;
+        });
+        html += '</table>';
+
+        let blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "relatorio_filtrado_materiais.xls";
+        link.click();
+    }
+
+    async function editarColaboradorModal(emailColab) {
+        let colab = colabsGlobalCache.find(c => String(c.email).trim().toLowerCase() === emailColab.toLowerCase());
+        if(!colab) return;
+
+        Swal.fire({
+            title: 'Editar Colaborador',
+            html: `
+                <div style="text-align:left; display:flex; flex-direction:column; gap:10px;">
+                    <label>Nome:</label><input type="text" id="edit-c-nome" class="swal2-input" value="${colab.nome}" style="margin:0; width:100%;">
+                    <label>Setor:</label>
+                    <select id="edit-c-setor" class="swal2-input" style="margin:0; width:100%;">
+                        <option value="Comercial" ${colab.setor==='Comercial'?'selected':''}>Comercial</option>
+                        <option value="Pedagógico" ${colab.setor==='Pedagógico'?'selected':''}>Pedagógico</option>
+                        <option value="Secretaria" ${colab.setor==='Secretaria'?'selected':''}>Secretaria</option>
+                    </select>
+                    <label>E-mail:</label><input type="email" id="edit-c-email" class="swal2-input" value="${colab.email}" style="margin:0; width:100%;">
+                    <label>Nova Senha (deixe em branco para não alterar):</label><input type="password" id="edit-c-senha" class="swal2-input" placeholder="Nova senha" style="margin:0; width:100%;">
+                </div>
+            `,
+            confirmButtonText: 'Salvar Alterações',
+            confirmButtonColor: '#16a34a',
+            showCancelButton: true,
+            preConfirm: () => {
+                return {
+                    novoNome: document.getElementById('edit-c-nome').value.trim(),
+                    novoSetor: document.getElementById('edit-c-setor').value,
+                    novoEmail: document.getElementById('edit-c-email').value.trim(),
+                    senha: document.getElementById('edit-c-senha').value
+                }
+            }
+        }).then(async (res) => {
+            if(res.isConfirmed) {
+                let payload = Object.assign({action: "updateColaborador", email: colab.email}, res.value);
+                await fetch(URL_PLANILHA, { method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"}, body: JSON.stringify(payload) });
+                Swal.fire('Sucesso!', 'Colaborador atualizado.', 'success');
+                renderizarPainelGerencial(true);
+            }
+        });
     }
 
     async function alternarBloqueioColaborador(email, novoStatus) {
@@ -1218,101 +1356,35 @@
             method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"},
             body: JSON.stringify({action: "updateColaborador", email, status: novoStatus})
         });
-        Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Status do colaborador alterado!', showConfirmButton: false, timer: 1500});
+        Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Status alterado!', showConfirmButton: false, timer: 1500});
         setTimeout(() => renderizarPainelGerencial(true), 1500);
-    }
-
-    async function resetarSenhaColaborador(email) {
-        const { value: novaSenha } = await Swal.fire({
-            title: 'Nova Senha',
-            input: 'password',
-            inputLabel: 'Digite a nova senha (mínimo 6 caracteres):',
-            inputAttributes: {minlength: 6},
-            showCancelButton: true
-        });
-
-        if(novaSenha && novaSenha.length >= 6) {
-            await fetch(URL_PLANILHA, {
-                method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({action: "updateColaborador", email, senha: novaSenha})
-            });
-            Swal.fire('Sucesso!', 'Senha alterada com sucesso.', 'success');
-        } else if(novaSenha) {
-            Swal.fire('Erro', 'A senha deve ter no mínimo 6 caracteres.', 'error');
-        }
     }
 
     async function exportarTabelaExcel() {
         try {
-            const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
-            let data = await res.json();
-            let alunos = data.alunos ? data.alunos : data;
-            
+            let alunos = alunosGlobalCache.slice();
             if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
-            
-            const enviados = alunos.filter(a => {
-                let st = a.status ? a.status.toString().trim().toLowerCase() : "";
-                return st === "enviado";
-            });
-            
-            if (enviados.length === 0) { 
-                Swal.fire('Aviso', 'Não existem registros enviados para exportar!', 'info'); 
-                return; 
-            }
+            const enviados = alunos.filter(a => String(a.status).trim().toLowerCase() === "enviado");
+            if (enviados.length === 0) { Swal.fire('Aviso', 'Não existem registros enviados para exportar!', 'info'); return; }
 
-            let conteudoHTML = `<meta charset="utf-8"><table border="1"><tr style="background-color: #f8f9fa; color: #333; font-weight: bold;"><th>Data Cadastro</th><th>Data Envio</th><th>Matrícula</th><th>Campanha</th><th>Aluno(a)</th><th>Curso</th><th>Dia</th><th>Horário</th><th>Vendedor</th><th>E-mail</th><th>Situação</th><th>Observações</th></tr>`;
-            enviados.forEach(aluno => {
-                conteudoHTML += `<tr><td>${formatarData(aluno.dataCadastro)||''}</td><td>${formatarData(aluno.dataEnvio)||''}</td><td>${aluno.matricula||''}</td><td>${aluno.campanha||''}</td><td>${aluno.nome||''}</td><td>${aluno.curso||''}</td><td>${aluno.dia||''}</td><td>${aluno.horario||''}</td><td>${aluno.vendedor||''}</td><td>${aluno.email||''}</td><td>${aluno.status||''}</td><td>${aluno.observacoes||''}</td></tr>`;
+            let html = `<meta charset="utf-8"><table border="1"><tr style="background:#f8f9fa;"><th>Cadastro</th><th>Envio</th><th>Matrícula</th><th>Campanha</th><th>Aluno(a)</th><th>Curso</th><th>Dia</th><th>Horário</th><th>Vendedor</th><th>E-mail</th><th>Situação</th><th>Observações</th></tr>`;
+            enviados.forEach(a => {
+                html += `<tr><td>${formatarData(a.dataCadastro)}</td><td>${formatarData(a.dataEnvio)}</td><td>${a.matricula}</td><td>${a.campanha}</td><td>${a.nome}</td><td>${a.curso}</td><td>${a.dia}</td><td>${a.horario}</td><td>${a.vendedor}</td><td>${a.email}</td><td>${a.status}</td><td>${a.observacoes}</td></tr>`;
             });
-            conteudoHTML += '</table>';
-            const blobUri = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(conteudoHTML);
-            const linkInvisivel = document.createElement("a");
-            linkInvisivel.href = blobUri; linkInvisivel.download = "relatorio_materiais_enviados.xls"; document.body.appendChild(linkInvisivel); linkInvisivel.click(); document.body.removeChild(linkInvisivel);
-        } catch (err) { Swal.fire('Erro!', 'Não foi possível gerar o arquivo Excel.', 'error'); }
+            html += '</table>';
+            let blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+            let link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "relatorio_materiais_enviados.xls"; link.click();
+        } catch (err) { Swal.fire('Erro!', 'Não foi possível gerar o Excel.', 'error'); }
     }
 
     async function exportarTabelaPDF() {
-        try {
-            const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
-            let data = await res.json();
-            let alunos = data.alunos ? data.alunos : data;
-            
-            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
-            if (!alunos.some(a => a.status && a.status.toString().trim().toLowerCase() === "enviado")) { 
-                Swal.fire('Aviso', 'Não existem registros para imprimir!', 'info'); 
-                return; 
-            }
-            window.print();
-        } catch (err) { Swal.fire('Erro!', 'Falha ao processar os dados para impressão.', 'error'); }
+        window.print();
     }
 
     function habilitarEdicaoCard(index, ehTabela) {
         const sufixo = ehTabela ? "-tab" : "";
-        const campos = [
-            `card-nome-${index}${sufixo}`,
-            `card-campanha-${index}${sufixo}`,
-            `card-curso-${index}${sufixo}`,
-            `card-dia-${index}${sufixo}`,
-            `card-horario-${index}${sufixo}`,
-            `card-vendedor-${index}${sufixo}`,
-            `card-email-${index}${sufixo}`,
-            `card-status-${index}${sufixo}`,
-            `card-obs-${index}${sufixo}`
-        ];
-
-        campos.forEach(id => {
-            const elemento = document.getElementById(id);
-            if (elemento) {
-                elemento.disabled = false;
-                if(ehTabela) {
-                    elemento.style.border = "1px solid var(--escola-laranja)";
-                    elemento.style.backgroundColor = "#fff";
-                } else {
-                    elemento.style.border = "1px solid var(--escola-laranja)";
-                }
-            }
-        });
-
+        const campos = [`card-nome-${index}${sufixo}`, `card-campanha-${index}${sufixo}`, `card-curso-${index}${sufixo}`, `card-dia-${index}${sufixo}`, `card-horario-${index}${sufixo}`, `card-vendedor-${index}${sufixo}`, `card-email-${index}${sufixo}`, `card-status-${index}${sufixo}`, `card-obs-${index}${sufixo}`];
+        campos.forEach(id => { const el = document.getElementById(id); if(el) { el.disabled = false; el.style.border = "1px solid var(--escola-laranja)"; if(ehTabela) el.style.backgroundColor = "#fff"; } });
         document.getElementById(`card-btn-edit-${index}${sufixo}`).style.display = 'none';
         document.getElementById(`card-btn-save-${index}${sufixo}`).style.display = 'inline-flex';
     }
@@ -1320,7 +1392,6 @@
     async function salvarEdicaoCard(index, ehTabela) {
         const sufixo = ehTabela ? "-tab" : "";
         const btnSalvar = document.getElementById(`card-btn-save-${index}${sufixo}`);
-
         const matricula = document.getElementById(`card-mat-${index}${sufixo}`).value.trim();
         const nome = document.getElementById(`card-nome-${index}${sufixo}`).value.trim();
         const campanha = document.getElementById(`card-campanha-${index}${sufixo}`).value;
@@ -1334,97 +1405,28 @@
 
         if (!ehTabela && novoStatus.toLowerCase() === "enviado") {
             const cardRow = document.getElementById(`row-${index}`);
-            if (cardRow) {
-                cardRow.style.opacity = '0'; 
-                cardRow.style.transform = 'translateX(50px)'; 
-                setTimeout(() => { cardRow.style.display = 'none'; }, 300); 
-            }
-            
-            Swal.fire({
-                title: 'Enviado!',
-                text: 'O material foi disparado para o e-mail do aluno.',
-                icon: 'success',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
-            });
-            
+            if (cardRow) { cardRow.style.opacity = '0'; setTimeout(() => cardRow.style.display = 'none', 300); }
+            Swal.fire({ title: 'Enviado!', text: 'Disparado para o e-mail do aluno.', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
         } else {
-            btnSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; 
-            btnSalvar.disabled = true;
-            Swal.fire({
-                title: 'Atualizado!',
-                text: 'Os dados foram salvos.',
-                icon: 'success',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 2000
-            });
+            btnSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; btnSalvar.disabled = true;
+            Swal.fire({ title: 'Atualizado!', text: 'Dados salvos.', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
         }
 
-        const dados = {
-            action: "update",
-            matricula: matricula,
-            nome: nome,
-            campanha: campanha,
-            curso: curso,
-            dia: dia,
-            horario: horario,
-            vendedor: vendedor,
-            email: email,
-            status: novoStatus,
-            observacoes: observacoes
-        };
-
+        const dados = { action: "update", matricula, nome, campanha, curso, dia, horario, vendedor, email, status: novoStatus, observacoes };
         try {
-            await fetch(URL_PLANILHA, {
-                method: "POST", mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(dados)
-            });
-            setTimeout(() => { renderizarPainelGerencial(true); }, 1500);
-
-        } catch (err) {
-            Swal.fire('Erro!', 'Ocorreu um problema ao tentar salvar a alteração.', 'error');
-            btnSalvar.innerHTML = '<i class="fas fa-save"></i> Salvar';
-            btnSalvar.disabled = false;
-        }
+            await fetch(URL_PLANILHA, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(dados) });
+            setTimeout(() => renderizarPainelGerencial(true), 1500);
+        } catch (err) { Swal.fire('Erro!', 'Problema ao salvar.', 'error'); }
     }
 
     async function deletarAluno(index, ehTabela) {
         const sufixo = ehTabela ? "-tab" : "";
         const matricula = document.getElementById(`card-mat-${index}${sufixo}`).value.trim();
-
-        Swal.fire({
-            title: 'Tem certeza?',
-            text: "Deseja remover o aluno de matrícula " + matricula + " definitivamente?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#4a5568',
-            confirmButtonText: 'Sim, excluir!',
-            cancelButtonText: 'Cancelar'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                const dados = { action: "delete", matricula: matricula };
-
-                try {
-                    document.getElementById(`row-${index}`) ? document.getElementById(`row-${index}`).style.opacity = '0.5' : null;
-
-                    await fetch(URL_PLANILHA, {
-                        method: "POST", mode: "no-cors",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(dados)
-                    });
-
-                    Swal.fire({ title: 'Excluído!', text: 'O registro foi removido.', icon: 'success', timer: 2000, showConfirmButton: false});
-                    setTimeout(() => { renderizarPainelGerencial(true); }, 1500);
-
-                } catch (err) {
-                    Swal.fire('Erro!', 'Não foi possível excluir o aluno.', 'error');
-                }
+        Swal.fire({ title: 'Tem certeza?', text: "Deseja remover o aluno " + matricula + "?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc3545', confirmButtonText: 'Sim, excluir!' }).then(async (res) => {
+            if (res.isConfirmed) {
+                await fetch(URL_PLANILHA, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "delete", matricula }) });
+                Swal.fire({ title: 'Excluído!', text: 'Registro removido.', icon: 'success', timer: 2000, showConfirmButton: false });
+                setTimeout(() => renderizarPainelGerencial(true), 1500);
             }
         });
     }
@@ -1440,35 +1442,14 @@
         const email = document.getElementById(`card-email-${index}-tab`).value.trim();
         const observacoes = document.getElementById(`card-obs-${index}-tab`).value.trim();
 
-        Swal.fire({
-            title: 'Reenviar Material?',
-            text: `Deseja enviar a apostila novamente para o e-mail de ${nome}?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3b82f6',
-            cancelButtonColor: '#4a5568',
-            confirmButtonText: 'Sim, reenviar!',
-            cancelButtonText: 'Cancelar'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                Swal.fire({
-                    title: 'Disparando E-mail...',
-                    text: 'Aguarde um momento.',
-                    allowOutsideClick: false,
-                    didOpen: () => { Swal.showLoading() }
-                });
-
-                const dadosBase = { action: "update", matricula, nome, campanha, curso, dia, horario, vendedor, email, observacoes };
-
-                try {
-                    await fetch(URL_PLANILHA, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({...dadosBase, status: "Pendente de Envio"}) });
-                    await fetch(URL_PLANILHA, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({...dadosBase, status: "Enviado"}) });
-
-                    Swal.fire({ title: 'Enviado!', text: 'O material foi reenviado com sucesso.', icon: 'success', timer: 2500, showConfirmButton: false });
-                    setTimeout(() => { renderizarPainelGerencial(true); }, 1500);
-                } catch (err) {
-                    Swal.fire('Erro!', 'Ocorreu um problema ao tentar reenviar o e-mail.', 'error');
-                }
+        Swal.fire({ title: 'Reenviar Material?', text: `Deseja enviar apostila novamente para ${nome}?`, icon: 'question', showCancelButton: true, confirmButtonText: 'Sim, reenviar!' }).then(async (res) => {
+            if (res.isConfirmed) {
+                Swal.fire({ title: 'Disparando E-mail...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                const base = { action: "update", matricula, nome, campanha, curso, dia, horario, vendedor, email, observacoes };
+                await fetch(URL_PLANILHA, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({...base, status: "Pendente de Envio"}) });
+                await fetch(URL_PLANILHA, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({...base, status: "Enviado"}) });
+                Swal.fire({ title: 'Reenviado!', icon: 'success', timer: 2000, showConfirmButton: false });
+                setTimeout(() => renderizarPainelGerencial(true), 1500);
             }
         });
     }
