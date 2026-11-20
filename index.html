@@ -116,6 +116,8 @@
         .auth-toggle-btn.active { background: white; color: var(--escola-laranja); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
         .swal2-popup { font-family: 'Jost', sans-serif; }
+        .swal2-styled.swal2-confirm { background-color: #4a5568 !important; }
+        .swal2-styled.swal2-confirm:hover { background-color: #2d3748 !important; }
 
         @media print {
             @page { size: landscape; margin: 10mm; }
@@ -125,7 +127,7 @@
             #page-restrita { display: block !important; }
             #admin-panel { display: block !important; }
             #admin-panel > .card:not(:has(#admin-panel-relatorio)) { display: none !important; }
-            #admin-panel-relatorio { display: block !important; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; }
+            #admin-panel-relatorio { display: block !important; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; background: white !important; }
             #admin-panel-relatorio .card-row, #admin-panel-relatorio div:has(> select), #admin-panel-relatorio div:has(> button) { display: none !important; }
             .table-responsive { border: none !important; overflow: visible !important; width: 100% !important; box-shadow: none !important;}
         }
@@ -223,37 +225,35 @@
                 </div>
             </div>
 
-            <!-- FILTRO DE MÊS E ANO PARA O COLABORADOR -->
-            <div class="card" style="padding: 15px; margin-bottom: 20px;">
-                <div style="display:flex; gap:15px; align-items:end; flex-wrap:wrap;">
-                    <div style="flex:1; min-width:180px;">
-                        <label>Filtrar por Mês:</label>
-                        <select id="colab-filtro-mes" onchange="carregarPainelColaborador()">
-                            <option value="0">Janeiro</option><option value="1">Fevereiro</option><option value="2">Março</option><option value="3">Abril</option><option value="4">Maio</option><option value="5">Junho</option><option value="6">Julho</option><option value="7">Agosto</option><option value="8">Setembro</option><option value="9">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option>
-                        </select>
-                    </div>
-                    <div style="flex:1; min-width:140px;">
-                        <label>Filtrar por Ano:</label>
-                        <select id="colab-filtro-ano" onchange="carregarPainelColaborador()">
-                            <option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- GRÁFICO DE DEMONSTRAÇÃO DO MÊS -->
+            <!-- GRÁFICO DE DESEMPENHO E FILTROS INTEGRADOS -->
             <div class="card" style="display:grid; grid-template-columns: 1fr 2fr; gap:20px; align-items:center;">
                 <div>
                     <h3 style="margin-top:0;" id="colab-grafico-titulo">Seu Desempenho</h3>
-                    <p style="font-size:14px; color:#555;">Gráfico demonstrativo dos seus envios cadastrados divididos pelas campanhas ativas no período selecionado.</p>
-                    <div id="colab-stats-texto" style="font-size:15px; font-weight:600; margin-top:15px;"></div>
+                    <p style="font-size:14px; color:#555; margin-bottom:15px;">Gráfico demonstrativo dos seus envios cadastrados divididos pelas campanhas ativas.</p>
+                    
+                    <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:110px;">
+                            <label style="font-size:12px;">Mês:</label>
+                            <select id="colab-filtro-mes" style="font-size:13px; padding:6px;" onchange="carregarPainelColaborador()">
+                                <option value="0">Janeiro</option><option value="1">Fevereiro</option><option value="2">Março</option><option value="3">Abril</option><option value="4">Maio</option><option value="5">Junho</option><option value="6">Julho</option><option value="7">Agosto</option><option value="8">Setembro</option><option value="9">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option>
+                            </select>
+                        </div>
+                        <div style="flex:1; min-width:90px;">
+                            <label style="font-size:12px;">Ano:</label>
+                            <select id="colab-filtro-ano" style="font-size:13px; padding:6px;" onchange="carregarPainelColaborador()">
+                                <option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="colab-stats-texto" style="font-size:15px; font-weight:600;"></div>
                 </div>
                 <div style="max-height: 250px; display:flex; justify-content:center;">
                     <canvas id="graficoColaborador"></canvas>
                 </div>
             </div>
 
-            <!-- CENTRAL DE MATERIAIS DO COLABORADOR -->
+            <!-- CENTRAL DE MATERIAIS DO COLABORADOR (EXIBINDO TODOS OS REGISTROS) -->
             <div class="card">
                 <h3>Central de Materiais Cadastrados por Você</h3>
                 <div class="table-responsive">
@@ -355,7 +355,7 @@
                     </table>
                 </div>
 
-                <!-- Adicionar Campanha (Lado a Lado conforme pedido) -->
+                <!-- Adicionar Campanha -->
                 <h3 style="margin-top: 0; border-left: 4px solid #333;"><i class="fas fa-bullhorn"></i> Campanhas Cadastradas e Nova Campanha</h3>
                 <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start; margin-bottom: 30px;">
                     <div style="background:#fff; padding:15px; border-radius:8px; border:1px solid #eee;">
@@ -457,7 +457,6 @@
         }
         await carregarConfiguracoesGerais();
         
-        // Ajustar selects de mês/ano padrão no colaborador
         const selMes = document.getElementById('colab-filtro-mes');
         const selAno = document.getElementById('colab-filtro-ano');
         if(selMes) selMes.value = new Date().getMonth();
@@ -578,16 +577,29 @@
     }
 
     function switchPage(page) {
-        if (page === 'publica' && colabLogado) {
+        const activePage = document.querySelector('.page.active');
+        const isFromColab = activePage && activePage.id === 'page-colaborador' && colabLogado;
+        const isFromAdmin = activePage && activePage.id === 'page-restrita' && logado;
+
+        if (isFromColab || isFromAdmin) {
             Swal.fire({
                 title: 'Deseja sair?',
-                text: 'Ao sair do Ambiente do Colaborador, sua sessão será encerrada.',
+                text: isFromColab ? 'Ao sair do Ambiente do Colaborador, sua sessão será encerrada.' : 'Sua sessão administrativa será encerrada.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Sim, sair',
-                cancelButtonText: 'Ficar'
+                cancelButtonText: 'Ficar',
+                confirmButtonColor: '#4a5568'
             }).then((res) => {
-                if(res.isConfirmed) { logoutColaborador(); executarTrocaDeAba(page); }
+                if(res.isConfirmed) {
+                    if(isFromColab) logoutColaborador();
+                    if(isFromAdmin) {
+                        logado = false;
+                        sessionStorage.removeItem('logadoMaster');
+                        document.getElementById('admin-password').value = "";
+                    }
+                    executarTrocaDeAba(page);
+                }
             });
             return;
         }
@@ -604,6 +616,7 @@
             if (!logado) {
                 document.getElementById('lock-screen').style.display = 'block';
                 document.getElementById('admin-panel').style.display = 'none';
+                document.getElementById('admin-password').value = "";
             } else {
                 document.getElementById('lock-screen').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
@@ -784,7 +797,8 @@
         sessionStorage.removeItem('colabLogado');
         document.getElementById('colaborador-auth-box').style.display = 'block';
         document.getElementById('colaborador-painel').style.display = 'none';
-        document.getElementById('form-login-colab').reset ? document.getElementById('form-login-colab').reset() : null;
+        document.getElementById('login-colab-email').value = "";
+        document.getElementById('login-colab-senha').value = "";
     }
 
     async function carregarPainelColaborador() {
@@ -818,21 +832,21 @@
             let totalPeriodo = 0;
             let nomeMes = new Date(selAno, selMes, 1).toLocaleString('pt-BR', { month: 'long' });
 
-            meusMateriais = meusMateriais.filter(m => {
+            meusMateriais.forEach(m => {
                 let msCad = parseDateSafely(m.dataCadastro);
+                let dentroDoPeriodo = false;
                 if(msCad > 0) {
                     let dCad = new Date(msCad);
-                    return dCad.getMonth() === selMes && dCad.getFullYear() === selAno;
+                    if(dCad.getMonth() === selMes && dCad.getFullYear() === selAno) {
+                        dentroDoPeriodo = true;
+                        totalPeriodo++;
+                        let camp = m.campanha || 'Padrão';
+                        if(contagemCampanhas[camp] !== undefined) contagemCampanhas[camp]++;
+                        else contagemCampanhas[camp] = 1;
+                    }
                 }
-                return false;
-            });
 
-            meusMateriais.forEach(m => {
-                totalPeriodo++;
-                let camp = m.campanha || 'Padrão';
-                if(contagemCampanhas[camp] !== undefined) contagemCampanhas[camp]++;
-                else contagemCampanhas[camp] = 1;
-
+                // Mantém TODOS os registros visíveis na tabela conforme solicitado
                 tbody.innerHTML += `
                     <tr>
                         <td>${formatarData(m.dataCadastro)}</td>
@@ -848,7 +862,7 @@
             });
 
             if(meusMateriais.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#777;">Nenhum material cadastrado neste período.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#777;">Nenhum material cadastrado por você ainda.</td></tr>`;
             }
 
             document.getElementById('colab-grafico-titulo').innerText = `Seu Desempenho (${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)}/${selAno})`;
@@ -897,7 +911,6 @@
                     <div>
                         <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Matrícula:</label>
                         <input type="text" id="swal-matricula" class="swal2-input" style="margin:0; width:100%; height:40px;" oninput="verificarDuplicidadeInput(this.value)" onblur="verificarDuplicidadeInput(this.value)">
-                        <div id="swal-duplicidade-aviso" style="font-size:12px; color:#dc3545; font-weight:bold; margin-top:4px; display:none;"></div>
                     </div>
                     <div>
                         <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Campanha:</label>
@@ -933,11 +946,6 @@
             confirmButtonColor: '#16a34a',
             showCancelButton: true,
             cancelButtonText: 'Cancelar',
-            didOpen: () => {
-                // Bloquear botão inicialmente até ter certeza
-                const confirmBtn = Swal.getConfirmButton();
-                confirmBtn.disabled = false;
-            },
             preConfirm: async () => {
                 const nome = document.getElementById('swal-nome').value.trim();
                 const matricula = document.getElementById('swal-matricula').value.trim();
@@ -960,7 +968,7 @@
 
                     const existente = listaAlunos.find(al => String(al.matricula).trim() === String(matricula).trim());
                     if(existente) {
-                        Swal.showValidationMessage(`Atenção, material da Matrícula ${matricula} já possui cadastro por outro colaborador (${existente.vendedor || 'Outro'}). Troque a matrícula para prosseguir.`);
+                        Swal.showValidationMessage(`Atenção: A matrícula ${matricula} já possui cadastro no sistema.`);
                         return false;
                     }
                 } catch(err) { console.error(err); }
@@ -1000,19 +1008,13 @@
     }
 
     async function verificarDuplicidadeInput(matriculaVal) {
-        const avisoDiv = document.getElementById('swal-duplicidade-aviso');
         const confirmBtn = Swal.getConfirmButton();
-        if(!avisoDiv) return;
-
+        if(!confirmBtn) return;
         if(!matriculaVal.trim()) {
-            avisoDiv.style.display = 'none';
-            if(confirmBtn) { confirmBtn.disabled = false; confirmBtn.style.opacity = '1'; }
+            confirmBtn.disabled = false;
+            confirmBtn.style.opacity = '1';
             return;
         }
-
-        avisoDiv.style.display = 'block';
-        avisoDiv.style.color = '#d97706';
-        avisoDiv.innerText = 'Verificando duplicidade...';
 
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
@@ -1022,19 +1024,13 @@
             let existente = alunos.find(al => String(al.matricula).trim() === String(matriculaVal).trim());
             
             if(existente) {
-                avisoDiv.style.display = 'block';
-                avisoDiv.style.color = '#dc3545';
-                avisoDiv.innerText = `⚠️ Matrícula ${matriculaVal} já cadastrada por (${existente.vendedor || 'Outro'}). O botão de Gravar está bloqueado até que você troque a matrícula.`;
-                if(confirmBtn) { confirmBtn.disabled = true; confirmBtn.style.opacity = '0.5'; }
+                confirmBtn.disabled = true;
+                confirmBtn.style.opacity = '0.4';
             } else {
-                avisoDiv.style.display = 'block';
-                avisoDiv.style.color = '#16a34a';
-                avisoDiv.innerText = '✓ Matrícula disponível para cadastro.';
-                if(confirmBtn) { confirmBtn.disabled = false; confirmBtn.style.opacity = '1'; }
+                confirmBtn.disabled = false;
+                confirmBtn.style.opacity = '1';
             }
-        } catch(e) {
-            avisoDiv.style.display = 'none';
-        }
+        } catch(e) {}
     }
 
     // --- PAINEL RESTRITO (ADMIN) ---
