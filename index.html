@@ -119,16 +119,30 @@
         .swal2-styled.swal2-confirm { background-color: #4a5568 !important; }
         .swal2-styled.swal2-confirm:hover { background-color: #2d3748 !important; }
 
-        @media print {
+@media print {
             @page { size: landscape; margin: 10mm; }
-            body { background: white; color: black; padding: 0; }
-            .tabs, #lock-screen, .search-action-bar, .card:not(:has(#admin-panel-relatorio)), h3:not(:has(#titulo-relatorio-impressao)), #grid-pendentes, .action-buttons-group, .card-actions, .table-btn-3d, div[style*="justify-content: space-between"], #tabela-enviados-raiz, .table-responsive:has(#tabela-enviados-raiz), #tbody-admin-colaboradores, div:has(#tbody-admin-colaboradores), div:has(#nova-campanha) { display: none !important; }
-            .page { display: none !important; }
-            #page-restrita { display: block !important; }
-            #admin-panel { display: block !important; }
-            #admin-panel > .card:not(:has(#admin-panel-relatorio)) { display: none !important; }
-            #admin-panel-relatorio { display: block !important; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; background: white !important; width: 100% !important; }
-            #admin-panel-relatorio .card-row, #admin-panel-relatorio div:has(> select), #admin-panel-relatorio div:has(> button) { display: none !important; }
+            body * { visibility: hidden !important; }
+            #admin-panel-relatorio, #admin-panel-relatorio * { visibility: visible !important; }
+            #admin-panel-relatorio { 
+                position: absolute !important; 
+                left: 0 !important; 
+                top: 0 !important; 
+                width: 100% !important; 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                background: white !important; 
+                border: none !important; 
+                box-shadow: none !important; 
+            }
+            #admin-panel-relatorio .card-row, 
+            #admin-panel-relatorio div:has(> select), 
+            #admin-panel-relatorio div:has(> button),
+            #admin-panel-relatorio h3:has(.fa-users-cog),
+            #admin-panel-relatorio .table-responsive:has(#tbody-admin-colaboradores),
+            #admin-panel-relatorio h3:has(.fa-bullhorn),
+            #admin-panel-relatorio div:has(#nova-campanha) { 
+                display: none !important; 
+            }
             .table-responsive { border: none !important; overflow: visible !important; width: 100% !important; box-shadow: none !important; max-height: none !important; }
             canvas { max-width: 100% !important; height: auto !important; }
         }
@@ -803,97 +817,97 @@
     }
 
     async function carregarPainelColaborador() {
-        document.getElementById('colaborador-auth-box').style.display = 'none';
-        document.getElementById('colaborador-painel').style.display = 'block';
+    document.getElementById('colaborador-auth-box').style.display = 'none';
+    document.getElementById('colaborador-painel').style.display = 'block';
 
-        const horaAtual = new Date().getHours();
-        let saudacao = "Bom dia";
-        if (horaAtual >= 12 && horaAtual < 18) saudacao = "Boa tarde";
-        else if (horaAtual >= 18) saudacao = "Boa noite";
+    const horaAtual = new Date().getHours();
+    let saudacao = "Bom dia";
+    if (horaAtual >= 12 && horaAtual < 18) saudacao = "Boa tarde";
+    else if (horaAtual >= 18) saudacao = "Boa noite";
 
-        document.getElementById('colab-saudacao-texto').innerHTML = `${saudacao}, ${colabLogado.nome}! Tenha um excelente dia.`;
-        document.getElementById('colab-logado-setor').innerText = colabLogado.setor;
-        document.getElementById('colab-logado-email').innerText = colabLogado.email;
+    document.getElementById('colab-saudacao-texto').innerHTML = `${saudacao}, ${colabLogado.nome}! Tenha um excelente dia.`;
+    document.getElementById('colab-logado-setor').innerText = colabLogado.setor;
+    document.getElementById('colab-logado-email').innerText = colabLogado.email;
 
-        try {
-            const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
-            let data = await res.json();
-            if(data.campanhas) campanhasData = data.campanhas;
-            let alunos = data.alunos || [];
-            
-            // Busca rigorosa pelo nome do colaborador (ignorando maiúsculas/minúsculas e espaços)
-            let meusMateriais = alunos.filter(a => String(a.vendedor || '').trim().toLowerCase() === String(colabLogado.nome || '').trim().toLowerCase());
+    try {
+        const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
+        let data = await res.json();
+        if(data.campanhas) campanhasData = data.campanhas;
+        let alunos = data.alunos || [];
+        
+        // CORREÇÃO CRUCIAL: Comparação limpa e insensível a maiúsculas/minúsculas e espaços extras
+        let nomeColabLogado = String(colabLogado.nome || '').trim().toLowerCase();
+        let meusMateriais = alunos.filter(a => String(a.vendedor || '').trim().toLowerCase() === nomeColabLogado);
 
-            let tbody = document.getElementById('tbody-materiais-colab');
-            tbody.innerHTML = '';
+        let tbody = document.getElementById('tbody-materiais-colab');
+        tbody.innerHTML = '';
 
-            let contagemCampanhas = {};
-            campanhasData.forEach(cp => { contagemCampanhas[cp] = 0; });
+        let contagemCampanhas = {};
+        campanhasData.forEach(cp => { contagemCampanhas[cp] = 0; });
 
-            const selMes = parseInt(document.getElementById('colab-filtro-mes').value, 10);
-            const selAno = parseInt(document.getElementById('colab-filtro-ano').value, 10);
-            let totalPeriodo = 0;
-            let nomeMes = new Date(selAno, selMes, 1).toLocaleString('pt-BR', { month: 'long' });
+        const selMes = parseInt(document.getElementById('colab-filtro-mes').value, 10);
+        const selAno = parseInt(document.getElementById('colab-filtro-ano').value, 10);
+        let totalPeriodo = 0;
+        let nomeMes = new Date(selAno, selMes, 1).toLocaleString('pt-BR', { month: 'long' });
 
-            meusMateriais.forEach(m => {
-                // Preenche a tabela com TODOS os materiais do colaborador (pendentes ou enviados)
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${formatarData(m.dataCadastro)}</td>
-                        <td><b>${m.matricula}</b></td>
-                        <td>${m.nome}</td>
-                        <td>${m.curso}</td>
-                        <td>${m.campanha || 'Padrão'}</td>
-                        <td>${m.email}</td>
-                        <td><span style="font-weight:bold; color:${String(m.status).toLowerCase()==='enviado'?'#16a34a':'#ff6b00'}">${m.status}</span></td>
-                        <td>${m.observacoes || '-'}</td>
-                    </tr>
-                `;
+        meusMateriais.forEach(m => {
+            // EXIBE TODOS OS MATERIAIS NA TABELA (Nenhum some ao ser enviado!)
+            tbody.innerHTML += `
+                <tr>
+                    <td>${formatarData(m.dataCadastro)}</td>
+                    <td><b>${m.matricula}</b></td>
+                    <td>${m.nome}</td>
+                    <td>${m.curso}</td>
+                    <td>${m.campanha || 'Padrão'}</td>
+                    <td>${m.email}</td>
+                    <td><span style="font-weight:bold; color:${String(m.status).toLowerCase()==='enviado'?'#16a34a':'#ff6b00'}">${m.status}</span></td>
+                    <td>${m.observacoes || '-'}</td>
+                </tr>
+            `;
 
-                // Filtra apenas para o cálculo do gráfico de desempenho do mês/ano selecionado
-                let msCad = parseDateSafely(m.dataCadastro);
-                if(msCad > 0) {
-                    let dCad = new Date(msCad);
-                    if(dCad.getMonth() === selMes && dCad.getFullYear() === selAno) {
-                        totalPeriodo++;
-                        let camp = m.campanha || 'Padrão';
-                        if(contagemCampanhas[camp] !== undefined) contagemCampanhas[camp]++;
-                        else contagemCampanhas[camp] = 1;
-                    }
+            // Apenas para alimentar o gráfico do período selecionado
+            let msCad = parseDateSafely(m.dataCadastro);
+            if(msCad > 0) {
+                let dCad = new Date(msCad);
+                if(dCad.getMonth() === selMes && dCad.getFullYear() === selAno) {
+                    totalPeriodo++;
+                    let camp = m.campanha || 'Padrão';
+                    if(contagemCampanhas[camp] !== undefined) contagemCampanhas[camp]++;
+                    else contagemCampanhas[camp] = 1;
                 }
-            });
-
-            if(meusMateriais.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#777;">Nenhum material cadastrado por você ainda.</td></tr>`;
             }
+        });
 
-            document.getElementById('colab-grafico-titulo').innerText = `Seu Desempenho (${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)}/${selAno})`;
-            
-            let textoStats = `Total no período: ${totalPeriodo}<br>`;
-            let labelsGrafico = [], dadosGrafico = [], coresGrafico = ['#ff6b00', '#16a34a', '#d97706', '#8b5cf6', '#ec4899'];
-            let corIndex = 0, bgCores = [];
+        if(meusMateriais.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#777;">Nenhum material cadastrado por você ainda.</td></tr>`;
+        }
 
-            for(let cp in contagemCampanhas) {
-                labelsGrafico.push(cp);
-                dadosGrafico.push(contagemCampanhas[cp]);
-                textoStats += `• ${cp}: ${contagemCampanhas[cp]}<br>`;
-                bgCores.push(coresGrafico[corIndex % coresGrafico.length]);
-                corIndex++;
-            }
+        document.getElementById('colab-grafico-titulo').innerText = `Seu Desempenho (${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)}/${selAno})`;
+        
+        let textoStats = `Total no período: ${totalPeriodo}<br>`;
+        let labelsGrafico = [], dadosGrafico = [], coresGrafico = ['#ff6b00', '#16a34a', '#d97706', '#8b5cf6', '#ec4899'];
+        let corIndex = 0, bgCores = [];
 
-            document.getElementById('colab-stats-texto').innerHTML = textoStats;
+        for(let cp in contagemCampanhas) {
+            labelsGrafico.push(cp);
+            dadosGrafico.push(contagemCampanhas[cp]);
+            textoStats += `• ${cp}: ${contagemCampanhas[cp]}<br>`;
+            bgCores.push(coresGrafico[corIndex % coresGrafico.length]);
+            corIndex++;
+        }
 
-            const ctx = document.getElementById('graficoColaborador').getContext('2d');
-            if(meuGrafico) meuGrafico.destroy();
-            meuGrafico = new Chart(ctx, {
-                type: 'doughnut',
-                data: { labels: labelsGrafico, datasets: [{ data: dadosGrafico, backgroundColor: bgCores }] },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+        document.getElementById('colab-stats-texto').innerHTML = textoStats;
 
-        } catch(e) { console.error(e); }
-    }
+        const ctx = document.getElementById('graficoColaborador').getContext('2d');
+        if(meuGrafico) meuGrafico.destroy();
+        meuGrafico = new Chart(ctx, {
+            type: 'doughnut',
+            data: { labels: labelsGrafico, datasets: [{ data: dadosGrafico, backgroundColor: bgCores }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
 
+    } catch(e) { console.error(e); }
+}
     async function abrirModalNovoEnvio() {
         let optionsCursos = listaCursos.map(c => `<option value="${c}">${c}</option>`).join('');
         let res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
