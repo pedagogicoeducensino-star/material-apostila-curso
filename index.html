@@ -45,6 +45,7 @@
         
         .btn-submit { background: linear-gradient(145deg, #ff8226, #e65c00); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: 600; font-family: 'Jost', sans-serif; width: 100%; transition: 0.2s; }
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(230, 92, 0, 0.3); }
+        .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .search-action-bar { display: grid; grid-template-columns: 1fr auto; gap: 15px; align-items: end; }
         @media (max-width: 768px) { .search-action-bar { grid-template-columns: 1fr; } }
@@ -88,7 +89,7 @@
         
         .config-list-item { display:flex; justify-content:space-between; align-items:center; background:#fff; padding:8px 15px; margin-bottom:8px; border-radius:6px; border:1px solid #eee; font-weight: 500; font-size: 14px;}
 
-        .table-responsive { width: 100%; max-height: 320px; overflow-y: auto; overflow-x: auto; background: white; border-radius: 10px; border: 1px solid #eee; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .table-responsive { width: 100%; max-height: 360px; overflow-y: auto; overflow-x: auto; background: white; border-radius: 10px; border: 1px solid #eee; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
         .table-responsive::-webkit-scrollbar { width: 8px; height: 8px; }
         .table-responsive::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         .table-responsive::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
@@ -115,36 +116,87 @@
         .auth-toggle-btn { flex: 1; padding: 10px; border: none; background: transparent; font-weight: 600; cursor: pointer; border-radius: 6px; transition: 0.3s; font-family: 'Jost', sans-serif; }
         .auth-toggle-btn.active { background: white; color: var(--escola-laranja); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
-        .swal2-popup { font-family: 'Jost', sans-serif; }
-        .swal2-styled.swal2-confirm { background-color: #4a5568 !important; }
-        .swal2-styled.swal2-confirm:hover { background-color: #2d3748 !important; }
+        /* MODAL CUSTOMIZADO PARA CADASTRO DE ENVIO (PERMITE SWEETALERT POR CIMA) */
+        .custom-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+        .custom-modal-overlay.open { display: flex; }
+        .custom-modal-box {
+            background: #fff;
+            width: 100%;
+            max-width: 750px;
+            border-radius: 12px;
+            border-top: 5px solid var(--escola-laranja);
+            padding: 25px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+        .custom-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f0f4f8;
+            padding-bottom: 12px;
+            margin-bottom: 18px;
+        }
+        .custom-modal-close {
+            background: transparent;
+            border: none;
+            font-size: 22px;
+            color: #666;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        .custom-modal-close:hover { color: #dc3545; }
+        .modal-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .modal-form-grid .span-2 { grid-column: span 2; }
+        @media (max-width: 600px) {
+            .modal-form-grid { grid-template-columns: 1fr; }
+            .modal-form-grid .span-2 { grid-column: span 1; }
+        }
+        .modal-footer-btns {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 22px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
 
-@media print {
+        .swal2-popup { font-family: 'Jost', sans-serif; }
+        .swal2-styled.swal2-confirm { background-color: #ff6b00 !important; }
+        .swal2-styled.swal2-confirm:hover { background-color: #e65c00 !important; }
+        .swal2-styled.swal2-cancel { background-color: #4a5568 !important; }
+
+        /* ÁREA EXCLUSIVA DE IMPRESSÃO (NUNCA IMPRIME EM BRANCO) */
+        #area-impressao-exclusiva { display: none; }
+
+        @media print {
             @page { size: landscape; margin: 10mm; }
-            body * { visibility: hidden !important; }
-            #admin-panel-relatorio, #admin-panel-relatorio * { visibility: visible !important; }
-            #admin-panel-relatorio { 
-                position: absolute !important; 
-                left: 0 !important; 
-                top: 0 !important; 
-                width: 100% !important; 
-                margin: 0 !important; 
-                padding: 0 !important; 
-                background: white !important; 
-                border: none !important; 
-                box-shadow: none !important; 
-            }
-            #admin-panel-relatorio .card-row, 
-            #admin-panel-relatorio div:has(> select), 
-            #admin-panel-relatorio div:has(> button),
-            #admin-panel-relatorio h3:has(.fa-users-cog),
-            #admin-panel-relatorio .table-responsive:has(#tbody-admin-colaboradores),
-            #admin-panel-relatorio h3:has(.fa-bullhorn),
-            #admin-panel-relatorio div:has(#nova-campanha) { 
-                display: none !important; 
-            }
-            .table-responsive { border: none !important; overflow: visible !important; width: 100% !important; box-shadow: none !important; max-height: none !important; }
-            canvas { max-width: 100% !important; height: auto !important; }
+            body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
+            body.imprimindo-exclusivo > .container,
+            body.imprimindo-exclusivo > .custom-modal-overlay,
+            body.imprimindo-exclusivo > .swal2-container { display: none !important; }
+            body.imprimindo-exclusivo > #area-impressao-exclusiva { display: block !important; width: 100% !important; }
+            .print-header { border-bottom: 2px solid #ff6b00; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-end; }
+            .print-header h1 { margin: 0; font-size: 20px; color: #333; }
+            .print-header p { margin: 3px 0 0 0; font-size: 12px; color: #555; }
+            .print-summary-grid { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+            .print-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+            .print-table th { background: #f0f0f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #999; padding: 6px; text-align: left; font-weight: 700; }
+            .print-table td { border: 1px solid #ccc; padding: 5px 6px; text-align: left; }
         }
     </style>
 </head>
@@ -236,13 +288,13 @@
                 </div>
                 <div style="display:flex; gap:10px;">
                     <button class="btn-submit" style="width:auto; background:#16a34a;" onclick="abrirModalNovoEnvio()"><i class="fas fa-plus-circle"></i> Cadastrar Novo Envio</button>
-                    <button class="btn-submit" style="width:auto; background:#dc3545;" onclick="logoutColaborador()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+                    <button class="btn-submit" style="width:auto; background:#dc3545;" onclick="confirmarLogoutColaborador()"><i class="fas fa-sign-out-alt"></i> Sair</button>
                 </div>
             </div>
 
             <!-- 1. CENTRAL DE MATERIAIS CADASTRADOS POR VOCÊ (PRIMEIRO NO TOPO) -->
             <div class="card">
-                <h3>Central de Materiais Cadastrados por Você</h3>
+                <h3 style="margin-top:0;">Central de Materiais Cadastrados por Você</h3>
                 <div class="table-responsive">
                     <table class="list-table">
                         <thead>
@@ -271,13 +323,13 @@
                     <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
                         <div style="flex:1; min-width:110px;">
                             <label style="font-size:12px;">Mês:</label>
-                            <select id="colab-filtro-mes" style="font-size:13px; padding:6px;" onchange="carregarPainelColaborador()">
+                            <select id="colab-filtro-mes" style="font-size:13px; padding:6px;" onchange="atualizarGraficoColaborador()">
                                 <option value="0">Janeiro</option><option value="1">Fevereiro</option><option value="2">Março</option><option value="3">Abril</option><option value="4">Maio</option><option value="5">Junho</option><option value="6">Julho</option><option value="7">Agosto</option><option value="8">Setembro</option><option value="9">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option>
                             </select>
                         </div>
                         <div style="flex:1; min-width:90px;">
                             <label style="font-size:12px;">Ano:</label>
-                            <select id="colab-filtro-ano" style="font-size:13px; padding:6px;" onchange="carregarPainelColaborador()">
+                            <select id="colab-filtro-ano" style="font-size:13px; padding:6px;" onchange="atualizarGraficoColaborador()">
                                 <option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option>
                             </select>
                         </div>
@@ -414,7 +466,7 @@
                     </div>
                     <div style="display:flex; gap:10px; margin-top:10px;">
                         <button class="btn-export btn-excel" onclick="exportarRelatorioFiltradoExcel()"><i class="fas fa-file-excel"></i> Exportar Relatório Filtrado (Excel)</button>
-                        <button class="btn-export btn-pdf" onclick="window.print()"><i class="fas fa-print"></i> Imprimir Relatório</button>
+                        <button class="btn-export btn-pdf" onclick="imprimirRelatorioEstatistico()"><i class="fas fa-print"></i> Imprimir Relatório</button>
                     </div>
                 </div>
 
@@ -431,6 +483,69 @@
     </div>
 </div>
 
+<!-- MODAL PRÓPRIO DE CADASTRO DE NOVO ENVIO (PERMITE ALERTAS POR CIMA SEM FECHAR) -->
+<div id="modal-novo-envio" class="custom-modal-overlay">
+    <div class="custom-modal-box">
+        <div class="custom-modal-header">
+            <h2 style="margin:0; padding:0; border:none; font-size:20px;"><i class="fas fa-plus-circle" style="color:var(--escola-laranja);"></i> Cadastrar Novo Envio</h2>
+            <button type="button" class="custom-modal-close" onclick="fecharModalNovoEnvio()"><i class="fas fa-times"></i></button>
+        </div>
+        <form id="form-novo-envio-colab" onsubmit="gravarNovoEnvioColab(event)">
+            <div class="modal-form-grid">
+                <div class="span-2">
+                    <label>Nome Completo do Aluno(a):</label>
+                    <input type="text" id="env-nome" required placeholder="Digite o nome completo do aluno...">
+                </div>
+                <div>
+                    <label>Matrícula:</label>
+                    <input type="text" id="env-matricula" required placeholder="Ex: 2026" oninput="aoDigitarMatricula()" onblur="verificarDuplicidadeMatricula(this.value)">
+                </div>
+                <div>
+                    <label>Campanha:</label>
+                    <select id="env-campanha" required></select>
+                </div>
+                <div class="span-2">
+                    <label>Curso:</label>
+                    <select id="env-curso" required></select>
+                </div>
+                <div>
+                    <label>Dia de Aula:</label>
+                    <select id="env-dia" required>
+                        <option value="Segunda-feira">Segunda-feira</option>
+                        <option value="Terça-feira">Terça-feira</option>
+                        <option value="Quarta-feira">Quarta-feira</option>
+                        <option value="Quinta-feira">Quinta-feira</option>
+                        <option value="Sexta-feira">Sexta-feira</option>
+                        <option value="Sábado">Sábado</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Horário:</label>
+                    <select id="env-horario" required>
+                        <option value="07:00 às 09:00">07:00 às 09:00</option>
+                        <option value="09:00 às 11:00">09:00 às 11:00</option>
+                        <option value="11:00 às 13:00">11:00 às 13:00</option>
+                        <option value="13:00 às 15:00">13:00 às 15:00</option>
+                        <option value="15:00 às 17:00">15:00 às 17:00</option>
+                        <option value="17:00 às 19:00">17:00 às 19:00</option>
+                    </select>
+                </div>
+                <div class="span-2">
+                    <label>E-mail do Aluno (Sem acentuações):</label>
+                    <input type="email" id="env-email" required placeholder="email@exemplo.com" oninput="validarEmailInput(this)">
+                </div>
+            </div>
+            <div class="modal-footer-btns">
+                <button type="button" class="btn-export btn-pdf" onclick="fecharModalNovoEnvio()">Cancelar</button>
+                <button type="submit" id="btn-gravar-novo-envio" class="btn-export" style="background:#16a34a;"><i class="fas fa-save"></i> Gravar Registro</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- CONTAINER EXCLUSIVO PARA IMPRESSÃO LIMPA -->
+<div id="area-impressao-exclusiva"></div>
+
 <script>
     let logado = false;
     let colabLogado = null;
@@ -440,6 +555,8 @@
     let campanhasData = [];  
     let alunosGlobalCache = [];
     let colabsGlobalCache = [];
+    let meusMateriaisCache = [];
+    let matriculaDuplicadaBloqueio = false;
     
     const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbyqYkmZyG6dkgm5bJBXEHwE1ttx2Nrik47RyVvbAvSBnsWuQ3MLy2BcSVdjRwWIx3WM/exec"; 
 
@@ -462,21 +579,31 @@
     ];
 
     window.onload = async () => {
+        // Define mês e ano atuais ANTES de carregar qualquer gráfico
+        const selMes = document.getElementById('colab-filtro-mes');
+        const selAno = document.getElementById('colab-filtro-ano');
+        if(selMes) selMes.value = new Date().getMonth();
+        if(selAno) selAno.value = new Date().getFullYear();
+
         if (sessionStorage.getItem('logadoMaster') === 'true') {
             logado = true;
         }
+        await carregarConfiguracoesGerais();
+
         let salvoColab = sessionStorage.getItem('colabLogado');
         if (salvoColab) {
             colabLogado = JSON.parse(salvoColab);
             carregarPainelColaborador();
         }
-        await carregarConfiguracoesGerais();
-        
-        const selMes = document.getElementById('colab-filtro-mes');
-        const selAno = document.getElementById('colab-filtro-ano');
-        if(selMes) selMes.value = new Date().getMonth();
-        if(selAno) selAno.value = new Date().getFullYear();
     };
+
+    function normalizarTexto(txt) {
+        return String(txt || '').trim().toLowerCase();
+    }
+
+    function validarEmailInput(input) {
+        input.value = input.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
 
     async function carregarConfiguracoesGerais() {
         try {
@@ -487,8 +614,58 @@
             if (data.alunos) alunosGlobalCache = data.alunos;
             if (data.colaboradores) colabsGlobalCache = data.colaboradores;
         } catch (err) {
-            console.error("Erro ao puxar dados globais.");
+            console.error("Erro ao puxar dados globais:", err);
         }
+    }
+
+    // CORREÇÃO PRINCIPAL: Inclui Colaboradores + Vendedores + Valor atual do registro para NUNCA apagar o vendedor ao salvar!
+    function montarOpcoesVendedores(vendedorAtual) {
+        let mapa = new Map();
+        const adicionar = (nome) => {
+            let limpo = String(nome || '').trim();
+            if (limpo && !mapa.has(limpo.toLowerCase())) {
+                mapa.set(limpo.toLowerCase(), limpo);
+            }
+        };
+        vendedoresData.forEach(adicionar);
+        colabsGlobalCache.forEach(c => adicionar(c.nome));
+        adicionar(vendedorAtual);
+
+        let atualNorm = normalizarTexto(vendedorAtual);
+        let html = '<option value="">Selecione...</option>';
+        mapa.forEach((nomeOriginal, chave) => {
+            let selected = (atualNorm && chave === atualNorm) ? 'selected' : '';
+            html += `<option value="${nomeOriginal}" ${selected}>${nomeOriginal}</option>`;
+        });
+        return html;
+    }
+
+    function montarOpcoesCampanhas(campanhaAtual) {
+        let mapa = new Map();
+        const adicionar = (c) => {
+            let limpo = String(c || '').trim();
+            if (limpo && !mapa.has(limpo.toLowerCase())) {
+                mapa.set(limpo.toLowerCase(), limpo);
+            }
+        };
+        campanhasData.forEach(adicionar);
+        adicionar(campanhaAtual);
+
+        let atualNorm = normalizarTexto(campanhaAtual);
+        let html = '<option value="">Selecione...</option>';
+        mapa.forEach((nomeOriginal, chave) => {
+            let selected = (atualNorm && chave === atualNorm) ? 'selected' : '';
+            html += `<option value="${nomeOriginal}" ${selected}>${nomeOriginal}</option>`;
+        });
+        return html;
+    }
+
+    function montarOpcoesCursos(cursoAtual) {
+        let lista = listaCursos.slice();
+        if (cursoAtual && !lista.includes(cursoAtual)) {
+            lista.unshift(cursoAtual);
+        }
+        return lista.map(c => `<option value="${c}" ${cursoAtual === c ? 'selected' : ''}>${c}</option>`).join('');
     }
 
     async function adicionarConfig(tipo, inputId) {
@@ -508,10 +685,13 @@
             });
             input.value = '';
             Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Adicionado com sucesso!', showConfirmButton: false, timer: 1500});
-            await carregarConfiguracoesGerais();
-            renderizarListasAdmin();
+            setTimeout(async () => {
+                await carregarConfiguracoesGerais();
+                renderizarListasAdmin();
+                popularFiltrosRelatorio();
+            }, 1200);
         } catch(e) {
-            Swal.fire('Erro', 'Falha ao adicionar.', 'error');
+            Swal.fire({ title: 'Erro', text: 'Falha ao adicionar.', icon: 'error', confirmButtonColor: '#4a5568' });
         }
         input.disabled = false;
         btn.innerHTML = btnOldHtml;
@@ -524,6 +704,8 @@
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#4a5568',
+            confirmButtonText: 'Sim, remover',
             cancelButtonText: 'Cancelar'
         }).then(async (result) => {
             if(result.isConfirmed) {
@@ -533,10 +715,13 @@
                         body: JSON.stringify({ action: "deleteConfig", tipo: tipo, valor: valor })
                     });
                     Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Removido!', showConfirmButton: false, timer: 1500});
-                    await carregarConfiguracoesGerais();
-                    renderizarListasAdmin();
+                    setTimeout(async () => {
+                        await carregarConfiguracoesGerais();
+                        renderizarListasAdmin();
+                        popularFiltrosRelatorio();
+                    }, 1200);
                 } catch(e) {
-                    Swal.fire('Erro', 'Falha ao remover.', 'error');
+                    Swal.fire({ title: 'Erro', text: 'Falha ao remover.', icon: 'error', confirmButtonColor: '#4a5568' });
                 }
             }
         });
@@ -593,31 +778,53 @@
 
     function switchPage(page) {
         const activePage = document.querySelector('.page.active');
+        if (activePage && activePage.id === `page-${page}`) return;
+
         const isFromColab = activePage && activePage.id === 'page-colaborador' && colabLogado;
         const isFromAdmin = activePage && activePage.id === 'page-restrita' && logado;
+        const isFromPublicaComConsulta = activePage && activePage.id === 'page-publica' && document.getElementById('search-result').style.display === 'block';
 
         if (isFromColab || isFromAdmin) {
             Swal.fire({
                 title: 'Deseja sair?',
-                text: isFromColab ? 'Ao sair do Ambiente do Colaborador, sua sessão será encerrada.' : 'Sua sessão administrativa será encerrada.',
+                text: isFromColab ? 'Ao sair do Ambiente do Colaborador, sua sessão será encerrada.' : 'Ao sair do Painel Restrito, sua sessão administrativa será encerrada.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Sim, sair',
                 cancelButtonText: 'Ficar',
-                confirmButtonColor: '#4a5568'
+                confirmButtonColor: '#ff6b00',
+                cancelButtonColor: '#4a5568'
             }).then((res) => {
                 if(res.isConfirmed) {
                     if(isFromColab) logoutColaborador();
-                    if(isFromAdmin) {
-                        logado = false;
-                        sessionStorage.removeItem('logadoMaster');
-                        document.getElementById('admin-password').value = "";
-                    }
+                    if(isFromAdmin) encerrarSessaoAdmin();
                     executarTrocaDeAba(page);
                 }
             });
             return;
         }
+
+        if (isFromPublicaComConsulta) {
+            Swal.fire({
+                title: 'Limpar consulta?',
+                text: 'Ao sair da tela de consulta, os dados exibidos serão limpos por segurança.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sim, continuar',
+                cancelButtonText: 'Ficar',
+                confirmButtonColor: '#ff6b00',
+                cancelButtonColor: '#4a5568'
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    document.getElementById('search-matricula').value = '';
+                    document.getElementById('search-result').style.display = 'none';
+                    document.getElementById('search-error').style.display = 'none';
+                    executarTrocaDeAba(page);
+                }
+            });
+            return;
+        }
+
         executarTrocaDeAba(page);
     }
 
@@ -657,9 +864,9 @@
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let data = await res.json();
             let alunos = data.alunos ? data.alunos : data;
-            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
+            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || alunos[0].matricula === "matricula")) alunos = alunos.slice(1);
 
-            const a = alunos.find(al => al.matricula == inputBusca);
+            const a = alunos.find(al => String(al.matricula).trim() === String(inputBusca).trim());
 
             if (a) {
                 let statusNormalizado = a.status ? a.status.toString().trim().toLowerCase() : "";
@@ -751,15 +958,15 @@
         const senha = document.getElementById('reg-colab-senha').value;
         const conf = document.getElementById('reg-colab-confirma').value;
 
-        if(senha !== conf) { Swal.fire('Erro', 'As senhas não coincidem!', 'error'); return; }
+        if(senha !== conf) { Swal.fire({ title: 'Erro', text: 'As senhas não coincidem!', icon: 'error', confirmButtonColor: '#4a5568' }); return; }
 
-        Swal.fire({title: 'Cadastrando...', didOpen: () => Swal.showLoading()});
+        Swal.fire({title: 'Cadastrando...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let data = await res.json();
             let colabs = data.colaboradores || [];
-            if(colabs.some(c => String(c.email).trim().toLowerCase() === email.toLowerCase())) {
-                Swal.fire('Aviso', 'Este e-mail já está cadastrado!', 'warning');
+            if(colabs.some(c => normalizarTexto(c.email) === normalizarTexto(email))) {
+                Swal.fire({ title: 'Aviso', text: 'Este e-mail já está cadastrado!', icon: 'warning', confirmButtonColor: '#ff6b00' });
                 return;
             }
 
@@ -768,29 +975,29 @@
                 body: JSON.stringify({action: "cadastrarColaborador", nome, setor, email, senha})
             });
 
-            Swal.fire('Sucesso!', 'Cadastro realizado. Faça seu login.', 'success');
+            Swal.fire({ title: 'Sucesso!', text: 'Cadastro realizado. Faça seu login.', icon: 'success', confirmButtonColor: '#16a34a' });
             alternarAuthColab('login');
             document.getElementById('form-colab-reg').reset();
         } catch(err) {
-            Swal.fire('Erro', 'Falha ao registrar colaborador.', 'error');
+            Swal.fire({ title: 'Erro', text: 'Falha ao registrar colaborador.', icon: 'error', confirmButtonColor: '#4a5568' });
         }
     }
 
     async function fazerLoginColaborador() {
         const email = document.getElementById('login-colab-email').value.trim();
         const senha = document.getElementById('login-colab-senha').value;
-        if(!email || !senha) return Swal.fire('Aviso', 'Preencha e-mail e senha.', 'info');
+        if(!email || !senha) return Swal.fire({ title: 'Aviso', text: 'Preencha e-mail e senha.', icon: 'warning', confirmButtonColor: '#ff6b00' });
 
-        Swal.fire({title: 'Entrando...', didOpen: () => Swal.showLoading()});
+        Swal.fire({title: 'Entrando...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let data = await res.json();
             let colabs = data.colaboradores || [];
-            let c = colabs.find(x => String(x.email).trim().toLowerCase() === email.toLowerCase() && String(x.senha) === senha);
+            let c = colabs.find(x => normalizarTexto(x.email) === normalizarTexto(email) && String(x.senha) === senha);
 
             if(c) {
-                if(String(c.status).toLowerCase() === 'bloqueado') {
-                    Swal.fire('Acesso Negado', 'Sua conta está bloqueada pela coordenação.', 'error');
+                if(normalizarTexto(c.status) === 'bloqueado') {
+                    Swal.fire({ title: 'Acesso Negado', text: 'Sua conta está bloqueada pela coordenação.', icon: 'error', confirmButtonColor: '#dc3545' });
                     return;
                 }
                 colabLogado = c;
@@ -800,15 +1007,31 @@
             } else {
                 document.getElementById('login-colab-senha').value = "";
                 document.getElementById('login-colab-senha').focus();
-                Swal.fire('Erro', 'E-mail ou senha incorretos.', 'error');
+                Swal.fire({ title: 'Erro', text: 'E-mail ou senha incorretos.', icon: 'error', confirmButtonColor: '#dc3545' });
             }
         } catch(e) {
-            Swal.fire('Erro', 'Erro ao conectar.', 'error');
+            Swal.fire({ title: 'Erro', text: 'Erro ao conectar.', icon: 'error', confirmButtonColor: '#4a5568' });
         }
+    }
+
+    function confirmarLogoutColaborador() {
+        Swal.fire({
+            title: 'Deseja sair?',
+            text: 'Sua sessão no Ambiente do Colaborador será encerrada.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, sair',
+            cancelButtonText: 'Ficar',
+            confirmButtonColor: '#ff6b00',
+            cancelButtonColor: '#4a5568'
+        }).then((res) => {
+            if (res.isConfirmed) logoutColaborador();
+        });
     }
 
     function logoutColaborador() {
         colabLogado = null;
+        meusMateriaisCache = [];
         sessionStorage.removeItem('colabLogado');
         document.getElementById('colaborador-auth-box').style.display = 'block';
         document.getElementById('colaborador-painel').style.display = 'none';
@@ -817,31 +1040,69 @@
     }
 
     async function carregarPainelColaborador() {
-    document.getElementById('colaborador-auth-box').style.display = 'none';
-    document.getElementById('colaborador-painel').style.display = 'block';
+        document.getElementById('colaborador-auth-box').style.display = 'none';
+        document.getElementById('colaborador-painel').style.display = 'block';
 
-    const horaAtual = new Date().getHours();
-    let saudacao = "Bom dia";
-    if (horaAtual >= 12 && horaAtual < 18) saudacao = "Boa tarde";
-    else if (horaAtual >= 18) saudacao = "Boa noite";
+        const horaAtual = new Date().getHours();
+        let saudacao = "Bom dia";
+        if (horaAtual >= 12 && horaAtual < 18) saudacao = "Boa tarde";
+        else if (horaAtual >= 18) saudacao = "Boa noite";
 
-    document.getElementById('colab-saudacao-texto').innerHTML = `${saudacao}, ${colabLogado.nome}! Tenha um excelente dia.`;
-    document.getElementById('colab-logado-setor').innerText = colabLogado.setor;
-    document.getElementById('colab-logado-email').innerText = colabLogado.email;
-
-    try {
-        const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
-        let data = await res.json();
-        if(data.campanhas) campanhasData = data.campanhas;
-        let alunos = data.alunos || [];
-        
-        // CORREÇÃO CRUCIAL: Comparação limpa e insensível a maiúsculas/minúsculas e espaços extras
-        let nomeColabLogado = String(colabLogado.nome || '').trim().toLowerCase();
-        let meusMateriais = alunos.filter(a => String(a.vendedor || '').trim().toLowerCase() === nomeColabLogado);
+        document.getElementById('colab-saudacao-texto').innerHTML = `${saudacao}, ${colabLogado.nome}! Tenha um excelente dia.`;
+        document.getElementById('colab-logado-setor').innerText = colabLogado.setor;
+        document.getElementById('colab-logado-email').innerText = colabLogado.email;
 
         let tbody = document.getElementById('tbody-materiais-colab');
-        tbody.innerHTML = '';
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:25px; font-weight:600;"><i class="fas fa-spinner fa-spin"></i> Carregando seus registros...</td></tr>`;
 
+        try {
+            const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
+            let data = await res.json();
+            if(data.campanhas) campanhasData = data.campanhas;
+            if(data.alunos) alunosGlobalCache = data.alunos;
+            if(data.colaboradores) colabsGlobalCache = data.colaboradores;
+
+            let alunos = data.alunos || [];
+            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || alunos[0].matricula === "matricula")) alunos = alunos.slice(1);
+            
+            // Busca TODOS os materiais em nome do colaborador (pendentes e enviados)
+            let nomeColabLogado = normalizarTexto(colabLogado.nome);
+            meusMateriaisCache = alunos.filter(a => normalizarTexto(a.vendedor) === nomeColabLogado);
+
+            // Ordena do cadastro mais recente para o mais antigo
+            meusMateriaisCache.sort((a, b) => parseDateSafely(b.dataCadastro) - parseDateSafely(a.dataCadastro));
+
+            tbody.innerHTML = '';
+            meusMateriaisCache.forEach(m => {
+                let stNorm = normalizarTexto(m.status);
+                let corStatus = stNorm === 'enviado' ? '#16a34a' : '#ff6b00';
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${formatarData(m.dataCadastro)}</td>
+                        <td><b>${m.matricula}</b></td>
+                        <td>${m.nome}</td>
+                        <td>${m.curso}</td>
+                        <td>${m.campanha || 'Padrão'}</td>
+                        <td>${m.email}</td>
+                        <td><span style="font-weight:bold; color:${corStatus}">${m.status}</span></td>
+                        <td>${m.observacoes || '-'}</td>
+                    </tr>
+                `;
+            });
+
+            if(meusMateriaisCache.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#777;">Nenhum material cadastrado por você ainda.</td></tr>`;
+            }
+
+            atualizarGraficoColaborador();
+
+        } catch(e) {
+            console.error(e);
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#dc3545;">Erro ao carregar seus materiais.</td></tr>`;
+        }
+    }
+
+    function atualizarGraficoColaborador() {
         let contagemCampanhas = {};
         campanhasData.forEach(cp => { contagemCampanhas[cp] = 0; });
 
@@ -850,37 +1111,19 @@
         let totalPeriodo = 0;
         let nomeMes = new Date(selAno, selMes, 1).toLocaleString('pt-BR', { month: 'long' });
 
-        meusMateriais.forEach(m => {
-            // EXIBE TODOS OS MATERIAIS NA TABELA (Nenhum some ao ser enviado!)
-            tbody.innerHTML += `
-                <tr>
-                    <td>${formatarData(m.dataCadastro)}</td>
-                    <td><b>${m.matricula}</b></td>
-                    <td>${m.nome}</td>
-                    <td>${m.curso}</td>
-                    <td>${m.campanha || 'Padrão'}</td>
-                    <td>${m.email}</td>
-                    <td><span style="font-weight:bold; color:${String(m.status).toLowerCase()==='enviado'?'#16a34a':'#ff6b00'}">${m.status}</span></td>
-                    <td>${m.observacoes || '-'}</td>
-                </tr>
-            `;
-
-            // Apenas para alimentar o gráfico do período selecionado
+        // Conta TODOS os materiais cadastrados no período (tanto Pendente quanto Enviado)
+        meusMateriaisCache.forEach(m => {
             let msCad = parseDateSafely(m.dataCadastro);
             if(msCad > 0) {
                 let dCad = new Date(msCad);
                 if(dCad.getMonth() === selMes && dCad.getFullYear() === selAno) {
                     totalPeriodo++;
-                    let camp = m.campanha || 'Padrão';
+                    let camp = String(m.campanha || 'Padrão').trim();
                     if(contagemCampanhas[camp] !== undefined) contagemCampanhas[camp]++;
                     else contagemCampanhas[camp] = 1;
                 }
             }
         });
-
-        if(meusMateriais.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#777;">Nenhum material cadastrado por você ainda.</td></tr>`;
-        }
 
         document.getElementById('colab-grafico-titulo').innerText = `Seu Desempenho (${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)}/${selAno})`;
         
@@ -905,130 +1148,46 @@
             data: { labels: labelsGrafico, datasets: [{ data: dadosGrafico, backgroundColor: bgCores }] },
             options: { responsive: true, maintainAspectRatio: false }
         });
-
-    } catch(e) { console.error(e); }
-}
-    async function abrirModalNovoEnvio() {
-        let optionsCursos = listaCursos.map(c => `<option value="${c}">${c}</option>`).join('');
-        let res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
-        let data = await res.json();
-        let campanhas = data.campanhas || ['Padrão'];
-        let optionsCamp = campanhas.map(cp => `<option value="${cp}">${cp}</option>`).join('');
-
-        Swal.fire({
-            title: 'Cadastrar Novo Envio',
-            width: '750px',
-            html: `
-                <div style="text-align:left; display:grid; grid-template-columns: 1fr 1fr; gap:15px; max-height:480px; overflow-y:auto; padding:10px;">
-                    <div style="grid-column: span 2;">
-                        <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Nome do Aluno(a):</label>
-                        <input type="text" id="swal-nome" class="swal2-input" style="margin:0; width:100%; height:40px;">
-                    </div>
-                    <div>
-                        <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Matrícula:</label>
-                        <input type="text" id="swal-matricula" class="swal2-input" style="margin:0; width:100%; height:40px;" onblur="verificarDuplicidadeInput(this.value)">
-                    </div>
-                    <div>
-                        <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Campanha:</label>
-                        <select id="swal-campanha" class="swal2-input" style="margin:0; width:100%; height:40px;">${optionsCamp}</select>
-                    </div>
-                    <div style="grid-column: span 2;">
-                        <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Curso:</label>
-                        <select id="swal-curso" class="swal2-input" style="margin:0; width:100%; height:40px;">${optionsCursos}</select>
-                    </div>
-                    <div>
-                        <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Dia de Aula:</label>
-                        <select id="swal-dia" class="swal2-input" style="margin:0; width:100%; height:40px;">
-                            <option value="Segunda-feira">Segunda-feira</option><option value="Terça-feira">Terça-feira</option>
-                            <option value="Quarta-feira">Quarta-feira</option><option value="Quinta-feira">Quinta-feira</option>
-                            <option value="Sexta-feira">Sexta-feira</option><option value="Sábado">Sábado</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">Horário:</label>
-                        <select id="swal-horario" class="swal2-input" style="margin:0; width:100%; height:40px;">
-                            <option value="07:00 às 09:00">07:00 às 09:00</option><option value="09:00 às 11:00">09:00 às 11:00</option>
-                            <option value="11:00 às 13:00">11:00 às 13:00</option><option value="13:00 às 15:00">13:00 às 15:00</option>
-                            <option value="15:00 às 17:00">15:00 às 17:00</option><option value="17:00 às 19:00">17:00 às 19:00</option>
-                        </select>
-                    </div>
-                    <div style="grid-column: span 2;">
-                        <label style="font-weight:600; font-size:14px; margin-bottom:4px; display:block;">E-mail do Aluno:</label>
-                        <input type="email" id="swal-email" class="swal2-input" style="margin:0; width:100%; height:40px;">
-                    </div>
-                </div>
-            `,
-            confirmButtonText: 'Gravar Registro',
-            confirmButtonColor: '#16a34a',
-            showCancelButton: true,
-            cancelButtonText: 'Cancelar',
-            preConfirm: async () => {
-                const nome = document.getElementById('swal-nome').value.trim();
-                const matricula = document.getElementById('swal-matricula').value.trim();
-                const curso = document.getElementById('swal-curso').value;
-                const campanha = document.getElementById('swal-campanha').value;
-                const dia = document.getElementById('swal-dia').value;
-                const horario = document.getElementById('swal-horario').value;
-                const email = document.getElementById('swal-email').value.trim();
-
-                if(!nome || !matricula || !email) {
-                    Swal.showValidationMessage('Preencha todos os campos obrigatórios!');
-                    return false;
-                }
-
-                try {
-                    const resCheck = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
-                    let dataCheck = await resCheck.json();
-                    let listaAlunos = dataCheck.alunos || [];
-                    if(listaAlunos.length > 0 && (listaAlunos[0].matricula === "Matrícula" || !listaAlunos[0].nome)) listaAlunos = listaAlunos.slice(1);
-
-                    const existente = listaAlunos.find(al => String(al.matricula).trim() === String(matricula).trim());
-                    if(existente) {
-                        Swal.showValidationMessage(`Atenção: A matrícula ${matricula} já possui cadastro no sistema.`);
-                        return false;
-                    }
-                } catch(err) { console.error(err); }
-
-                return { nome, matricula, curso, campanha, dia, horario, email, vendedor: colabLogado.nome };
-            }
-        }).then(async (result) => {
-            if(result.isConfirmed) {
-                let dados = result.value;
-                let dataRegistroFormatada = new Date().toLocaleDateString('pt-BR');
-                let horaRegistroFormatada = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-
-                Swal.fire({title: 'Gravando na base...', didOpen: () => Swal.showLoading()});
-                await fetch(URL_PLANILHA, {
-                    method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify(dados)
-                });
-
-                let textoCGD = `Eu, ${colabLogado.nome}, formalizo o registro do cadastro do Material/Apostila do(a) aluno(a) ${dados.nome}, matrícula ${dados.matricula}, realizado em ${dataRegistroFormatada}, às ${horaRegistroFormatada}, referente ao curso ${dados.curso}, vinculado à campanha ${dados.campanha}, com e-mail de cadastro ${dados.email}.`;
-
-                Swal.fire({
-                    title: 'Cadastro Realizado com Sucesso!',
-                    html: `
-                        <p style="font-size:14px; color:#555; margin-bottom:10px;">Copie o relatório abaixo para lançar no sistema CGD da escola:</p>
-                        <textarea id="cgd-texto-copiar" readonly style="width:100%; height:110px; font-size:13px; padding:10px; background:#f4f5f7; border:1px solid #ccc; border-radius:6px;">${textoCGD}</textarea>
-                    `,
-                    icon: 'success',
-                    confirmButtonText: '<i class="fas fa-copy"></i> Copiar para o CGD e Concluir',
-                    confirmButtonColor: '#16a34a'
-                }).then(() => {
-                    const textarea = document.getElementById('cgd-texto-copiar');
-                    if(textarea) { textarea.select(); navigator.clipboard.writeText(textarea.value); }
-                    carregarPainelColaborador();
-                });
-            }
-        });
     }
 
-    async function verificarDuplicidadeInput(matriculaVal) {
-        if(!matriculaVal.trim()) return;
+    // --- MODAL DE NOVO ENVIO (INSTANTÂNEO + ALERTA POPUP REAL DE DUPLICIDADE) ---
+    function abrirModalNovoEnvio() {
+        document.getElementById('form-novo-envio-colab').reset();
+        matriculaDuplicadaBloqueio = false;
+        const btnGravar = document.getElementById('btn-gravar-novo-envio');
+        btnGravar.disabled = false;
+        btnGravar.style.opacity = '1';
+
+        const selCurso = document.getElementById('env-curso');
+        selCurso.innerHTML = '<option value="">Selecione...</option>' + listaCursos.map(c => `<option value="${c}">${c}</option>`).join('');
+
+        const selCamp = document.getElementById('env-campanha');
+        let listaCamps = campanhasData.length > 0 ? campanhasData : ['Padrão', 'Suporte'];
+        selCamp.innerHTML = listaCamps.map(cp => `<option value="${cp}">${cp}</option>`).join('');
+
+        document.getElementById('modal-novo-envio').classList.add('open');
+    }
+
+    function fecharModalNovoEnvio() {
+        document.getElementById('modal-novo-envio').classList.remove('open');
+    }
+
+    function aoDigitarMatricula() {
+        if (matriculaDuplicadaBloqueio) {
+            matriculaDuplicadaBloqueio = false;
+            const btnGravar = document.getElementById('btn-gravar-novo-envio');
+            btnGravar.disabled = false;
+            btnGravar.style.opacity = '1';
+        }
+    }
+
+    async function verificarDuplicidadeMatricula(matriculaVal) {
+        const mat = String(matriculaVal || '').trim();
+        if (!mat) return;
 
         Swal.fire({
             title: 'Verificando duplicidade...',
-            text: 'Analisando a base de dados...',
+            text: `Consultando a matrícula ${mat} na base de dados...`,
             allowOutsideClick: false,
             didOpen: () => Swal.showLoading()
         });
@@ -1037,31 +1196,122 @@
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
             let data = await res.json();
             let alunos = data.alunos || [];
-            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
-            let existente = alunos.find(al => String(al.matricula).trim() === String(matriculaVal).trim());
-            
-            Swal.close();
+            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || alunos[0].matricula === "matricula")) alunos = alunos.slice(1);
 
-            if(existente) {
+            let existente = alunos.find(al => String(al.matricula).trim() === mat);
+            const btnGravar = document.getElementById('btn-gravar-novo-envio');
+
+            if (existente) {
+                matriculaDuplicadaBloqueio = true;
+                btnGravar.disabled = true;
+                btnGravar.style.opacity = '0.45';
                 Swal.fire({
-                    title: '⚠️ Matrícula Duplicada!',
-                    text: `A matrícula ${matriculaVal} já está cadastrada no sistema por (${existente.vendedor || 'Outro'}).`,
+                    title: 'Atenção: Cadastro Duplicado!',
+                    text: `O material da matrícula ${mat} já possui cadastro por (${existente.vendedor || 'outro colaborador'}). Por favor, busque orientação na Coordenação Pedagógica ou corrija a matrícula em caso de erro.`,
+                    icon: 'warning',
+                    confirmButtonText: 'Corrigir Matrícula',
+                    confirmButtonColor: '#dc3545'
+                }).then(() => {
+                    const inputMat = document.getElementById('env-matricula');
+                    if (inputMat) inputMat.focus();
+                });
+            } else {
+                matriculaDuplicadaBloqueio = false;
+                btnGravar.disabled = false;
+                btnGravar.style.opacity = '1';
+                Swal.fire({
+                    title: 'Matrícula Liberada!',
+                    text: `Nenhum registro encontrado para a matrícula ${mat}. Pode continuar o cadastro.`,
+                    icon: 'success',
+                    confirmButtonText: 'Continuar Cadastro',
+                    confirmButtonColor: '#16a34a'
+                });
+            }
+        } catch (err) {
+            Swal.close();
+        }
+    }
+
+    async function gravarNovoEnvioColab(e) {
+        e.preventDefault();
+        if (matriculaDuplicadaBloqueio) {
+            Swal.fire({
+                title: 'Cadastro Bloqueado!',
+                text: 'Esta matrícula já existe no sistema. Altere a matrícula para prosseguir.',
+                icon: 'error',
+                confirmButtonColor: '#dc3545'
+            });
+            return;
+        }
+
+        const nome = document.getElementById('env-nome').value.trim();
+        const matricula = document.getElementById('env-matricula').value.trim();
+        const curso = document.getElementById('env-curso').value;
+        const campanha = document.getElementById('env-campanha').value;
+        const dia = document.getElementById('env-dia').value;
+        const horario = document.getElementById('env-horario').value;
+        const email = document.getElementById('env-email').value.trim();
+
+        if (!nome || !matricula || !curso || !email) {
+            Swal.fire({ title: 'Atenção', text: 'Preencha todos os campos obrigatórios.', icon: 'warning', confirmButtonColor: '#ff6b00' });
+            return;
+        }
+
+        Swal.fire({ title: 'Verificando e gravando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+        try {
+            // Verificação final de segurança contra duplicidade
+            const resCheck = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
+            let dataCheck = await resCheck.json();
+            let listaAlunos = dataCheck.alunos || [];
+            if(listaAlunos.length > 0 && (listaAlunos[0].matricula === "Matrícula" || listaAlunos[0].matricula === "matricula")) listaAlunos = listaAlunos.slice(1);
+
+            const existente = listaAlunos.find(al => String(al.matricula).trim() === matricula);
+            if (existente) {
+                matriculaDuplicadaBloqueio = true;
+                const btnGravar = document.getElementById('btn-gravar-novo-envio');
+                btnGravar.disabled = true;
+                btnGravar.style.opacity = '0.45';
+                Swal.fire({
+                    title: 'Atenção: Cadastro Duplicado!',
+                    text: `O material da matrícula ${matricula} já possui cadastro por (${existente.vendedor || 'outro colaborador'}). Por favor, busque orientação na Coordenação Pedagógica ou corrija a matrícula em caso de erro.`,
                     icon: 'warning',
                     confirmButtonText: 'Entendido',
                     confirmButtonColor: '#dc3545'
                 });
-            } else {
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Matrícula disponível!',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                return;
             }
-        } catch(e) {
-            Swal.close();
+
+            const dados = { nome, matricula, curso, campanha, dia, horario, email, vendedor: colabLogado.nome };
+            let dataRegistroFormatada = new Date().toLocaleDateString('pt-BR');
+            let horaRegistroFormatada = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+            await fetch(URL_PLANILHA, {
+                method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(dados)
+            });
+
+            fecharModalNovoEnvio();
+
+            let textoCGD = `Eu, ${colabLogado.nome}, identificado(a), formalizo o registro do cadastro do Material/Apostila do(a) aluno(a) ${dados.nome}, matrícula ${dados.matricula}, realizado em ${dataRegistroFormatada}, às ${horaRegistroFormatada}, referente ao curso ${dados.curso}, vinculado à campanha ${dados.campanha}, com e-mail de cadastro ${dados.email}.`;
+
+            Swal.fire({
+                title: 'Cadastro Realizado com Sucesso!',
+                html: `
+                    <p style="font-size:14px; color:#555; margin-bottom:10px;">Copie a ocorrência abaixo para lançar no sistema CGD da escola:</p>
+                    <textarea id="cgd-texto-copiar" readonly style="width:100%; height:115px; font-size:13px; padding:10px; background:#f4f5f7; border:1px solid #ccc; border-radius:6px;">${textoCGD}</textarea>
+                `,
+                icon: 'success',
+                confirmButtonText: '<i class="fas fa-copy"></i> Copiar para o CGD e Concluir',
+                confirmButtonColor: '#16a34a'
+            }).then(() => {
+                const textarea = document.getElementById('cgd-texto-copiar');
+                if(textarea) { textarea.select(); navigator.clipboard.writeText(textarea.value); }
+                setTimeout(() => carregarPainelColaborador(), 800);
+            });
+
+        } catch (err) {
+            Swal.fire({ title: 'Erro', text: 'Não foi possível gravar o registro. Tente novamente.', icon: 'error', confirmButtonColor: '#dc3545' });
         }
     }
 
@@ -1082,21 +1332,26 @@
         }
     }
 
+    function encerrarSessaoAdmin() {
+        logado = false;
+        sessionStorage.removeItem('logadoMaster'); 
+        document.getElementById('admin-password').value = "";
+        document.getElementById('lock-screen').style.display = 'block';
+        document.getElementById('admin-panel').style.display = 'none';
+    }
+
     function logout() {
         Swal.fire({
             title: 'Bloquear Painel?',
             text: 'Sua sessão administrativa será encerrada.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Sim, bloquear'
+            confirmButtonText: 'Sim, bloquear',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#4a5568'
         }).then(res => {
-            if(res.isConfirmed) {
-                logado = false;
-                sessionStorage.removeItem('logadoMaster'); 
-                document.getElementById('admin-password').value = "";
-                document.getElementById('lock-screen').style.display = 'block';
-                document.getElementById('admin-panel').style.display = 'none';
-            }
+            if(res.isConfirmed) encerrarSessaoAdmin();
         });
     }
 
@@ -1126,7 +1381,7 @@
             if(tbodyColabAdmin) {
                 tbodyColabAdmin.innerHTML = '';
                 colabsGlobalCache.forEach(c => {
-                    let bloqueado = String(c.status).toLowerCase() === 'bloqueado';
+                    let bloqueado = normalizarTexto(c.status) === 'bloqueado';
                     tbodyColabAdmin.innerHTML += `
                         <tr>
                             <td><b>${c.nome}</b></td>
@@ -1148,13 +1403,13 @@
             containerPendentes.innerHTML = "";
             tbodyEnviados.innerHTML = "";
             
-            let alunos = alunosGlobalCache;
-            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
+            let alunos = alunosGlobalCache.slice();
+            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || alunos[0].matricula === "matricula")) alunos = alunos.slice(1);
             
             let pendentes = [], enviados = [];
             alunos.forEach((a, index) => {
                 a.originalIndex = index; 
-                let st = a.status ? a.status.toString().trim().toLowerCase() : "";
+                let st = normalizarTexto(a.status);
                 if (st === 'pendente de envio' || st === 'pendente') pendentes.push(a);
                 else if (st === 'enviado') enviados.push(a);
             });
@@ -1164,9 +1419,9 @@
             
             pendentes.forEach((aluno) => {
                 let index = aluno.originalIndex;
-                let opcoesCursos = listaCursos.map(c => `<option value="${c}" ${aluno.curso === c ? 'selected' : ''}>${c}</option>`).join('');
-                let opcoesVendedores = '<option value="">Selecione...</option>' + vendedoresData.map(v => `<option value="${v}" ${aluno.vendedor === v ? 'selected' : ''}>${v}</option>`).join('');
-                let opcoesCampanhas = '<option value="">Selecione...</option>' + campanhasData.map(c => `<option value="${c}" ${aluno.campanha === c ? 'selected' : ''}>${c}</option>`).join('');
+                let opcoesCursos = montarOpcoesCursos(aluno.curso);
+                let opcoesVendedores = montarOpcoesVendedores(aluno.vendedor);
+                let opcoesCampanhas = montarOpcoesCampanhas(aluno.campanha);
 
                 let timerHTML = '<i class="fas fa-clock"></i> Aguardando Envio';
                 let timerStyle = 'background: #fff5eb; color: var(--escola-laranja); border-color: #ffe8cc;';
@@ -1270,9 +1525,9 @@
 
             enviados.forEach((aluno) => {
                 let index = aluno.originalIndex;
-                let opcoesCursos = listaCursos.map(c => `<option value="${c}" ${aluno.curso === c ? 'selected' : ''}>${c}</option>`).join('');
-                let opcoesVendedores = '<option value="">Selecione...</option>' + vendedoresData.map(v => `<option value="${v}" ${aluno.vendedor === v ? 'selected' : ''}>${v}</option>`).join('');
-                let opcoesCampanhas = '<option value="">Selecione...</option>' + campanhasData.map(c => `<option value="${c}" ${aluno.campanha === c ? 'selected' : ''}>${c}</option>`).join('');
+                let opcoesCursos = montarOpcoesCursos(aluno.curso);
+                let opcoesVendedores = montarOpcoesVendedores(aluno.vendedor);
+                let opcoesCampanhas = montarOpcoesCampanhas(aluno.campanha);
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -1313,23 +1568,32 @@
         campanhasData.forEach(c => { selCamp.innerHTML += `<option value="${c}">${c}</option>`; });
         selCamp.value = campAtual;
 
+        // Reúne colaboradores cadastrados + nomes históricos da planilha
+        let nomesUnicos = new Map();
+        const addNome = (n) => {
+            let limpo = String(n || '').trim();
+            if (limpo && !nomesUnicos.has(limpo.toLowerCase())) nomesUnicos.set(limpo.toLowerCase(), limpo);
+        };
+        colabsGlobalCache.forEach(cb => addNome(cb.nome));
+        alunosGlobalCache.forEach(al => addNome(al.vendedor));
+
         selColab.innerHTML = '<option value="">Todos os Colaboradores</option>';
-        colabsGlobalCache.forEach(cb => { selColab.innerHTML += `<option value="${cb.nome}">${cb.nome}</option>`; });
+        nomesUnicos.forEach(nome => { selColab.innerHTML += `<option value="${nome}">${nome}</option>`; });
         selColab.value = colabAtual;
     }
 
-    function renderizarRelatorioEstatistico() {
+    function obterRegistrosFiltradosAdmin() {
         const fCamp = document.getElementById('filtro-campanha')?.value || "";
         const fColab = document.getElementById('filtro-colaborador')?.value || "";
         const fInicio = document.getElementById('filtro-data-inicio')?.value || "";
         const fFim = document.getElementById('filtro-data-fim')?.value || "";
 
         let lista = alunosGlobalCache.slice();
-        if(lista.length > 0 && (lista[0].matricula === "Matrícula" || !lista[0].nome)) lista = lista.slice(1);
+        if(lista.length > 0 && (lista[0].matricula === "Matrícula" || lista[0].matricula === "matricula")) lista = lista.slice(1);
 
-        let filtrados = lista.filter(a => {
-            let matchCamp = !fCamp || String(a.campanha).trim().toLowerCase() === fCamp.trim().toLowerCase();
-            let matchColab = !fColab || String(a.vendedor).trim().toLowerCase() === fColab.trim().toLowerCase();
+        return lista.filter(a => {
+            let matchCamp = !fCamp || normalizarTexto(a.campanha) === normalizarTexto(fCamp);
+            let matchColab = !fColab || normalizarTexto(a.vendedor) === normalizarTexto(fColab);
             let ms = parseDateSafely(a.dataCadastro);
             let matchData = true;
             if(fInicio && ms) {
@@ -1342,11 +1606,15 @@
             }
             return matchCamp && matchColab && matchData;
         });
+    }
+
+    function renderizarRelatorioEstatistico() {
+        let filtrados = obterRegistrosFiltradosAdmin();
 
         let contCamp = {};
         campanhasData.forEach(c => { contCamp[c] = 0; });
         filtrados.forEach(a => {
-            let cp = a.campanha || 'Padrão';
+            let cp = String(a.campanha || 'Padrão').trim();
             if(contCamp[cp] !== undefined) contCamp[cp]++;
             else contCamp[cp] = 1;
         });
@@ -1377,19 +1645,87 @@
         }
     }
 
+    function dispararImpressaoExclusiva(htmlConteudo) {
+        const area = document.getElementById('area-impressao-exclusiva');
+        area.innerHTML = htmlConteudo;
+        document.body.classList.add('imprimindo-exclusivo');
+
+        const limpar = () => {
+            document.body.classList.remove('imprimindo-exclusivo');
+            area.innerHTML = '';
+            window.removeEventListener('afterprint', limpar);
+        };
+        window.addEventListener('afterprint', limpar);
+
+        setTimeout(() => {
+            window.print();
+            setTimeout(limpar, 1000);
+        }, 150);
+    }
+
+    function imprimirRelatorioEstatistico() {
+        const filtrados = obterRegistrosFiltradosAdmin();
+        const fCamp = document.getElementById('filtro-campanha')?.value || "Todas";
+        const fColab = document.getElementById('filtro-colaborador')?.value || "Todos";
+        const fInicio = document.getElementById('filtro-data-inicio')?.value || "Início";
+        const fFim = document.getElementById('filtro-data-fim')?.value || "Hoje";
+        const resumoHtml = document.getElementById('estatisticas-texto-resumo')?.innerHTML || "";
+
+        const canvas = document.getElementById('graficoAdminRelatorio');
+        const imgGrafico = canvas ? canvas.toDataURL('image/png') : '';
+
+        let linhasTabela = filtrados.map(a => `
+            <tr>
+                <td>${formatarData(a.dataCadastro)}</td>
+                <td><b>${a.matricula}</b></td>
+                <td>${a.nome}</td>
+                <td>${a.curso}</td>
+                <td>${a.campanha || '-'}</td>
+                <td>${a.vendedor || '-'}</td>
+                <td>${a.email || '-'}</td>
+                <td>${a.status || '-'}</td>
+            </tr>
+        `).join('');
+
+        if (!linhasTabela) {
+            linhasTabela = `<tr><td colspan="8" style="text-align:center; padding:12px;">Nenhum registro encontrado para os filtros aplicados.</td></tr>`;
+        }
+
+        const htmlPrint = `
+            <div class="print-header">
+                <div>
+                    <h1>Relatório de Cadastros e Estatísticas - Educ</h1>
+                    <p><strong>Campanha:</strong> ${fCamp} &nbsp;|&nbsp; <strong>Colaborador:</strong> ${fColab} &nbsp;|&nbsp; <strong>Período:</strong> ${fInicio} até ${fFim}</p>
+                </div>
+                <p>Emitido em: ${new Date().toLocaleString('pt-BR')}</p>
+            </div>
+            <div class="print-summary-grid">
+                <div style="font-size:14px; line-height:1.7;">${resumoHtml}</div>
+                ${imgGrafico ? `<div><img src="${imgGrafico}" style="max-height:190px; width:auto;"></div>` : ''}
+            </div>
+            <table class="print-table">
+                <thead>
+                    <tr>
+                        <th>Cadastro</th>
+                        <th>Matrícula</th>
+                        <th>Aluno(a)</th>
+                        <th>Curso</th>
+                        <th>Campanha</th>
+                        <th>Colaborador</th>
+                        <th>E-mail</th>
+                        <th>Situação</th>
+                    </tr>
+                </thead>
+                <tbody>${linhasTabela}</tbody>
+            </table>
+        `;
+
+        dispararImpressaoExclusiva(htmlPrint);
+    }
+
     function exportarRelatorioFiltradoExcel() {
-        const fCamp = document.getElementById('filtro-campanha')?.value || "";
-        const fColab = document.getElementById('filtro-colaborador')?.value || "";
-        let lista = alunosGlobalCache.slice();
-        if(lista.length > 0 && (lista[0].matricula === "Matrícula" || !lista[0].nome)) lista = lista.slice(1);
-
-        let filtrados = lista.filter(a => {
-            let matchCamp = !fCamp || String(a.campanha).trim().toLowerCase() === fCamp.trim().toLowerCase();
-            let matchColab = !fColab || String(a.vendedor).trim().toLowerCase() === fColab.trim().toLowerCase();
-            return matchCamp && matchColab;
-        });
-
-        if(filtrados.length === 0) { Swal.fire('Aviso', 'Nenhum registro para exportar com esses filtros!', 'info'); return; }
+        let filtrados = obterRegistrosFiltradosAdmin();
+        if(filtrados.length === 0) { Swal.fire({ title: 'Aviso', text: 'Nenhum registro para exportar com esses filtros!', icon: 'info', confirmButtonColor: '#ff6b00' }); return; }
 
         let html = `<meta charset="utf-8"><table border="1"><tr style="background:#f8f9fa;"><th>Cadastro</th><th>Matrícula</th><th>Aluno(a)</th><th>Curso</th><th>Campanha</th><th>Colaborador</th><th>E-mail</th><th>Situação</th></tr>`;
         filtrados.forEach(a => {
@@ -1405,7 +1741,7 @@
     }
 
     async function editarColaboradorModal(emailColab) {
-        let colab = colabsGlobalCache.find(c => String(c.email).trim().toLowerCase() === emailColab.toLowerCase());
+        let colab = colabsGlobalCache.find(c => normalizarTexto(c.email) === normalizarTexto(emailColab));
         if(!colab) return;
 
         Swal.fire({
@@ -1425,7 +1761,9 @@
             `,
             confirmButtonText: 'Salvar Alterações',
             confirmButtonColor: '#16a34a',
+            cancelButtonColor: '#4a5568',
             showCancelButton: true,
+            cancelButtonText: 'Cancelar',
             preConfirm: () => {
                 return {
                     novoNome: document.getElementById('edit-c-nome').value.trim(),
@@ -1438,8 +1776,8 @@
             if(res.isConfirmed) {
                 let payload = Object.assign({action: "updateColaborador", email: colab.email}, res.value);
                 await fetch(URL_PLANILHA, { method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"}, body: JSON.stringify(payload) });
-                Swal.fire('Sucesso!', 'Colaborador atualizado.', 'success');
-                renderizarPainelGerencial(true);
+                Swal.fire({ title: 'Sucesso!', text: 'Colaborador atualizado.', icon: 'success', confirmButtonColor: '#16a34a' });
+                setTimeout(() => renderizarPainelGerencial(true), 1200);
             }
         });
     }
@@ -1456,9 +1794,9 @@
     async function exportarTabelaExcel() {
         try {
             let alunos = alunosGlobalCache.slice();
-            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || !alunos[0].nome)) alunos = alunos.slice(1);
-            const enviados = alunos.filter(a => String(a.status).trim().toLowerCase() === "enviado");
-            if (enviados.length === 0) { Swal.fire('Aviso', 'Não existem registros enviados para exportar!', 'info'); return; }
+            if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || alunos[0].matricula === "matricula")) alunos = alunos.slice(1);
+            const enviados = alunos.filter(a => normalizarTexto(a.status) === "enviado");
+            if (enviados.length === 0) { Swal.fire({ title: 'Aviso', text: 'Não existem registros enviados para exportar!', icon: 'info', confirmButtonColor: '#ff6b00' }); return; }
 
             let html = `<meta charset="utf-8"><table border="1"><tr style="background:#f8f9fa;"><th>Cadastro</th><th>Envio</th><th>Matrícula</th><th>Campanha</th><th>Aluno(a)</th><th>Curso</th><th>Dia</th><th>Horário</th><th>Vendedor</th><th>E-mail</th><th>Situação</th><th>Observações</th></tr>`;
             enviados.forEach(a => {
@@ -1467,11 +1805,51 @@
             html += '</table>';
             let blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
             let link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "relatorio_materiais_enviados.xls"; link.click();
-        } catch (err) { Swal.fire('Erro!', 'Não foi possível gerar o Excel.', 'error'); }
+        } catch (err) { Swal.fire({ title: 'Erro!', text: 'Não foi possível gerar o Excel.', icon: 'error', confirmButtonColor: '#dc3545' }); }
     }
 
-    async function exportarTabelaPDF() {
-        window.print();
+    function exportarTabelaPDF() {
+        let alunos = alunosGlobalCache.slice();
+        if(alunos.length > 0 && (alunos[0].matricula === "Matrícula" || alunos[0].matricula === "matricula")) alunos = alunos.slice(1);
+        const enviados = alunos.filter(a => normalizarTexto(a.status) === "enviado");
+        if (enviados.length === 0) { Swal.fire({ title: 'Aviso', text: 'Não existem registros enviados para imprimir!', icon: 'info', confirmButtonColor: '#ff6b00' }); return; }
+
+        enviados.sort((a, b) => (parseDateSafely(b.dataEnvio) || parseDateSafely(b.dataCadastro)) - (parseDateSafely(a.dataEnvio) || parseDateSafely(a.dataCadastro)));
+
+        let linhas = enviados.map(a => `
+            <tr>
+                <td>${formatarData(a.dataCadastro)}</td>
+                <td>${formatarData(a.dataEnvio)}</td>
+                <td><b>${a.matricula}</b></td>
+                <td>${a.campanha || '-'}</td>
+                <td>${a.nome}</td>
+                <td>${a.curso}</td>
+                <td>${a.dia || '-'}</td>
+                <td>${a.horario || '-'}</td>
+                <td>${a.vendedor || '-'}</td>
+                <td>${a.email || '-'}</td>
+                <td>${a.observacoes || '-'}</td>
+            </tr>
+        `).join('');
+
+        const htmlPrint = `
+            <div class="print-header">
+                <div>
+                    <h1>Relatório de Materiais Enviados - Educ</h1>
+                    <p>Total de materiais enviados: ${enviados.length}</p>
+                </div>
+                <p>Emitido em: ${new Date().toLocaleString('pt-BR')}</p>
+            </div>
+            <table class="print-table">
+                <thead>
+                    <tr>
+                        <th>Cadastro</th><th>Envio</th><th>Matrícula</th><th>Campanha</th><th>Aluno(a)</th><th>Curso</th><th>Dia</th><th>Horário</th><th>Vendedor</th><th>E-mail</th><th>Observações</th>
+                    </tr>
+                </thead>
+                <tbody>${linhas}</tbody>
+            </table>
+        `;
+        dispararImpressaoExclusiva(htmlPrint);
     }
 
     function habilitarEdicaoCard(index, ehTabela) {
@@ -1509,13 +1887,13 @@
         try {
             await fetch(URL_PLANILHA, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(dados) });
             setTimeout(() => renderizarPainelGerencial(true), 1500);
-        } catch (err) { Swal.fire('Erro!', 'Problema ao salvar.', 'error'); }
+        } catch (err) { Swal.fire({ title: 'Erro!', text: 'Problema ao salvar.', icon: 'error', confirmButtonColor: '#dc3545' }); }
     }
 
     async function deletarAluno(index, ehTabela) {
         const sufixo = ehTabela ? "-tab" : "";
         const matricula = document.getElementById(`card-mat-${index}${sufixo}`).value.trim();
-        Swal.fire({ title: 'Tem certeza?', text: "Deseja remover o aluno " + matricula + "?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc3545', confirmButtonText: 'Sim, excluir!' }).then(async (res) => {
+        Swal.fire({ title: 'Tem certeza?', text: "Deseja remover o aluno " + matricula + "?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc3545', cancelButtonColor: '#4a5568', confirmButtonText: 'Sim, excluir!', cancelButtonText: 'Cancelar' }).then(async (res) => {
             if (res.isConfirmed) {
                 await fetch(URL_PLANILHA, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "delete", matricula }) });
                 Swal.fire({ title: 'Excluído!', text: 'Registro removido.', icon: 'success', timer: 2000, showConfirmButton: false });
@@ -1535,7 +1913,7 @@
         const email = document.getElementById(`card-email-${index}-tab`).value.trim();
         const observacoes = document.getElementById(`card-obs-${index}-tab`).value.trim();
 
-        Swal.fire({ title: 'Reenviar Material?', text: `Deseja enviar apostila novamente para ${nome}?`, icon: 'question', showCancelButton: true, confirmButtonText: 'Sim, reenviar!' }).then(async (res) => {
+        Swal.fire({ title: 'Reenviar Material?', text: `Deseja enviar apostila novamente para ${nome}?`, icon: 'question', showCancelButton: true, confirmButtonColor: '#ff6b00', cancelButtonColor: '#4a5568', confirmButtonText: 'Sim, reenviar!', cancelButtonText: 'Cancelar' }).then(async (res) => {
             if (res.isConfirmed) {
                 Swal.fire({ title: 'Disparando E-mail...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
                 const base = { action: "update", matricula, nome, campanha, curso, dia, horario, vendedor, email, observacoes };
