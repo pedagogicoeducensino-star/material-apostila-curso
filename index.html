@@ -292,7 +292,7 @@
                 </div>
             </div>
 
- <!-- 1. CENTRAL DE MATERIAIS CADASTRADOS POR VOCÊ (PRIMEIRO NO TOPO) -->
+            <!-- 1. CENTRAL DE MATERIAIS CADASTRADOS POR VOCÊ (PRIMEIRO NO TOPO) -->
             <div class="card">
                 <h3 style="margin-top:0;">Materiais Cadastrados por Você</h3>
                 <div class="table-responsive" style="max-height: 260px;">
@@ -307,6 +307,7 @@
                                 <th>E-mail</th>
                                 <th>Status</th>
                                 <th>Observação</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-materiais-colab"></tbody>
@@ -494,11 +495,11 @@
     </div>
 </div>
 
-<!-- MODAL PRÓPRIO DE CADASTRO DE NOVO ENVIO (PERMITE ALERTAS POR CIMA SEM FECHAR) -->
+<!-- MODAL PRÓPRIO DE CADASTRO / EDIÇÃO DE ENVIO (PERMITE ALERTAS POR CIMA SEM FECHAR) -->
 <div id="modal-novo-envio" class="custom-modal-overlay">
     <div class="custom-modal-box">
         <div class="custom-modal-header">
-            <h2 style="margin:0; padding:0; border:none; font-size:20px;"><i class="fas fa-plus-circle" style="color:var(--escola-laranja);"></i> Cadastrar Novo Envio</h2>
+            <h2 id="titulo-modal-envio" style="margin:0; padding:0; border:none; font-size:20px;"><i class="fas fa-plus-circle" style="color:var(--escola-laranja);"></i> Cadastrar Novo Envio</h2>
             <button type="button" class="custom-modal-close" onclick="fecharModalNovoEnvio()"><i class="fas fa-times"></i></button>
         </div>
         <form id="form-novo-envio-colab" onsubmit="gravarNovoEnvioColab(event)">
@@ -568,8 +569,9 @@
     let colabsGlobalCache = [];
     let meusMateriaisCache = [];
     let matriculaDuplicadaBloqueio = false;
+    let registroEmEdicaoColab = null;
     
-    const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbyqYkmZyG6dkgm5bJBXEHwE1ttx2Nrik47RyVvbAvSBnsWuQ3MLy2BcSVdjRwWIx3WM/exec"; 
+    const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbzi2UMBWTxsmvBuDDmKhw6fxKDSnJHlbO7ox6LGpDVKqsmMnWkM50T848W9-8tIt5Yw/exec"; 
 
     const listaCursos = [
         "Assistente Administrativo - AA", "Assistente Administrativo Plus - AAP",
@@ -590,7 +592,6 @@
     ];
 
     window.onload = async () => {
-        // Define mês e ano atuais ANTES de carregar qualquer gráfico
         const selMes = document.getElementById('colab-filtro-mes');
         const selAno = document.getElementById('colab-filtro-ano');
         if(selMes) selMes.value = new Date().getMonth();
@@ -1066,7 +1067,7 @@
         document.getElementById('colab-logado-email').innerText = colabLogado.email;
 
         let tbody = document.getElementById('tbody-materiais-colab');
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:25px; font-weight:600;"><i class="fas fa-spinner fa-spin"></i> Carregando seus registros...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:25px; font-weight:600;"><i class="fas fa-spinner fa-spin"></i> Carregando seus registros...</td></tr>`;
 
         try {
             const res = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
@@ -1086,7 +1087,7 @@
             meusMateriaisCache.sort((a, b) => parseDateSafely(b.dataCadastro) - parseDateSafely(a.dataCadastro));
 
             tbody.innerHTML = '';
-            meusMateriaisCache.forEach(m => {
+            meusMateriaisCache.forEach((m, idx) => {
                 let stNorm = normalizarTexto(m.status);
                 let corStatus = stNorm === 'enviado' ? '#16a34a' : '#ff6b00';
                 tbody.innerHTML += `
@@ -1099,19 +1100,26 @@
                         <td>${m.email}</td>
                         <td><span style="font-weight:bold; color:${corStatus}">${m.status}</span></td>
                         <td>${m.observacoes || '-'}</td>
+                        <td>
+                            <div style="display:flex; gap:6px;">
+                                <button type="button" title="Copiar Ocorrência para CGD" class="table-btn-3d btn-resend" onclick="copiarOcorrenciaColab(${idx})"><i class="fas fa-copy"></i></button>
+                                <button type="button" title="Editar Informações" class="table-btn-3d btn-edit" onclick="editarMaterialColab(${idx})"><i class="fas fa-edit"></i></button>
+                                <button type="button" title="Excluir Material" class="table-btn-3d btn-del" onclick="excluirMaterialColab(${idx})"><i class="fas fa-times"></i></button>
+                            </div>
+                        </td>
                     </tr>
                 `;
             });
 
             if(meusMateriaisCache.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#777;">Nenhum material cadastrado por você ainda.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:20px; color:#777;">Nenhum material cadastrado por você ainda.</td></tr>`;
             }
 
             atualizarGraficoColaborador();
 
         } catch(e) {
             console.error(e);
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#dc3545;">Erro ao carregar seus materiais.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:20px; color:#dc3545;">Erro ao carregar seus materiais.</td></tr>`;
         }
     }
 
@@ -1175,13 +1183,164 @@
         });
     }
 
-    // --- MODAL DE NOVO ENVIO (INSTANTÂNEO + ALERTA POPUP REAL DE DUPLICIDADE) ---
-    function abrirModalNovoEnvio() {
-        document.getElementById('form-novo-envio-colab').reset();
+    // --- GERADOR DE OCORRÊNCIA E AÇÕES DO COLABORADOR ---
+    function gerarTextoOcorrenciaCGD(dados, dataRegistro, horaRegistro) {
+        return `Formalizo o registro do Material/Apostila do(a) aluno(a) ${dados.nome}, matrícula ${dados.matricula}, realizado em ${dataRegistro}, às ${horaRegistro}, referente ao curso ${dados.curso}, vinculado à campanha ${dados.campanha}, com e-mail de cadastro ${dados.email}.`;
+    }
+
+    function extrairDataHoraParaOcorrencia(dataStr) {
+        let ms = parseDateSafely(dataStr);
+        let dt = ms > 0 ? new Date(ms) : new Date();
+        let dia = String(dt.getDate()).padStart(2, '0');
+        let mes = String(dt.getMonth() + 1).padStart(2, '0');
+        let ano = dt.getFullYear();
+        let hora = String(dt.getHours()).padStart(2, '0');
+        let min = String(dt.getMinutes()).padStart(2, '0');
+        return { data: `${dia}/${mes}/${ano}`, hora: `${hora}:${min}` };
+    }
+
+    function copiarTextoParaAreaTransferencia(texto) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(texto);
+        }
+        const temp = document.createElement('textarea');
+        temp.value = texto;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        return Promise.resolve();
+    }
+
+    function copiarTextoModalCGD() {
+        const textarea = document.getElementById('cgd-texto-copiar');
+        const feedback = document.getElementById('feedback-copia-cgd');
+        if (!textarea) return;
+        textarea.select();
+        copiarTextoParaAreaTransferencia(textarea.value).then(() => {
+            if (feedback) {
+                feedback.style.display = 'block';
+                feedback.innerHTML = '<i class="fas fa-check-circle"></i> Registro copiado! Você já pode colar no CGD.';
+            }
+        });
+    }
+
+    function concluirModalCGD(recarregarPainel = true) {
+        Swal.close();
+        if (recarregarPainel) {
+            setTimeout(() => carregarPainelColaborador(), 600);
+        }
+    }
+
+    function exibirModalOcorrenciaCGD(titulo, textoCGD, recarregarAoConcluir = true) {
+        Swal.fire({
+            title: titulo,
+            icon: 'success',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            html: `
+                <p style="font-size:14px; color:#555; margin-bottom:10px;">Copie a ocorrência abaixo para lançar no sistema CGD da escola:</p>
+                <textarea id="cgd-texto-copiar" readonly style="width:100%; height:115px; font-size:13px; padding:10px; background:#f4f5f7; border:1px solid #ccc; border-radius:6px;">${textoCGD}</textarea>
+                <div id="feedback-copia-cgd" style="display:none; margin-top:8px; font-size:13px; font-weight:600; color:#16a34a;"></div>
+                <div style="display:flex; justify-content:center; gap:10px; margin-top:18px; flex-wrap:wrap;">
+                    <button type="button" class="btn-export" style="background:var(--escola-laranja);" onclick="copiarTextoModalCGD()"><i class="fas fa-copy"></i> Copiar Registro para CGD</button>
+                    <button type="button" class="btn-export" style="background:#16a34a;" onclick="concluirModalCGD(${recarregarAoConcluir})"><i class="fas fa-check"></i> Concluir</button>
+                </div>
+            `
+        });
+    }
+
+    function copiarOcorrenciaColab(idx) {
+        const m = meusMateriaisCache[idx];
+        if (!m) return;
+        const dh = extrairDataHoraParaOcorrencia(m.dataCadastro);
+        const textoCGD = gerarTextoOcorrenciaCGD({
+            nome: m.nome,
+            matricula: m.matricula,
+            curso: m.curso,
+            campanha: m.campanha || 'Padrão',
+            email: m.email
+        }, dh.data, dh.hora);
+
+        exibirModalOcorrenciaCGD('Ocorrência para o CGD', textoCGD, false);
+    }
+
+    function editarMaterialColab(idx) {
+        const m = meusMateriaisCache[idx];
+        if (!m) return;
+
+        registroEmEdicaoColab = m;
         matriculaDuplicadaBloqueio = false;
+
         const btnGravar = document.getElementById('btn-gravar-novo-envio');
         btnGravar.disabled = false;
         btnGravar.style.opacity = '1';
+        btnGravar.innerHTML = '<i class="fas fa-save"></i> Salvar Alterações';
+
+        document.getElementById('titulo-modal-envio').innerHTML = '<i class="fas fa-edit" style="color:var(--escola-laranja);"></i> Editar Informações do Envio';
+
+        const selCurso = document.getElementById('env-curso');
+        selCurso.innerHTML = montarOpcoesCursos(m.curso);
+
+        const selCamp = document.getElementById('env-campanha');
+        let listaCamps = campanhasData.length > 0 ? campanhasData.slice() : ['Padrão', 'Suporte'];
+        if (m.campanha && !listaCamps.some(c => normalizarTexto(c) === normalizarTexto(m.campanha))) {
+            listaCamps.unshift(m.campanha);
+        }
+        selCamp.innerHTML = listaCamps.map(cp => `<option value="${cp}" ${normalizarTexto(cp) === normalizarTexto(m.campanha) ? 'selected' : ''}>${cp}</option>`).join('');
+
+        document.getElementById('env-nome').value = m.nome || '';
+        document.getElementById('env-matricula').value = m.matricula || '';
+        document.getElementById('env-dia').value = m.dia || 'Segunda-feira';
+        document.getElementById('env-horario').value = m.horario || '07:00 às 09:00';
+        document.getElementById('env-email').value = m.email || '';
+
+        document.getElementById('modal-novo-envio').classList.add('open');
+    }
+
+    function excluirMaterialColab(idx) {
+        const m = meusMateriaisCache[idx];
+        if (!m) return;
+
+        Swal.fire({
+            title: 'Excluir Material?',
+            text: `Deseja remover o cadastro do(a) aluno(a) ${m.nome} (Matrícula ${m.matricula})?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#4a5568',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar'
+        }).then(async (res) => {
+            if (res.isConfirmed) {
+                Swal.fire({ title: 'Excluindo registro...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                try {
+                    await fetch(URL_PLANILHA, {
+                        method: "POST", mode: "no-cors",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ action: "delete", matricula: String(m.matricula).trim() })
+                    });
+                    Swal.fire({ title: 'Excluído!', text: 'Registro removido com sucesso.', icon: 'success', timer: 1800, showConfirmButton: false });
+                    setTimeout(() => carregarPainelColaborador(), 1000);
+                } catch (err) {
+                    Swal.fire({ title: 'Erro!', text: 'Não foi possível excluir o material.', icon: 'error', confirmButtonColor: '#dc3545' });
+                }
+            }
+        });
+    }
+
+    // --- MODAL DE NOVO ENVIO (INSTANTÂNEO + ALERTA POPUP REAL DE DUPLICIDADE) ---
+    function abrirModalNovoEnvio() {
+        document.getElementById('form-novo-envio-colab').reset();
+        registroEmEdicaoColab = null;
+        matriculaDuplicadaBloqueio = false;
+
+        document.getElementById('titulo-modal-envio').innerHTML = '<i class="fas fa-plus-circle" style="color:var(--escola-laranja);"></i> Cadastrar Novo Envio';
+
+        const btnGravar = document.getElementById('btn-gravar-novo-envio');
+        btnGravar.disabled = false;
+        btnGravar.style.opacity = '1';
+        btnGravar.innerHTML = '<i class="fas fa-save"></i> Salvar';
 
         const selCurso = document.getElementById('env-curso');
         selCurso.innerHTML = '<option value="">Selecione...</option>' + listaCursos.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -1194,6 +1353,7 @@
     }
 
     function fecharModalNovoEnvio() {
+        registroEmEdicaoColab = null;
         document.getElementById('modal-novo-envio').classList.remove('open');
     }
 
@@ -1209,6 +1369,15 @@
     async function verificarDuplicidadeMatricula(matriculaVal) {
         const mat = String(matriculaVal || '').trim();
         if (!mat) return;
+
+        // Se está editando e manteve a mesma matrícula original, não precisa acusar duplicidade
+        if (registroEmEdicaoColab && mat === String(registroEmEdicaoColab.matricula).trim()) {
+            matriculaDuplicadaBloqueio = false;
+            const btnGravar = document.getElementById('btn-gravar-novo-envio');
+            btnGravar.disabled = false;
+            btnGravar.style.opacity = '1';
+            return;
+        }
 
         Swal.fire({
             title: 'Verificando duplicidade...',
@@ -1246,9 +1415,9 @@
                 btnGravar.style.opacity = '1';
                 Swal.fire({
                     title: 'Matrícula Liberada!',
-                    text: `Nenhum registro encontrado para a matrícula ${mat}. Pode continuar o cadastro.`,
+                    text: `Nenhum registro encontrado para a matrícula ${mat}. Pode continuar.`,
                     icon: 'success',
-                    confirmButtonText: 'Continuar Cadastro',
+                    confirmButtonText: 'Continuar',
                     confirmButtonColor: '#16a34a'
                 });
             }
@@ -1282,58 +1451,78 @@
             return;
         }
 
-        Swal.fire({ title: 'Verificando e gravando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        const ehEdicao = Boolean(registroEmEdicaoColab);
+        const matriculaOriginal = ehEdicao ? String(registroEmEdicaoColab.matricula).trim() : null;
+
+        Swal.fire({ title: ehEdicao ? 'Salvando alterações...' : 'Verificando e gravando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
         try {
-            // Verificação final de segurança contra duplicidade
-            const resCheck = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
-            let dataCheck = await resCheck.json();
-            let listaAlunos = dataCheck.alunos || [];
-            if(listaAlunos.length > 0 && (listaAlunos[0].matricula === "Matrícula" || listaAlunos[0].matricula === "matricula")) listaAlunos = listaAlunos.slice(1);
+            // Verificação final de segurança contra duplicidade (novo cadastro ou alteração de matrícula na edição)
+            if (!ehEdicao || matricula !== matriculaOriginal) {
+                const resCheck = await fetch(URL_PLANILHA + "?t=" + new Date().getTime());
+                let dataCheck = await resCheck.json();
+                let listaAlunos = dataCheck.alunos || [];
+                if(listaAlunos.length > 0 && (listaAlunos[0].matricula === "Matrícula" || listaAlunos[0].matricula === "matricula")) listaAlunos = listaAlunos.slice(1);
 
-            const existente = listaAlunos.find(al => String(al.matricula).trim() === matricula);
-            if (existente) {
-                matriculaDuplicadaBloqueio = true;
-                const btnGravar = document.getElementById('btn-gravar-novo-envio');
-                btnGravar.disabled = true;
-                btnGravar.style.opacity = '0.45';
-                Swal.fire({
-                    title: 'Atenção: Cadastro Duplicado!',
-                    text: `O material da matrícula ${matricula} já possui cadastro por (${existente.vendedor || 'outro colaborador'}). Por favor, busque orientação na Coordenação Pedagógica ou corrija a matrícula em caso de erro.`,
-                    icon: 'warning',
-                    confirmButtonText: 'Entendido',
-                    confirmButtonColor: '#dc3545'
-                });
-                return;
+                const existente = listaAlunos.find(al => String(al.matricula).trim() === matricula);
+                if (existente) {
+                    matriculaDuplicadaBloqueio = true;
+                    const btnGravar = document.getElementById('btn-gravar-novo-envio');
+                    btnGravar.disabled = true;
+                    btnGravar.style.opacity = '0.45';
+                    Swal.fire({
+                        title: 'Atenção: Cadastro Duplicado!',
+                        text: `O material da matrícula ${matricula} já possui cadastro por (${existente.vendedor || 'outro colaborador'}). Por favor, busque orientação na Coordenação Pedagógica ou corrija a matrícula em caso de erro.`,
+                        icon: 'warning',
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#dc3545'
+                    });
+                    return;
+                }
             }
 
             const dados = { nome, matricula, curso, campanha, dia, horario, email, vendedor: colabLogado.nome };
-            let dataRegistroFormatada = new Date().toLocaleDateString('pt-BR');
-            let horaRegistroFormatada = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
 
-            await fetch(URL_PLANILHA, {
-                method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(dados)
-            });
+            if (ehEdicao) {
+                const payloadEdicao = {
+                    action: "update",
+                    matriculaOriginal: matriculaOriginal,
+                    matricula: matricula,
+                    nome: nome,
+                    campanha: campanha,
+                    curso: curso,
+                    dia: dia,
+                    horario: horario,
+                    vendedor: colabLogado.nome,
+                    email: email,
+                    status: registroEmEdicaoColab.status || "Pendente de Envio",
+                    observacoes: registroEmEdicaoColab.observacoes || ""
+                };
 
-            fecharModalNovoEnvio();
+                await fetch(URL_PLANILHA, {
+                    method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(payloadEdicao)
+                });
 
-            let textoCGD = `Eu, ${colabLogado.nome}, identificado(a), formalizo o registro do cadastro do Material/Apostila do(a) aluno(a) ${dados.nome}, matrícula ${dados.matricula}, realizado em ${dataRegistroFormatada}, às ${horaRegistroFormatada}, referente ao curso ${dados.curso}, vinculado à campanha ${dados.campanha}, com e-mail de cadastro ${dados.email}.`;
+                const dh = extrairDataHoraParaOcorrencia(registroEmEdicaoColab.dataCadastro);
+                fecharModalNovoEnvio();
 
-            Swal.fire({
-                title: 'Cadastro Realizado com Sucesso!',
-                html: `
-                    <p style="font-size:14px; color:#555; margin-bottom:10px;">Copie a ocorrência abaixo para lançar no sistema CGD da escola:</p>
-                    <textarea id="cgd-texto-copiar" readonly style="width:100%; height:115px; font-size:13px; padding:10px; background:#f4f5f7; border:1px solid #ccc; border-radius:6px;">${textoCGD}</textarea>
-                `,
-                icon: 'success',
-                confirmButtonText: '<i class="fas fa-copy"></i> Copiar para o CGD e Concluir',
-                confirmButtonColor: '#16a34a'
-            }).then(() => {
-                const textarea = document.getElementById('cgd-texto-copiar');
-                if(textarea) { textarea.select(); navigator.clipboard.writeText(textarea.value); }
-                setTimeout(() => carregarPainelColaborador(), 800);
-            });
+                const textoCGD = gerarTextoOcorrenciaCGD(dados, dh.data, dh.hora);
+                exibirModalOcorrenciaCGD('Cadastro Atualizado com Sucesso!', textoCGD, true);
+            } else {
+                let dataRegistroFormatada = new Date().toLocaleDateString('pt-BR');
+                let horaRegistroFormatada = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+                await fetch(URL_PLANILHA, {
+                    method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(dados)
+                });
+
+                fecharModalNovoEnvio();
+
+                const textoCGD = gerarTextoOcorrenciaCGD(dados, dataRegistroFormatada, horaRegistroFormatada);
+                exibirModalOcorrenciaCGD('Cadastro Realizado com Sucesso!', textoCGD, true);
+            }
 
         } catch (err) {
             Swal.fire({ title: 'Erro', text: 'Não foi possível gravar o registro. Tente novamente.', icon: 'error', confirmButtonColor: '#dc3545' });
