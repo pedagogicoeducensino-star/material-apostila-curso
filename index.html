@@ -294,19 +294,19 @@
 
             <!-- 1. CENTRAL DE MATERIAIS CADASTRADOS POR VOCÊ (PRIMEIRO NO TOPO) -->
             <div class="card">
-                <h3 style="margin-top:0;">Central de Materiais Cadastrados por Você</h3>
+                <h3 style="margin-top:0;">Materiais Cadastrados por Você</h3>
                 <div class="table-responsive">
                     <table class="list-table">
                         <thead>
                             <tr>
-                                <th>Data Cadastro</th>
+                                <th>Data e Hora do Cadastro</th>
                                 <th>Matrícula</th>
                                 <th>Aluno(a)</th>
                                 <th>Curso</th>
                                 <th>Campanha</th>
                                 <th>E-mail</th>
                                 <th>Status</th>
-                                <th>Observação da Coordenação</th>
+                                <th>Observação</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-materiais-colab"></tbody>
@@ -317,7 +317,7 @@
             <!-- 2. SEU DESEMPENHO E GRÁFICO (NO FINAL) -->
             <div class="card" style="display:grid; grid-template-columns: 1fr 2fr; gap:20px; align-items:center;">
                 <div>
-                    <h3 style="margin-top:0;" id="colab-grafico-titulo">Seu Desempenho</h3>
+                    <h3 style="margin-top:0;" id="colab-grafico-titulo">Meu Desempenho</h3>
                     <p style="font-size:14px; color:#555; margin-bottom:15px;">Gráfico demonstrativo dos seus envios cadastrados divididos pelas campanhas ativas no período.</p>
                     
                     <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
@@ -366,7 +366,7 @@
             </div>
             
             <!-- 1. MATERIAIS PENDENTES DE ENVIO -->
-            <h3>Materiais Pendentes de Envio - Lembre-se: o envio do material deverá ocorrer em até 72 horas, contadas a partir da data e horário do registro da solicitação.</h3>
+            <h3>Materiais Pendentes de Envio - Lembre-se: o envio do material deverá ocorrer em até 72 horas.</h3>
             <div id="grid-pendentes"></div>
 
             <!-- 2. MATERIAIS ENVIADOS -->
@@ -478,6 +478,9 @@
                         <canvas id="graficoAdminRelatorio"></canvas>
                     </div>
                 </div>
+
+                <!-- TABELA DE DETALHAMENTO POR VENDEDOR / COLABORADOR -->
+                <div id="detalhamento-vendedores-relatorio" style="display:none; margin-top: 20px; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #eee;"></div>
             </div>
         </div>
     </div>
@@ -537,7 +540,7 @@
             </div>
             <div class="modal-footer-btns">
                 <button type="button" class="btn-export btn-pdf" onclick="fecharModalNovoEnvio()">Cancelar</button>
-                <button type="submit" id="btn-gravar-novo-envio" class="btn-export" style="background:#16a34a;"><i class="fas fa-save"></i> Gravar Registro</button>
+                <button type="submit" id="btn-gravar-novo-envio" class="btn-export" style="background:#16a34a;"><i class="fas fa-save"></i> Salvar</button>
             </div>
         </form>
     </div>
@@ -618,7 +621,7 @@
         }
     }
 
-    // CORREÇÃO PRINCIPAL: Inclui Colaboradores + Vendedores + Valor atual do registro para NUNCA apagar o vendedor ao salvar!
+    // Inclui Colaboradores + Vendedores + Valor atual do registro para NUNCA apagar o vendedor ao salvar
     function montarOpcoesVendedores(vendedorAtual) {
         let mapa = new Map();
         const adicionar = (nome) => {
@@ -689,6 +692,7 @@
                 await carregarConfiguracoesGerais();
                 renderizarListasAdmin();
                 popularFiltrosRelatorio();
+                renderizarRelatorioEstatistico();
             }, 1200);
         } catch(e) {
             Swal.fire({ title: 'Erro', text: 'Falha ao adicionar.', icon: 'error', confirmButtonColor: '#4a5568' });
@@ -719,6 +723,7 @@
                         await carregarConfiguracoesGerais();
                         renderizarListasAdmin();
                         popularFiltrosRelatorio();
+                        renderizarRelatorioEstatistico();
                     }, 1200);
                 } catch(e) {
                     Swal.fire({ title: 'Erro', text: 'Falha ao remover.', icon: 'error', confirmButtonColor: '#4a5568' });
@@ -901,7 +906,7 @@
                             <div style="font-size:15px; font-weight:500;"><i class="fas fa-envelope text-muted"></i> ${a.email || '-'}</div>
                         </div>
                         <div>
-                            <div class="card-data-label">Vendedor / Consultor</div>
+                            <div class="card-data-label">Colaborador</div>
                             <div style="font-size:15px; font-weight:600;"><i class="fas fa-user-tag text-muted"></i> ${a.vendedor || '-'}</div>
                         </div>
                     </div>
@@ -1048,7 +1053,7 @@
         if (horaAtual >= 12 && horaAtual < 18) saudacao = "Boa tarde";
         else if (horaAtual >= 18) saudacao = "Boa noite";
 
-        document.getElementById('colab-saudacao-texto').innerHTML = `${saudacao}, ${colabLogado.nome}! Tenha um excelente dia.`;
+        document.getElementById('colab-saudacao-texto').innerHTML = `${saudacao}, ${colabLogado.nome}! Tenha um excelente trabalho.`;
         document.getElementById('colab-logado-setor').innerText = colabLogado.setor;
         document.getElementById('colab-logado-email').innerText = colabLogado.email;
 
@@ -1125,7 +1130,7 @@
             }
         });
 
-        document.getElementById('colab-grafico-titulo').innerText = `Seu Desempenho (${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)}/${selAno})`;
+        document.getElementById('colab-grafico-titulo').innerText = `Meu Desempenho (${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)}/${selAno})`;
         
         let textoStats = `Total no período: ${totalPeriodo}<br>`;
         let labelsGrafico = [], dadosGrafico = [], coresGrafico = ['#ff6b00', '#16a34a', '#d97706', '#8b5cf6', '#ec4899'];
@@ -1610,6 +1615,8 @@
 
     function renderizarRelatorioEstatistico() {
         let filtrados = obterRegistrosFiltradosAdmin();
+        const fCamp = document.getElementById('filtro-campanha')?.value || "";
+        const fColab = document.getElementById('filtro-colaborador')?.value || "";
 
         let contCamp = {};
         campanhasData.forEach(c => { contCamp[c] = 0; });
@@ -1643,6 +1650,80 @@
                 options: { responsive: true, maintainAspectRatio: false }
             });
         }
+
+        // DETALHAMENTO POR VENDEDOR (EXIBIDO QUANDO FILTRO COLABORADOR = "TODOS")
+        const boxDetalhe = document.getElementById('detalhamento-vendedores-relatorio');
+        if (!boxDetalhe) return;
+
+        if (fColab !== "") {
+            boxDetalhe.style.display = 'none';
+            boxDetalhe.innerHTML = '';
+            return;
+        }
+
+        // Define quais colunas de campanha aparecem (todas ou somente a selecionada no filtro)
+        let colunasCamp = fCamp ? [fCamp] : Object.keys(contCamp);
+        let mapaVendedores = {};
+
+        filtrados.forEach(a => {
+            let nomeVend = String(a.vendedor || 'Não informado').trim();
+            let chaveVend = normalizarTexto(nomeVend);
+            let campReg = String(a.campanha || 'Padrão').trim();
+
+            if (!mapaVendedores[chaveVend]) {
+                mapaVendedores[chaveVend] = { nome: nomeVend, total: 0, campanhas: {} };
+                colunasCamp.forEach(cp => { mapaVendedores[chaveVend].campanhas[normalizarTexto(cp)] = 0; });
+            }
+
+            let chaveCamp = normalizarTexto(campReg);
+            if (mapaVendedores[chaveVend].campanhas[chaveCamp] === undefined) {
+                mapaVendedores[chaveVend].campanhas[chaveCamp] = 0;
+            }
+            mapaVendedores[chaveVend].campanhas[chaveCamp]++;
+            mapaVendedores[chaveVend].total++;
+        });
+
+        let listaVend = Object.values(mapaVendedores).sort((a, b) => b.total - a.total);
+
+        if (listaVend.length === 0) {
+            boxDetalhe.style.display = 'block';
+            boxDetalhe.innerHTML = `<p style="margin:0; color:#777; text-align:center;">Nenhum cadastro encontrado para os filtros selecionados.</p>`;
+            return;
+        }
+
+        let cabecalhosCamp = colunasCamp.map(cp => `<th>${cp}</th>`).join('');
+        let linhasHtml = listaVend.map(v => {
+            let celulasCamp = colunasCamp.map(cp => {
+                let qtd = v.campanhas[normalizarTexto(cp)] || 0;
+                return `<td><strong>${qtd}</strong> ${cp}</td>`;
+            }).join('');
+            return `
+                <tr>
+                    <td><strong>${v.nome}</strong></td>
+                    ${celulasCamp}
+                    ${colunasCamp.length > 1 ? `<td style="color:var(--escola-laranja); font-weight:700;">${v.total}</td>` : ''}
+                </tr>
+            `;
+        }).join('');
+
+        boxDetalhe.style.display = 'block';
+        boxDetalhe.innerHTML = `
+            <h4 style="margin:0 0 12px 0; color:var(--escola-cinza-escuro); font-size:16px;">
+                <i class="fas fa-users" style="color:var(--escola-laranja);"></i> Detalhamento por Colaborador / Vendedor
+            </h4>
+            <div class="table-responsive" style="max-height: 280px;">
+                <table class="list-table">
+                    <thead>
+                        <tr>
+                            <th>Vendedor / Colaborador</th>
+                            ${cabecalhosCamp}
+                            ${colunasCamp.length > 1 ? '<th>Total</th>' : ''}
+                        </tr>
+                    </thead>
+                    <tbody>${linhasHtml}</tbody>
+                </table>
+            </div>
+        `;
     }
 
     function dispararImpressaoExclusiva(htmlConteudo) {
@@ -1674,6 +1755,13 @@
         const canvas = document.getElementById('graficoAdminRelatorio');
         const imgGrafico = canvas ? canvas.toDataURL('image/png') : '';
 
+        const boxDet = document.getElementById('detalhamento-vendedores-relatorio');
+        const detalhePrint = (boxDet && boxDet.style.display !== 'none')
+            ? `<div style="margin-bottom:15px;">${boxDet.innerHTML
+                .replace('class="list-table"', 'class="print-table"')
+                .replace('max-height: 280px;', 'max-height: none; overflow: visible; border: none; box-shadow: none;')}</div>`
+            : '';
+
         let linhasTabela = filtrados.map(a => `
             <tr>
                 <td>${formatarData(a.dataCadastro)}</td>
@@ -1703,6 +1791,7 @@
                 <div style="font-size:14px; line-height:1.7;">${resumoHtml}</div>
                 ${imgGrafico ? `<div><img src="${imgGrafico}" style="max-height:190px; width:auto;"></div>` : ''}
             </div>
+            ${detalhePrint}
             <table class="print-table">
                 <thead>
                     <tr>
