@@ -327,10 +327,12 @@
                                 <option value="0">Janeiro</option><option value="1">Fevereiro</option><option value="2">Março</option><option value="3">Abril</option><option value="4">Maio</option><option value="5">Junho</option><option value="6">Julho</option><option value="7">Agosto</option><option value="8">Setembro</option><option value="9">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option>
                             </select>
                         </div>
-                        <div style="flex:1; min-width:90px;">
-                            <label style="font-size:12px;">Ano:</label>
-                            <select id="colab-filtro-ano" style="font-size:13px; padding:6px;" onchange="atualizarGraficoColaborador()">
-                                <option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option>
+                        <div style="flex:1; min-width:120px;">
+                            <label style="font-size:12px;">Status:</label>
+                            <select id="colab-filtro-status" style="font-size:13px; padding:6px;" onchange="atualizarGraficoColaborador()">
+                                <option value="todos">Todos</option>
+                                <option value="enviado" selected>Enviados</option>
+                                <option value="pendente">Pendentes</option>
                             </select>
                         </div>
                     </div>
@@ -1107,36 +1109,48 @@
         }
     }
 
-    function atualizarGraficoColaborador() {
+  function atualizarGraficoColaborador() {
         let contagemCampanhas = {};
         campanhasData.forEach(cp => { contagemCampanhas[cp] = 0; });
 
         const selMes = parseInt(document.getElementById('colab-filtro-mes').value, 10);
         const selAno = parseInt(document.getElementById('colab-filtro-ano').value, 10);
+        const selStatus = document.getElementById('colab-filtro-status')?.value || 'todos';
         let totalPeriodo = 0;
         let nomeMes = new Date(selAno, selMes, 1).toLocaleString('pt-BR', { month: 'long' });
 
-        // Conta TODOS os materiais cadastrados no período (tanto Pendente quanto Enviado)
         meusMateriaisCache.forEach(m => {
             let msCad = parseDateSafely(m.dataCadastro);
-            if(msCad > 0) {
+            if (msCad > 0) {
                 let dCad = new Date(msCad);
-                if(dCad.getMonth() === selMes && dCad.getFullYear() === selAno) {
-                    totalPeriodo++;
-                    let camp = String(m.campanha || 'Padrão').trim();
-                    if(contagemCampanhas[camp] !== undefined) contagemCampanhas[camp]++;
-                    else contagemCampanhas[camp] = 1;
+                if (dCad.getMonth() === selMes && dCad.getFullYear() === selAno) {
+                    let st = normalizarTexto(m.status);
+                    let passaStatus = true;
+
+                    if (selStatus === 'enviado') {
+                        passaStatus = (st === 'enviado');
+                    } else if (selStatus === 'pendente') {
+                        passaStatus = (st === 'pendente de envio' || st === 'pendente');
+                    }
+
+                    if (passaStatus) {
+                        totalPeriodo++;
+                        let camp = String(m.campanha || 'Padrão').trim();
+                        if (contagemCampanhas[camp] !== undefined) contagemCampanhas[camp]++;
+                        else contagemCampanhas[camp] = 1;
+                    }
                 }
             }
         });
 
+        const rotuloStatus = selStatus === 'enviado' ? 'Enviados' : (selStatus === 'pendente' ? 'Pendentes' : 'Todos');
         document.getElementById('colab-grafico-titulo').innerText = `Meu Desempenho (${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)}/${selAno})`;
         
-        let textoStats = `Total no período: ${totalPeriodo}<br>`;
+        let textoStats = `Total no período (${rotuloStatus}): ${totalPeriodo}<br>`;
         let labelsGrafico = [], dadosGrafico = [], coresGrafico = ['#ff6b00', '#16a34a', '#d97706', '#8b5cf6', '#ec4899'];
         let corIndex = 0, bgCores = [];
 
-        for(let cp in contagemCampanhas) {
+        for (let cp in contagemCampanhas) {
             labelsGrafico.push(cp);
             dadosGrafico.push(contagemCampanhas[cp]);
             textoStats += `• ${cp}: ${contagemCampanhas[cp]}<br>`;
@@ -1147,7 +1161,7 @@
         document.getElementById('colab-stats-texto').innerHTML = textoStats;
 
         const ctx = document.getElementById('graficoColaborador').getContext('2d');
-        if(meuGrafico) meuGrafico.destroy();
+        if (meuGrafico) meuGrafico.destroy();
         meuGrafico = new Chart(ctx, {
             type: 'doughnut',
             data: { labels: labelsGrafico, datasets: [{ data: dadosGrafico, backgroundColor: bgCores }] },
